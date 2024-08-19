@@ -17,6 +17,13 @@ boolean "true"|"false"
 
 %%
 
+"int"                       { printf("VARIABLE TIPO ENTERO "); return TYPE_INT; }
+"bool"                      { printf("VARIABLE TIPO BOOLEANA "); return TYPE_BOOL; }
+"void"                    { printf("%s\n", yytext); return TYPE_VOID; }
+
+"="                         { printf("%s\n", yytext); return ASIGNACION; }
+"return"                    { printf("%s\n", yytext); return RETURN; }
+
 {boolean}	                    {
                                 if(strcmp(yytext,"true") == 0)
                                     printf("BOLEANO VERDADERO");
@@ -37,7 +44,7 @@ boolean "true"|"false"
 "-"                       {  printf("%s\n",yytext);
                                   return TMENOS;}
 
-[+*;()]                   {  printf("%s\n",yytext);
+[+*;(){}]                   {  printf("%s\n",yytext);
                                   return *yytext;}
 
 .|\n                          ; /* ignore all the rest */
