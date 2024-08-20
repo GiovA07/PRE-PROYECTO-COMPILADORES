@@ -38,10 +38,6 @@ boolean "true"|"false"
 
 {letra}({letra}|{digito})*  { printf("ID : %s\n",yytext);  return ID; }
 
-{constante}({constante}|{digito})* {
-                                    printf("Constante declarada : %s \n", yytext); return CONSTANTE;
-                                   }
-
 "="                       {  printf("%s\n", yytext); return ASIGNACION; }
 
 "-"                       {  printf("%s\n",yytext);  return TMENOS;}
@@ -58,7 +54,7 @@ boolean "true"|"false"
 
 "}"                       {  printf("%s\n",yytext);  return TLLAVE_CL;}
 
-[;]                       {  printf("%s\n",yytext);  return *yytext;}
+[;,]                       {  printf("%s\n",yytext);  return *yytext;}
 
 .|\n                          ; /* ignore all the rest */
 

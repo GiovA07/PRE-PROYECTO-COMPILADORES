@@ -1,8 +1,7 @@
 #define PI = 123;
 #define HOl = true;
 int main(){
-    #define PI = 123;
-    int x = 4;
+    int x = 4 , j = 2;
     int y;
     bool z = false;
     x = 1;

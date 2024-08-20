@@ -27,11 +27,12 @@
 %token TLLAVE_CL
 
 /* palabras reservadas */
-%token IF
-%token ELSE
+/* %token IF
+%token ELSE */
 %token RETURN
 
 
+/* presedencias */
 %left TMAS TMENOS
 %left TPOR
 %left TPAR_OP TPAR_CL
@@ -46,25 +47,33 @@ prog: main  { printf("No hay errores \n"); }
 
 
 type: TYPE_BOOL
-    |TYPE_INT
-    |TYPE_VOID
+    | TYPE_INT
+    | TYPE_VOID
 
 
 main: constante type ID TPAR_OP TPAR_CL TLLAVE_OP sentencias TLLAVE_CL
 
 constante: 
-            |constante CONSTANTE asignacion
+         |constante CONSTANTE asignacion
 
 sentencias:
-            |sentencias asignacion retorno
-            |sentencias declaracion retorno
-    ;
-
-
-
-asignacion: ID ASIGNACION expr ';'
-          | ID ASIGNACION exprBool ';' 
+          |sentencias asignacion retorno
+          |sentencias declaracion retorno
           ;
+
+
+
+asignacion: boolAsignacion
+          | intAsignacion
+          ;
+
+intAsignacion: ID ASIGNACION expr ';'
+             | ID ASIGNACION expr ',' asignacion
+             ;
+
+boolAsignacion: ID ASIGNACION exprBool ';'
+              | ID ASIGNACION exprBool ',' asignacion
+              ;
 
 declaracion: TYPE_INT ID ';'
            | TYPE_BOOL ID ';'
@@ -72,25 +81,22 @@ declaracion: TYPE_INT ID ';'
            | TYPE_INT asignacion
            ;
 
-exprBool: BOOLEAN 
-        
 
+exprBool: BOOLEAN 
 
 expr: INT
     | ID
     | expr TMAS expr
-
     | expr TPOR expr
-
     | expr TMENOS expr
     | '(' expr ')'
     ;
 
 retorno:
-        | RETURN exprBool ';'
-        | RETURN expr ';'
-        | RETURN ';'
-        ;
+       | RETURN exprBool ';'
+       | RETURN expr ';'
+       | RETURN ';'
+       ;
 
 /*VALOR : INT
        | BOOLEAN
