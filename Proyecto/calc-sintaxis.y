@@ -5,24 +5,38 @@
 
 %}
 
+/*declaraciones*/
 %token ID
+%token CONSTANTE
+
+/* tipos de datos */
 %token INT
-%token TMAS
-%token TPOR
-%token TMENOS
 %token BOOLEAN
 %token TYPE_INT
 %token TYPE_BOOL
 %token TYPE_VOID
+
+/* simbolos */
+%token TMAS
+%token TPOR
+%token TMENOS
 %token ASIGNACION
+%token TPAR_OP
+%token TPAR_CL
+%token TLLAVE_OP
+%token TLLAVE_CL
+
+/* palabras reservadas */
+%token IF
+%token ELSE
 %token RETURN
-%token CONSTANTE
+
 
 %left TMAS TMENOS
 %left TPOR
-%left ')' '('
-%left '{'
-%left '}'
+%left TPAR_OP TPAR_CL
+%left TLLAVE_OP
+%left TLLAVE_CL
 
 
 %%
@@ -36,7 +50,7 @@ type: TYPE_BOOL
     |TYPE_VOID
 
 
-main: constante type ID '(' ')' '{' sentencias '}'
+main: constante type ID TPAR_OP TPAR_CL TLLAVE_OP sentencias TLLAVE_CL
 
 constante: 
             |constante CONSTANTE asignacion

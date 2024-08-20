@@ -12,35 +12,37 @@
 %option yylineno
 
 letra [a-zA-Z]
-constante[A-Z]
+constante [A-Z]
 digito [0-9]
 boolean "true"|"false"
 
 %%
-"#define"                   {printf("CONSTANTE "); return CONSTANTE; }
+"#define"                   { printf("CONSTANTE "); return CONSTANTE; }
+
 "int"                       { printf("VARIABLE TIPO ENTERO "); return TYPE_INT; }
 "bool"                      { printf("VARIABLE TIPO BOOLEANA "); return TYPE_BOOL; }
 "void"                      { printf("%s\n", yytext); return TYPE_VOID; }
 
-"="                         { printf("%s\n", yytext); return ASIGNACION; }
 "return"                    { printf("%s\n", yytext); return RETURN; }
 
-{boolean}	                    {
+{boolean}	                {
                                 if(strcmp(yytext,"true") == 0)
                                     printf("BOLEANO VERDADERO");
                                 else
                                    printf("BOLEANO FALSO");
 
                                 return BOOLEAN;
-                                }
+                            }
 
-{digito}+                     {
-                                printf("INT : %d\n",atoi(yytext));
-                                return INT;}
+{digito}+                   { printf("INT : %d\n",atoi(yytext));  return INT; }
 
-{letra}({letra}|{digito})*    {
-                                printf("ID : %s\n",yytext);
-                                return ID;}
+{letra}({letra}|{digito})*  { printf("ID : %s\n",yytext);  return ID; }
+
+{constante}({constante}|{digito})* {
+                                    printf("Constante declarada : %s \n", yytext); return CONSTANTE;
+                                   }
+
+"="                       {  printf("%s\n", yytext); return ASIGNACION; }
 
 "-"                       {  printf("%s\n",yytext);  return TMENOS;}
 
@@ -48,7 +50,15 @@ boolean "true"|"false"
 
 "*"                       {  printf("%s\n",yytext);  return TPOR;}
 
-[;(){}]                   {  printf("%s\n",yytext);  return *yytext;}
+"("                       {  printf("%s\n",yytext);  return TPAR_OP;}
+
+")"                       {  printf("%s\n",yytext);  return TPAR_CL;}
+
+"{"                       {  printf("%s\n",yytext);  return TLLAVE_OP;}
+
+"}"                       {  printf("%s\n",yytext);  return TLLAVE_CL;}
+
+[;]                       {  printf("%s\n",yytext);  return *yytext;}
 
 .|\n                          ; /* ignore all the rest */
 
