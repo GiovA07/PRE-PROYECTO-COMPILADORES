@@ -25,6 +25,15 @@ boolean "true"|"false"
 
 "return"                    { printf("%s\n", yytext); return RETURN; }
 
+"||"                       {  printf(" OR ");;  return OR;}
+"&&"                       {  printf(" AND ");  return AND;}
+"NOT"                      {  printf(" NOT ");  return NOT;}
+
+"if"                      {  printf("%s\n",yytext);   return IF;}
+"else"                    {  printf("%s\n",yytext);   return ELSE;}
+
+"while"                      {  printf("%s\n",yytext);   return WHILE;}
+
 {boolean}	                {
                                 if(strcmp(yytext,"true") == 0)
                                     printf("BOLEANO VERDADERO");
@@ -54,9 +63,6 @@ boolean "true"|"false"
 
 "}"                       {  printf("%s\n",yytext);  return TLLAVE_CL;}
 
-"||"                       {  printf(" OR ");;  return OR;}
-"&&"                       {  printf(" AND ");  return AND;}
-"NOT"                      {  printf(" NOT ");  return NOT;}
 
 
 [;,]                       {  printf("%s\n",yytext);  return *yytext;}

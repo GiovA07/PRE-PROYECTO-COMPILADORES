@@ -29,21 +29,27 @@
 %token AND
 %token NOT
 
+
+
+
+
 /* palabras reservadas */
-/* %token IF
-%token ELSE */
+%token IF
+%token ELSE
+%token WHILE
 %token RETURN
 
 
 /* presedencias */
 %left TMAS TMENOS
 %left TPOR
-%left TPAR_OP TPAR_CL
-%left TLLAVE_OP
-%left TLLAVE_CL
 %left OR
 %left AND
 %left NOT
+%left TPAR_OP TPAR_CL
+%left TLLAVE_OP
+%left TLLAVE_CL
+
 
 
 %%
@@ -65,6 +71,9 @@ constante:
 sentencias:
           |sentencias asignacion retorno
           |sentencias declaracion retorno
+          |sentencias while retorno
+          |sentencias if_else retorno
+
           ;
 
 
@@ -92,6 +101,7 @@ exprBool: BOOLEAN
         | exprBool AND exprBool
         | exprBool OR exprBool
         | NOT exprBool
+        ;
 
 expr: INT
     | ID
@@ -106,6 +116,13 @@ retorno:
        | RETURN expr ';'
        | RETURN ';'
        ;
+
+if_else: IF TPAR_OP exprBool TPAR_CL TLLAVE_OP sentencias TLLAVE_CL
+       | IF TPAR_OP exprBool TPAR_CL TLLAVE_OP sentencias TLLAVE_CL ELSE TLLAVE_OP sentencias TLLAVE_CL
+       ;
+
+while: WHILE TPAR_OP exprBool TPAR_CL TLLAVE_OP sentencias TLLAVE_CL
+      ;
 
 /*VALOR : INT
        | BOOLEAN
