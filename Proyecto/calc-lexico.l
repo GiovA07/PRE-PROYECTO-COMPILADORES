@@ -12,60 +12,47 @@
 %option yylineno
 
 letra [a-zA-Z]
-constante [A-Z]
 digito [0-9]
-boolean "true"|"false"
+true "TRUE"
+false "FALSE"
 
 %%
-"#define"                   { printf("CONSTANTE "); return CONSTANTE; }
-
-"int"                       { printf("VARIABLE TIPO ENTERO "); return TYPE_INT; }
-"bool"                      { printf("VARIABLE TIPO BOOLEANA "); return TYPE_BOOL; }
-"void"                      { printf("%s\n", yytext); return TYPE_VOID; }
-
+"@define"                   { printf("CONSTANTE "); return CONSTANTE; }
+"main"						{ printf("MAIN "); return MAIN; }
 "return"                    { printf("%s\n", yytext); return RETURN; }
 
-"||"                       {  printf(" OR ");;  return OR;}
-"&&"                       {  printf(" AND ");  return AND;}
-"NOT"                      {  printf(" NOT ");  return NOT;}
+"int"                       { printf("TIPO ENTERO "); return TYPE_INT; }
+"bool"                      { printf("TIPO BOOLEANA "); return TYPE_BOOL; }
+"void"                      { printf("%s\n", yytext); return TYPE_VOID; }
 
-"if"                      {  printf("%s\n",yytext);   return IF;}
-"else"                    {  printf("%s\n",yytext);   return ELSE;}
+"||"                        {  printf(" OR ");;  return OR;}
+"&&"                        {  printf(" AND ");  return AND;}
+"NOT"|"!"                   {  printf(" NOT ");  return NOT;}
 
-"while"                      {  printf("%s\n",yytext);   return WHILE;}
+"if"         				{  printf("%s\n",yytext);   return IF;}
+"else"       				{  printf("%s\n",yytext);   return ELSE;}
 
-{boolean}	                {
-                                if(strcmp(yytext,"true") == 0)
-                                    printf("BOLEANO VERDADERO");
-                                else
-                                   printf("BOLEANO FALSO");
+"while"                 	{  printf("%s\n",yytext);   return WHILE;}
 
-                                return BOOLEAN;
-                            }
+{true}						{ printf("%s\n", yytext); return TTRUE;}
+{false}						{ printf("%s\n", yytext); return TFALSE; }
 
-{digito}+                   { printf("INT : %d\n",atoi(yytext));  return INT; }
+{digito}+     				{ printf("INT : %d\n",atoi(yytext));  return INT;}
 
 {letra}({letra}|{digito})*  { printf("ID : %s\n",yytext);  return ID; }
 
-"="                       {  printf("%s\n", yytext); return ASIGNACION; }
+"="                         {  printf("%s\n", yytext); return ASIGNACION; }
+"-"                         {  printf("%s\n",yytext);  return TMENOS;}
+"+"                         {  printf("%s\n",yytext);  return TMAS;}
+"*"                         {  printf("%s\n",yytext);  return TPOR;}
 
-"-"                       {  printf("%s\n",yytext);  return TMENOS;}
-
-"+"                       {  printf("%s\n",yytext);  return TMAS;}
-
-"*"                       {  printf("%s\n",yytext);  return TPOR;}
-
-"("                       {  printf("%s\n",yytext);  return TPAR_OP;}
-
-")"                       {  printf("%s\n",yytext);  return TPAR_CL;}
-
-"{"                       {  printf("%s\n",yytext);  return TLLAVE_OP;}
-
-"}"                       {  printf("%s\n",yytext);  return TLLAVE_CL;}
+"("                         {  printf("%s\n",yytext);  return TPAR_OP;}
+")"                         {  printf("%s\n",yytext);  return TPAR_CL;}
+"{"                         {  printf("%s\n",yytext);  return TLLAVE_OP;}
+"}"                         {  printf("%s\n",yytext);  return TLLAVE_CL;}
 
 
-
-[;,]                       {  printf("%s\n",yytext);  return *yytext;}
+[;,]                        {  printf("%s\n",yytext);  return *yytext;}
 
 .|\n                          ; /* ignore all the rest */
 

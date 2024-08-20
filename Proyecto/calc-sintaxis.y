@@ -9,12 +9,13 @@
 %token ID
 %token CONSTANTE
 
+
 /* tipos de datos */
 %token INT
-%token BOOLEAN
 %token TYPE_INT
 %token TYPE_BOOL
 %token TYPE_VOID
+
 
 /* simbolos */
 %token TMAS
@@ -30,14 +31,14 @@
 %token NOT
 
 
-
-
-
 /* palabras reservadas */
 %token IF
 %token ELSE
 %token WHILE
 %token RETURN
+%token TTRUE
+%token TFALSE
+%token MAIN
 
 
 /* presedencias */
@@ -52,43 +53,49 @@
 
 
 
+
 %%
 
 prog: main  { printf("No hay errores \n"); }
     ;
 
-
 type: TYPE_BOOL
     | TYPE_INT
     | TYPE_VOID
+    ;
 
 
-main: constante type ID TPAR_OP TPAR_CL TLLAVE_OP sentencias TLLAVE_CL
+main: constante type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_sentencias TLLAVE_CL
+    ;
 
 constante:
          |constante CONSTANTE asignacion
+         ;
 
-sentencias:
-          |sentencias asignacion retorno
-          |sentencias declaracion retorno
-          |sentencias while retorno
-          |sentencias if_else retorno
-
+list_sentencias:
+          |list_sentencias sentencia
           ;
 
-
-
-asignacion: boolAsignacion
-          | intAsignacion
-          ;
-
-intAsignacion: ID ASIGNACION expr ';'
-             | ID ASIGNACION expr ',' asignacion
-             ;
-
-boolAsignacion: ID ASIGNACION exprBool ';'
-              | ID ASIGNACION exprBool ',' asignacion
+sentencia: asignacion
+         | declaracion
+         | while
+         | if_else
+         | retorno
+         ;
+         
+int_Asignacion: ID ASIGNACION expr ';'
+              | ID ASIGNACION TMENOS expr ';'
+              | ID ASIGNACION expr ',' int_Asignacion
+              | ID ASIGNACION TMENOS expr ',' int_Asignacion
               ;
+
+bool_Asignacion: ID ASIGNACION expr_bool ';'
+              | ID ASIGNACION expr_bool ',' bool_Asignacion
+              ;
+    
+asignacion: bool_Asignacion
+          | int_Asignacion
+          ;
 
 declaracion: TYPE_INT ID ';'
            | TYPE_BOOL ID ';'
@@ -96,39 +103,34 @@ declaracion: TYPE_INT ID ';'
            | TYPE_INT asignacion
            ;
 
+expr_bool: TTRUE
+         | TFALSE
+         | expr_bool AND expr_bool
+         | expr_bool OR expr_bool
+         | NOT expr_bool
+         ;
 
-exprBool: BOOLEAN
-        | exprBool AND exprBool
-        | exprBool OR exprBool
-        | NOT exprBool
-        ;
-
-expr: INT
-    | ID
+expr: ID
+    | INT
     | expr TMAS expr
     | expr TPOR expr
     | expr TMENOS expr
-    | '(' expr ')'
+    | TPAR_OP TMENOS INT TPAR_CL
     ;
 
-retorno:
-       | RETURN exprBool ';'
+retorno: RETURN expr_bool ';'
        | RETURN expr ';'
        | RETURN ';'
        ;
 
-if_else: IF TPAR_OP exprBool TPAR_CL TLLAVE_OP sentencias TLLAVE_CL
-       | IF TPAR_OP exprBool TPAR_CL TLLAVE_OP sentencias TLLAVE_CL ELSE TLLAVE_OP sentencias TLLAVE_CL
+if_else: IF TPAR_OP expr_bool TPAR_CL TLLAVE_OP list_sentencias TLLAVE_CL
+       | IF TPAR_OP expr_bool TPAR_CL TLLAVE_OP list_sentencias TLLAVE_CL ELSE TLLAVE_OP list_sentencias TLLAVE_CL
        ;
 
-while: WHILE TPAR_OP exprBool TPAR_CL TLLAVE_OP sentencias TLLAVE_CL
-      ;
+while: WHILE TPAR_OP expr_bool TPAR_CL TLLAVE_OP list_sentencias TLLAVE_CL
+     ;
 
-/*VALOR : INT
-       | BOOLEAN
-       ;
 
-*/
 %%
 
 

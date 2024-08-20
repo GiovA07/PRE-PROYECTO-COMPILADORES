@@ -1,20 +1,21 @@
-#define PI = 123;
-#define HOl = true;
+@define PI = 123;
+@define HOl = TRUE;
 int main(){
+    bool aux = NOT TRUE && ! FALSE;
     int x = 4 , j = 2;
     int y;
-    bool z = false || true;
-    if (true) {
+    if (TRUE) {
         x = 3;
     } else {
         x = 5;
     }
-    while(true) {
+    while(TRUE) {
         int k = 2;
         x = k + x;
     }
     x = 1;
-    x = x+3*2*y;
+    x = -23;
+    x = x-(-3)*2*y;
     return x;
     y = 4;
     x = 2;
