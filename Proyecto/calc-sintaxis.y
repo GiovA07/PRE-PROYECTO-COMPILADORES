@@ -25,6 +25,9 @@
 %token TPAR_CL
 %token TLLAVE_OP
 %token TLLAVE_CL
+%token OR
+%token AND
+%token NOT
 
 /* palabras reservadas */
 /* %token IF
@@ -38,6 +41,9 @@
 %left TPAR_OP TPAR_CL
 %left TLLAVE_OP
 %left TLLAVE_CL
+%left OR
+%left AND
+%left NOT
 
 
 %%
@@ -53,7 +59,7 @@ type: TYPE_BOOL
 
 main: constante type ID TPAR_OP TPAR_CL TLLAVE_OP sentencias TLLAVE_CL
 
-constante: 
+constante:
          |constante CONSTANTE asignacion
 
 sentencias:
@@ -82,7 +88,10 @@ declaracion: TYPE_INT ID ';'
            ;
 
 
-exprBool: BOOLEAN 
+exprBool: BOOLEAN
+        | exprBool AND exprBool
+        | exprBool OR exprBool
+        | NOT exprBool
 
 expr: INT
     | ID

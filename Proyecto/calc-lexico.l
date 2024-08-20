@@ -54,6 +54,11 @@ boolean "true"|"false"
 
 "}"                       {  printf("%s\n",yytext);  return TLLAVE_CL;}
 
+"||"                       {  printf(" OR ");;  return OR;}
+"&&"                       {  printf(" AND ");  return AND;}
+"NOT"                      {  printf(" NOT ");  return NOT;}
+
+
 [;,]                       {  printf("%s\n",yytext);  return *yytext;}
 
 .|\n                          ; /* ignore all the rest */

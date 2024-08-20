@@ -3,7 +3,7 @@
 int main(){
     int x = 4 , j = 2;
     int y;
-    bool z = false;
+    bool z = false || true;
     x = 1;
     x = x+3*2*y;
     return x;
