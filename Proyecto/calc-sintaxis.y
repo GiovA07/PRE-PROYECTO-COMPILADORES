@@ -14,6 +14,7 @@
 %token TYPE_VOID
 %token ASIGNACION
 %token RETURN
+%token CONSTANTE
 
 %left '+' TMENOS
 %left '*'
@@ -41,32 +42,42 @@ sentencias:
             |sentencias declaracion retorno
     ;
 
+
+
 asignacion: ID ASIGNACION expr ';'
+          | ID ASIGNACION exprBool ';' 
+          ;
 
 declaracion: TYPE_INT ID ';'
            | TYPE_BOOL ID ';'
+           | TYPE_BOOL asignacion
+           | TYPE_INT asignacion
+           | CONSTANTE  asignacion
            ;
 
-expr: VALOR
+exprBool: BOOLEAN 
+        ;
+
+
+expr: INT
     | ID
     | expr '+' expr
-
     | expr '*' expr
-
     | expr TMENOS expr
-
     | '(' expr ')'
     ;
 
 retorno:
+        | RETURN exprBool ';'
         | RETURN expr ';'
         | RETURN ';'
         ;
 
-VALOR : INT
+/*VALOR : INT
        | BOOLEAN
        ;
 
+*/
 %%
 
 
