@@ -36,8 +36,10 @@ type: TYPE_BOOL
     |TYPE_VOID
 
 
-main: type ID '(' ')' '{' sentencias '}'
+main: constante type ID '(' ')' '{' sentencias '}'
 
+constante: 
+            |constante CONSTANTE asignacion
 
 sentencias:
             |sentencias asignacion retorno
@@ -54,11 +56,10 @@ declaracion: TYPE_INT ID ';'
            | TYPE_BOOL ID ';'
            | TYPE_BOOL asignacion
            | TYPE_INT asignacion
-           | CONSTANTE  asignacion
            ;
 
 exprBool: BOOLEAN 
-        ;
+        
 
 
 expr: INT
