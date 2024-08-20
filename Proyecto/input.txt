@@ -1,6 +1,8 @@
 int main(){
-    int x;
+    #define PI = 123;
+    int x = 4;
     int y;
+    bool z = false;
     x = 1;
     x = x+3*2*y;
     return x;
