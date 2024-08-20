@@ -5,8 +5,10 @@
 
 %}
 
-%token INT
 %token ID
+%token INT
+%token TMAS
+%token TPOR
 %token TMENOS
 %token BOOLEAN
 %token TYPE_INT
@@ -15,8 +17,8 @@
 %token ASIGNACION
 %token RETURN
 
-%left '+' TMENOS
-%left '*'
+%left TMAS TMENOS
+%left TPOR
 %left ')' '('
 %left '{'
 %left '}'
@@ -49,9 +51,9 @@ declaracion: TYPE_INT ID ';'
 
 expr: VALOR
     | ID
-    | expr '+' expr
+    | expr TMAS expr
 
-    | expr '*' expr
+    | expr TPOR expr
 
     | expr TMENOS expr
 

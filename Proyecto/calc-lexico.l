@@ -19,7 +19,7 @@ boolean "true"|"false"
 
 "int"                       { printf("VARIABLE TIPO ENTERO "); return TYPE_INT; }
 "bool"                      { printf("VARIABLE TIPO BOOLEANA "); return TYPE_BOOL; }
-"void"                    { printf("%s\n", yytext); return TYPE_VOID; }
+"void"                      { printf("%s\n", yytext); return TYPE_VOID; }
 
 "="                         { printf("%s\n", yytext); return ASIGNACION; }
 "return"                    { printf("%s\n", yytext); return RETURN; }
@@ -41,11 +41,13 @@ boolean "true"|"false"
                                 printf("ID : %s\n",yytext);
                                 return ID;}
 
-"-"                       {  printf("%s\n",yytext);
-                                  return TMENOS;}
+"-"                       {  printf("%s\n",yytext);  return TMENOS;}
 
-[+*;(){}]                   {  printf("%s\n",yytext);
-                                  return *yytext;}
+"+"                       {  printf("%s\n",yytext);  return TMAS;}
+
+"*"                       {  printf("%s\n",yytext);  return TPOR;}
+
+[;(){}]                   {  printf("%s\n",yytext);  return *yytext;}
 
 .|\n                          ; /* ignore all the rest */
 
