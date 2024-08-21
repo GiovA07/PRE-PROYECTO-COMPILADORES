@@ -23,10 +23,6 @@ digito [0-9]
 "bool"                      { printf("TIPO BOOLEANA "); return TYPE_BOOL; }
 "void"                      { printf("%s\n", yytext); return TYPE_VOID; }
 
-"||"                        {  printf(" OR ");;  return OR;}
-"&&"                        {  printf(" AND ");  return AND;}
-"NOT"|"!"                   {  printf(" NOT ");  return NOT;}
-
 "if"         				{  printf("%s\n",yytext);   return IF;}
 "else"       				{  printf("%s\n",yytext);   return ELSE;}
 
@@ -38,6 +34,10 @@ digito [0-9]
 {digito}+     				{ printf("INT : %d\n",atoi(yytext));  return INT;}
 
 {letra}({letra}|{digito})*  { printf("ID : %s\n",yytext);  return ID; }
+
+"||"                        {  printf(" OR ");;  return OR;}
+"&&"                        {  printf(" AND ");  return AND;}
+"NOT"|"!"                   {  printf(" NOT ");  return NOT;}
 
 "="                         {  printf("%s\n", yytext); return ASIGNACION; }
 "-"                         {  printf("%s\n",yytext);  return TMENOS;}
