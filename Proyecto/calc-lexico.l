@@ -13,8 +13,6 @@
 
 letra [a-zA-Z]
 digito [0-9]
-true "TRUE"
-false "FALSE"
 
 %%
 "@define"                   { printf("CONSTANTE "); return CONSTANTE; }
@@ -34,8 +32,8 @@ false "FALSE"
 
 "while"                 	{  printf("%s\n",yytext);   return WHILE;}
 
-{true}						{ printf("%s\n", yytext); return TTRUE;}
-{false}						{ printf("%s\n", yytext); return TFALSE; }
+"TRUE"						{ printf("%s\n", yytext); return TTRUE;}
+"FALSE"						{ printf("%s\n", yytext); return TFALSE; }
 
 {digito}+     				{ printf("INT : %d\n",atoi(yytext));  return INT;}
 

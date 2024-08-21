@@ -1,21 +1,8 @@
-@define PI = 123;
-@define HOl = TRUE;
 int main(){
-    bool aux = NOT TRUE && ! FALSE;
-    int x = 4 , j = 2;
+    int x;
     int y;
-    if (TRUE) {
-        x = 3;
-    } else {
-        x = 5;
-    }
-    while(TRUE) {
-        int k = 2;
-        x = k + x;
-    }
-    x = 1;
-    x = -23;
-    x = x-(-3)*2*y;
+    x = (1);
+    x = x+3*2*y;
     return x;
     y = 4;
     x = 2;

@@ -6,16 +6,14 @@
 %}
 
 /*declaraciones*/
+/* %token CONSTANTE */
 %token ID
-%token CONSTANTE
-
 
 /* tipos de datos */
 %token INT
 %token TYPE_INT
 %token TYPE_BOOL
 %token TYPE_VOID
-
 
 /* simbolos */
 %token TMAS
@@ -42,16 +40,14 @@
 
 
 /* presedencias */
+%left TPAR_CL
 %left TMAS TMENOS
 %left TPOR
 %left OR
 %left AND
 %left NOT
-%left TPAR_OP TPAR_CL
-%left TLLAVE_OP
-%left TLLAVE_CL
-
-
+%left TLLAVE_OP TLLAVE_CL
+%left TPAR_OP
 
 
 %%
@@ -65,70 +61,61 @@ type: TYPE_BOOL
     ;
 
 
-main: constante type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_sentencias TLLAVE_CL
+main: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL
     ;
 
-constante:
-         |constante CONSTANTE asignacion
-         ;
+list_declaraciones:
+                  |list_declaraciones declaracion
+                  ;
 
 list_sentencias:
-          |list_sentencias sentencia
-          ;
+               |list_sentencias sentencia
+               ;
 
 sentencia: asignacion
-         | declaracion
-         | while
-         | if_else
          | retorno
          ;
-         
-int_Asignacion: ID ASIGNACION expr ';'
-              | ID ASIGNACION TMENOS expr ';'
-              | ID ASIGNACION expr ',' int_Asignacion
-              | ID ASIGNACION TMENOS expr ',' int_Asignacion
-              ;
 
-bool_Asignacion: ID ASIGNACION expr_bool ';'
-              | ID ASIGNACION expr_bool ',' bool_Asignacion
-              ;
-    
-asignacion: bool_Asignacion
-          | int_Asignacion
+asignacion: ID ASIGNACION expr ';'
           ;
 
 declaracion: TYPE_INT ID ';'
            | TYPE_BOOL ID ';'
-           | TYPE_BOOL asignacion
-           | TYPE_INT asignacion
+           | TYPE_INT ID ',' declaracion
+           | TYPE_BOOL ID ',' declaracion
            ;
 
-expr_bool: TTRUE
-         | TFALSE
-         | expr_bool AND expr_bool
-         | expr_bool OR expr_bool
-         | NOT expr_bool
-         ;
-
-expr: ID
-    | INT
+expr: valor
     | expr TMAS expr
     | expr TPOR expr
+    | TPAR_OP expr TPAR_CL
     | expr TMENOS expr
-    | TPAR_OP TMENOS INT TPAR_CL
+    | expr AND expr
+    | expr OR expr
+    | NOT expr
     ;
 
-retorno: RETURN expr_bool ';'
-       | RETURN expr ';'
+valor: INT
+     | ID
+     | TTRUE
+     | TFALSE
+
+retorno: RETURN expr ';'
        | RETURN ';'
        ;
 
-if_else: IF TPAR_OP expr_bool TPAR_CL TLLAVE_OP list_sentencias TLLAVE_CL
+
+
+/* constante:
+         |constante CONSTANTE asignacion
+         ; */
+
+/* if_else: IF TPAR_OP expr_bool TPAR_CL TLLAVE_OP list_sentencias TLLAVE_CL
        | IF TPAR_OP expr_bool TPAR_CL TLLAVE_OP list_sentencias TLLAVE_CL ELSE TLLAVE_OP list_sentencias TLLAVE_CL
        ;
 
 while: WHILE TPAR_OP expr_bool TPAR_CL TLLAVE_OP list_sentencias TLLAVE_CL
-     ;
+     ; */
 
 
 %%
