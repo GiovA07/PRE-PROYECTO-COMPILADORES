@@ -6,7 +6,7 @@
 %}
 
 /*declaraciones*/
-/* %token CONSTANTE */
+%token CONSTANTE
 %token ID
 
 /* tipos de datos */
@@ -97,6 +97,7 @@ expr: valor
 
 valor: INT
      | ID
+     | TMENOS INT
      | TTRUE
      | TFALSE
 
