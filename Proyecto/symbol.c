@@ -34,29 +34,15 @@ void DeleteList(){
     free(aux);
   }
 }
-/*
-int main(){
-  char *num = "num";
-  char *sum = "sum";
 
-  Install(aux,1,1);
-  Install(aux1,1,1);
-  Install(aux,10,10);
-  Install(aux,10,10);
-  Install(aux,10,10);
-  struct Tsymbol *res = Lookup(aux);
-  printf("Tipo : %d \n",res->type);
-  printf("Size : %d \n",res->size);
-  
-  DeleteList();
-  
-  if(table == NULL) {
-    printf("Sin basura");
-  }
-  return 0;
+void prinTable(){ 
+    Tsymbol *aux = table;  
+    printf("TABLA DE SIMBOLOS\n");
+    printf("| nam |typ|siz|\n");
+    while(aux != NULL) {
+        printf("| %s |", aux->name);
+        printf(" %d |", aux->type);
+        printf(" %d |\n", aux->size);
+        aux = aux->next;
+    }
 }
-
-*/
-
-
-

@@ -13,7 +13,7 @@ AST createTree(int val, int type, char* c, struct AST *l, struct AST *r) {
 
 void showTree(AST tree) {
     if (&tree != NULL) {
-        printf("< %d %s >", (tree.val) , tree.varname);
+        printf("< %s >",tree.varname);
         if(&(*tree.left) != NULL){
             printf("(LEFT:");
             showTree(*tree.left);

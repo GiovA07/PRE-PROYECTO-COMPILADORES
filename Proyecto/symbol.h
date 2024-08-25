@@ -18,4 +18,6 @@ void Install(char *name, int type, int size);   // Creates a symbol table entry.
 
 void DeleteList();
 
+void prinTable();
+
 #endif
