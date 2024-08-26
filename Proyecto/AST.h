@@ -5,17 +5,22 @@
 #ifndef AST_H
 #define AST_H
 
+enum TYPES {
+    VAR,
+    FUNC,
+    CONS,
+    OTHERS
+};
+
 typedef struct AST {
-    int val;
     char* varname;
-    int type;
-    int nodetype;
+    enum TYPES nodetype;
     struct Tsymbol *table;
     struct AST *left;
     struct AST *right;
 } AST;
 
-AST createTree(int val, int type, char* c, struct AST *l, struct AST *r);
+AST createTree(enum TYPES type, char* c, struct AST *l, struct AST *r);
 
 void showTree(AST tree);
 

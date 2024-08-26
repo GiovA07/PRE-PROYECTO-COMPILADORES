@@ -1,10 +1,9 @@
 #include "AST.h"
 #include "symbol.h"
 
-AST createTree(int val, int type, char* c, struct AST *l, struct AST *r) {
+AST createTree(enum TYPES type, char* c, struct AST *l, struct AST *r) {
     AST arbol;
-    arbol.val = val;
-    arbol.type = type;
+    arbol.nodetype = type;
     arbol.varname = c;
     arbol.left = l;
     arbol.right = r;
@@ -20,7 +19,7 @@ void showTree(AST tree) {
             printf(")");
         }else {
             printf("Ø");
-        } 
+        }
         if(&(*tree.right) != NULL){
             printf("(RHIGT:");
             showTree(*tree.right);

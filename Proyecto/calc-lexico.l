@@ -28,10 +28,10 @@ digito [0-9]
 
 "while"                 	{  printf("%s\n",yytext);   return WHILE;}
 
-"TRUE"						{ printf("%s\n", yytext); return TTRUE;}
-"FALSE"						{ printf("%s\n", yytext); return TFALSE; }
+"TRUE"						{ printf("%s\n", yytext); yylval = yytext; return TTRUE;}
+"FALSE"						{ printf("%s\n", yytext); yylval = yytext; return TFALSE; }
 
-{digito}+     				{ printf("INT : %d\n",atoi(yytext));  return INT;}
+{digito}+     				{ printf("INT : %d\n",yytext); yylval = atoi(yytext);  return INT;}
 
 {letra}({letra}|{digito})*  { printf("ID : %s\n",yytext);  return ID; }
 
