@@ -1,7 +1,9 @@
 
 #include "AST.h"
+#include <stdbool.h>
 
 int main(){
+    bool aux;
     char *num3 = "3";
     char *sum = "+";
     char *resta = "resta";
@@ -22,16 +24,18 @@ int main(){
         printf("Revisar tabla!!!!");
         DeleteList();
     } else {
-        AST izq2 = createTree(20,var1->type,var1->name,NULL,NULL);
-        AST der2 = createTree(30,1,num3,NULL,NULL);
+        // AST izq2 = createTree(20,var1->type,var1->name,NULL,NULL);
+        // AST der2 = createTree(30,1,num3,NULL,NULL);
 
-        AST izq1 = createTree(20,valor->type,valor->name,NULL,NULL);
-        AST der1 = createTree(30,1,sum,&izq2,&der2);
-        AST der = createTree(30,1,sum,&izq1,&der1);
+        // AST izq1 = createTree(20,valor->type,valor->name,NULL,NULL);
+        // AST der1 = createTree(30,1,sum,&izq2,&der2);
+        AST *der = createTree(OTHERS,sum,NULL,NULL);
 
-        AST izq = createTree(20,valor->type,valor->name,NULL,NULL);
-
-        showTree(createTree(1,1,igu,&izq,&der));
+        AST *izq = createTree(VAR,valor->name,NULL,NULL);
+        aux = true;
+        if(aux){
+            showTree(createTree(VAR,igu,der,izq));
+        }
         DeleteList();
     }
  /*

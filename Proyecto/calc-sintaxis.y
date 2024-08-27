@@ -7,12 +7,13 @@
 #include "AST.h"
 
 
+
 %}
 %union {
     char* id;
     int i;
     bool bolean;
-    AST* arbol;
+    struct AST *arbol;
 }
 
 /*declaraciones*/
@@ -60,7 +61,7 @@
 %left TPAR_OP
 
 /*Types*/
-%type<arbol> prog expr asignacion retorno
+%type <arbol> prog expr asignacion retorno
 
 
 %%
@@ -89,7 +90,7 @@ sentencia: asignacion
          | retorno
          ;
 
-asignacion: ID ASIGNACION expr ';' {$$ = createTree(NULL,NULL, "asignacion", $2, $3)}
+asignacion: ID ASIGNACION expr ';' {$$ = createTree(OTHERS, "asignacion", $1, $3);}
           ;
 
 declaracion: TYPE_INT ID ';'
@@ -98,24 +99,24 @@ declaracion: TYPE_INT ID ';'
            | TYPE_BOOL ID ',' declaracion
            ;
 
-expr: valor                     {$$ = createTree($1, CONS, NULL, NULL, NULL);}
-    | expr TMAS expr            {$$ = createTree(0, OTHERS, "+", $1, $3);}
-    | expr TPOR expr            {$$ = createTree(0, OTHERS, "*", $1, $3);}
+expr: valor                     {$$ = createTree(CONS, NULL, NULL, NULL);}
+    | expr TMAS expr            {$$ = createTree(OTHERS, "+", $1, $3);}
+    | expr TPOR expr            {$$ = createTree(OTHERS, "*", $1, $3);}
     | TPAR_OP expr TPAR_CL      {$$ = $2;}
-    | expr TMENOS expr          {$$ = createTree(0, OTHERS, "-", $1, $3);}
-    | expr AND expr             {$$ = createTree(0, OTHERS, "&&", $1, $3);}
-    | expr OR expr              {$$ = createTree(0, OTHERS, "||", $1, $3);}
-    | NOT expr                  {$$ = createTree(0, OTHERS, "!", NULL, $2);}
+    | expr TMENOS expr          {$$ = createTree(OTHERS, "-", $1, $3);}
+    | expr AND expr             {$$ = createTree(OTHERS, "&&", $1, $3);}
+    | expr OR expr              {$$ = createTree(OTHERS, "||", $1, $3);}
+    | NOT expr                  {$$ = createTree(OTHERS, "!", NULL, $2);}
     ;
 
-valor: INT
+valor: INT 
      | ID
      | TMENOS INT
      | TTRUE
      | TFALSE
 
-retorno: RETURN expr ';' {$$ = createTree(0, FUNC, "return", $2, NULL);}
-       | RETURN ';'      {$$ = createTree(0, FUNC, "return", NULL, NULL);}
+retorno: RETURN expr ';' {$$ = createTree(FUNC, "return", $2, NULL);}
+       | RETURN ';'      {$$ = createTree(FUNC, "return", NULL, NULL);}
        ;
 
 

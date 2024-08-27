@@ -20,8 +20,8 @@ typedef struct AST {
     struct AST *right;
 } AST;
 
-AST createTree(enum TYPES type, char* c, struct AST *l, struct AST *r);
+struct AST* createTree(enum TYPES type, char* c, struct AST *l, struct AST *r);
 
-void showTree(AST tree);
+void showTree(AST* tree);
 
 #endif
