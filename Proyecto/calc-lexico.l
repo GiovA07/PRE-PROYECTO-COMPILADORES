@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "calc-sintaxis.tab.h"
 #include "AST.h"
+#include "symbol.h"
 
 
 %}
@@ -29,12 +30,12 @@ digito [0-9]
 
 "while"                 	{  printf("%s\n",yytext);   return WHILE;}
 
-"TRUE"						{ printf("%s\n", yytext); yylval.bolean = 1; return TTRUE;}
-"FALSE"						{ printf("%s\n", yytext); yylval.bolean = 0; return TFALSE; }
+"TRUE"						{ printf("%s\n", yytext); yylval.symbol = CreateSymbol(strdup(yytext),CONSBOOL,1); return TTRUE;}
+"FALSE"						{ printf("%s\n", yytext); yylval.symbol = CreateSymbol(strdup(yytext),CONSBOOL,1); return TFALSE; }
 
-{digito}+     				{ printf("INT : %d\n",atoi(yytext)); yylval.i= atoi(yytext);  return INT;}
+{digito}+     				{ printf("INT : %d\n",atoi(yytext));yylval.symbol = CreateSymbol(strdup(yytext),CONSINT,1);return INT;}
 
-{letra}({letra}|{digito})*  { printf("ID : %s\n",yytext); yylval.id = strdup(yytext); return ID; }
+{letra}({letra}|{digito})*  { printf("ID : %s\n",yytext); yylval.symbol = CreateSymbol(strdup(yytext),EID,1); return ID; }
 
 "||"                        {  printf(" OR ");;  return OR;}
 "&&"                        {  printf(" AND ");  return AND;}

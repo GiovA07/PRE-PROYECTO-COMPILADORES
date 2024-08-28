@@ -15,7 +15,7 @@ struct Tsymbol *Lookup(char * name){
   return NULL;
 }
 
-void Install(char *name, int type, int size){
+void Install(char *name, enum TYPES type, int size){
   if(Lookup(name) == NULL){
     Tsymbol *newSymbol = (Tsymbol *)malloc(sizeof(Tsymbol));
     newSymbol->varname = name;
@@ -26,11 +26,12 @@ void Install(char *name, int type, int size){
   }
 }
 
-void CreateSymbol(char *name, int type, int size){
+struct Tsymbol *CreateSymbol(char *name, enum TYPES type, int size){
     Tsymbol *newSymbol = (Tsymbol *)malloc(sizeof(Tsymbol));
     newSymbol->varname = name;
     newSymbol->type = type;
     newSymbol->size = size;
+    return newSymbol;
 }
 
 void DeleteList(){
@@ -48,7 +49,7 @@ void prinTable(){
     printf("| nam |typ|siz|\n");
     while(aux != NULL) {
         printf("| %s |", aux->varname);
-        printf(" %d |", aux->type);
+        //printf(" %s |", aux->type);
         printf(" %d |\n", aux->size);
         aux = aux->next;
     }

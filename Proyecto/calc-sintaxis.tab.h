@@ -88,12 +88,10 @@ union YYSTYPE
 {
 #line 12 "calc-sintaxis.y"
 
-    char* id;
-    int i;
-    int bolean;
+    struct Tsymbol* symbol;
     struct AST *arbol;
 
-#line 97 "calc-sintaxis.tab.h"
+#line 95 "calc-sintaxis.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

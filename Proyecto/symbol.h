@@ -30,20 +30,19 @@ enum TYPES {
 typedef struct Tsymbol {
     enum TYPES type;
     char* varname;       // name of the variable
-    int type;         // type of the variable
     int size;         // size of the type of the variable
     struct Tsymbol *next;
 } Tsymbol;
 
 struct Tsymbol *Lookup(char * name);  // Returns a pointer to the symbol table entry for the variable, returns NULL otherwise.
 
-void Install(char *name, int type, int size);   // Creates a symbol table entry.
+void Install(char *name, enum TYPES type, int size);   // Creates a symbol table entry.
 
 void DeleteList();
 
 void prinTable();
 
-void CreateSymbol(char *name, int type, int size);
+struct Tsymbol * CreateSymbol(char *name, enum TYPES type, int size);
 
 
 #endif
