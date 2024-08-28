@@ -876,7 +876,7 @@ YY_RULE_SETUP
 case 13:
 YY_RULE_SETUP
 #line 36 "calc-lexico.l"
-{ printf("ID : %s\n",yytext);  return ID; }
+{ printf("ID : %s\n",yytext); return ID; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP

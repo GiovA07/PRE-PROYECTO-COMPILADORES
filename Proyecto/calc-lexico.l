@@ -33,7 +33,7 @@ digito [0-9]
 
 {digito}+     				{ printf("INT : %d\n",atoi(yytext)); yylval.i= atoi(yytext);  return INT;}
 
-{letra}({letra}|{digito})*  { printf("ID : %s\n",yytext);  return ID; }
+{letra}({letra}|{digito})*  { printf("ID : %s\n",yytext); return ID; }
 
 "||"                        {  printf(" OR ");;  return OR;}
 "&&"                        {  printf(" AND ");  return AND;}

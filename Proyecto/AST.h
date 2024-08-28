@@ -6,9 +6,21 @@
 #define AST_H
 
 enum TYPES {
-    VAR,
-    FUNC,
-    CONS,
+    VARINT,
+    VARBOOL,
+    EMAIN,
+    CONSINT,
+    CONSBOOL,
+    SUMA,
+    RESTA,
+    PROD,
+    EOR,
+    EAND,
+    ENOT,
+    ASIG,
+    DECLA,
+    SENTEN,
+    ERETURN,
     OTHERS
 };
 

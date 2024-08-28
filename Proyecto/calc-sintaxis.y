@@ -61,12 +61,12 @@
 %left TPAR_OP
 
 /*Types*/
-%type <arbol> prog expr asignacion retorno valor
+%type <arbol> prog expr asignacion retorno valor list_declaraciones declaracion sentencia list_sentencias
 
 
 %%
 
-prog: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  {  }
+prog: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  { $$ = createTree(MAIN, "main pro", $6, $7); showTree($$);}
     ;
 
 type: TYPE_BOOL
@@ -78,19 +78,19 @@ type: TYPE_BOOL
 /* main: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL
     ; */
 
-list_declaraciones:
-                  |list_declaraciones declaracion
+list_declaraciones:                                 {$$ = NULL;}
+                  |list_declaraciones declaracion   {$$ = createTree(DECLA, "DECLARACION", $1, $2);}
                   ;
 
-list_sentencias: sentencia
-               |list_sentencias sentencia
+list_sentencias:sentencia                           {$$ = $1;}
+               |list_sentencias sentencia           {$$ = createTree(SENTEN, "SENTENCIA", $1, $2);}
                ;
 
-sentencia: asignacion
-         | retorno
+sentencia: asignacion                               {$$ = $1;}
+         | retorno                                  {$$ = $1;}
          ;
 
-asignacion: ID ASIGNACION expr ';' {$$ = createTree(OTHERS, "asignacion", $1, $3);}
+asignacion: ID ASIGNACION expr ';' {$$ = createTree(ASIG, "asignacion", $1, $3);}
           ;
 
 declaracion: TYPE_INT ID ';'
@@ -100,23 +100,23 @@ declaracion: TYPE_INT ID ';'
            ;
 
 expr: valor                     {$$ = $1;}
-    | expr TMAS expr            {$$ = createTree(OTHERS, "+", $1, $3);}
-    | expr TPOR expr            {$$ = createTree(OTHERS, "*", $1, $3);}
+    | expr TMAS expr            {$$ = createTree(SUMA, "+", $1, $3);}
+    | expr TPOR expr            {$$ = createTree(PROD, "*", $1, $3);}
     | TPAR_OP expr TPAR_CL      {$$ = $2;}
-    | expr TMENOS expr          {$$ = createTree(OTHERS, "-", $1, $3);}
-    | expr AND expr             {$$ = createTree(OTHERS, "&&", $1, $3);}
-    | expr OR expr              {$$ = createTree(OTHERS, "||", $1, $3);}
-    | NOT expr                  {$$ = createTree(OTHERS, "!", NULL, $2);}
+    | expr TMENOS expr          {$$ = createTree(RESTA, "-", $1, $3);}
+    | expr AND expr             {$$ = createTree(EAND, "&&", $1, $3);}
+    | expr OR expr              {$$ = createTree(EOR, "||", $1, $3);}
+    | NOT expr                  {$$ = createTree(ENOT, "!", NULL, $2);}
     ;
 
-valor: INT                      {$$ = createTree($1, NULL, NULL, NULL);}
-     | ID                       {$$ = createTree($1, NULL, NULL, NULL);}
-     | TMENOS INT               {$$ = createTree($2, NULL, NULL, NULL);}
-     | TTRUE                    {$$ = createTree($1, NULL, NULL, NULL);}
-     | TFALSE                   {$$ = createTree($1, NULL, NULL, NULL);}
+valor: INT                      {$$ = createTree(CONSINT, "int", NULL, NULL);}
+     | ID                       {$$ = createTree(OTHERS, "ID", NULL, NULL);}
+     | TMENOS INT               {$$ = createTree(CONSINT, "int", NULL, NULL);}
+     | TTRUE                    {$$ = createTree(CONSBOOL, "TRUE", NULL, NULL);}
+     | TFALSE                   {$$ = createTree(CONSBOOL, "FALSE", NULL, NULL);}
 
-retorno: RETURN expr ';' {$$ = createTree(FUNC, "return", $2, NULL);}
-       | RETURN ';'      {$$ = createTree(FUNC, "return", NULL, NULL);}
+retorno: RETURN expr ';' {$$ = createTree(ERETURN, "return", $2, NULL);}
+       | RETURN ';'      {$$ = createTree(ERETURN, "return", NULL, NULL);}
        ;
 
 

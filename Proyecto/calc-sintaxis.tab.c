@@ -1138,78 +1138,144 @@ yyreduce:
     {
   case 2: /* prog: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  */
 #line 69 "calc-sintaxis.y"
-                                                                                        {  }
+                                                                                        { (yyval.arbol) = createTree(MAIN, "main pro", (yyvsp[-2].arbol), (yyvsp[-1].arbol)); showTree((yyval.arbol));}
 #line 1143 "calc-sintaxis.tab.c"
+    break;
+
+  case 6: /* list_declaraciones: %empty  */
+#line 81 "calc-sintaxis.y"
+                                                    {(yyval.arbol) = NULL;}
+#line 1149 "calc-sintaxis.tab.c"
+    break;
+
+  case 7: /* list_declaraciones: list_declaraciones declaracion  */
+#line 82 "calc-sintaxis.y"
+                                                    {(yyval.arbol) = createTree(DECLA, "DECLARACION", (yyvsp[-1].arbol), (yyvsp[0].arbol));}
+#line 1155 "calc-sintaxis.tab.c"
+    break;
+
+  case 8: /* list_sentencias: sentencia  */
+#line 85 "calc-sintaxis.y"
+                                                    {(yyval.arbol) = (yyvsp[0].arbol);}
+#line 1161 "calc-sintaxis.tab.c"
+    break;
+
+  case 9: /* list_sentencias: list_sentencias sentencia  */
+#line 86 "calc-sintaxis.y"
+                                                    {(yyval.arbol) = createTree(SENTEN, "SENTENCIA", (yyvsp[-1].arbol), (yyvsp[0].arbol));}
+#line 1167 "calc-sintaxis.tab.c"
+    break;
+
+  case 10: /* sentencia: asignacion  */
+#line 89 "calc-sintaxis.y"
+                                                    {(yyval.arbol) = (yyvsp[0].arbol);}
+#line 1173 "calc-sintaxis.tab.c"
+    break;
+
+  case 11: /* sentencia: retorno  */
+#line 90 "calc-sintaxis.y"
+                                                    {(yyval.arbol) = (yyvsp[0].arbol);}
+#line 1179 "calc-sintaxis.tab.c"
     break;
 
   case 12: /* asignacion: ID ASIGNACION expr ';'  */
 #line 93 "calc-sintaxis.y"
-                                   {(yyval.arbol) = createTree(OTHERS, "asignacion", (yyvsp[-3].id), (yyvsp[-1].arbol));}
-#line 1149 "calc-sintaxis.tab.c"
+                                   {(yyval.arbol) = createTree(ASIG, "asignacion", (yyvsp[-3].id), (yyvsp[-1].arbol));}
+#line 1185 "calc-sintaxis.tab.c"
     break;
 
   case 17: /* expr: valor  */
 #line 102 "calc-sintaxis.y"
-                                {(yyval.arbol) = createTree(CONS, NULL, NULL, NULL);}
-#line 1155 "calc-sintaxis.tab.c"
+                                {(yyval.arbol) = (yyvsp[0].arbol);}
+#line 1191 "calc-sintaxis.tab.c"
     break;
 
   case 18: /* expr: expr TMAS expr  */
 #line 103 "calc-sintaxis.y"
-                                {(yyval.arbol) = createTree(OTHERS, "+", (yyvsp[-2].arbol), (yyvsp[0].arbol));}
-#line 1161 "calc-sintaxis.tab.c"
+                                {(yyval.arbol) = createTree(SUMA, "+", (yyvsp[-2].arbol), (yyvsp[0].arbol));}
+#line 1197 "calc-sintaxis.tab.c"
     break;
 
   case 19: /* expr: expr TPOR expr  */
 #line 104 "calc-sintaxis.y"
-                                {(yyval.arbol) = createTree(OTHERS, "*", (yyvsp[-2].arbol), (yyvsp[0].arbol));}
-#line 1167 "calc-sintaxis.tab.c"
+                                {(yyval.arbol) = createTree(PROD, "*", (yyvsp[-2].arbol), (yyvsp[0].arbol));}
+#line 1203 "calc-sintaxis.tab.c"
     break;
 
   case 20: /* expr: TPAR_OP expr TPAR_CL  */
 #line 105 "calc-sintaxis.y"
                                 {(yyval.arbol) = (yyvsp[-1].arbol);}
-#line 1173 "calc-sintaxis.tab.c"
+#line 1209 "calc-sintaxis.tab.c"
     break;
 
   case 21: /* expr: expr TMENOS expr  */
 #line 106 "calc-sintaxis.y"
-                                {(yyval.arbol) = createTree(OTHERS, "-", (yyvsp[-2].arbol), (yyvsp[0].arbol));}
-#line 1179 "calc-sintaxis.tab.c"
+                                {(yyval.arbol) = createTree(RESTA, "-", (yyvsp[-2].arbol), (yyvsp[0].arbol));}
+#line 1215 "calc-sintaxis.tab.c"
     break;
 
   case 22: /* expr: expr AND expr  */
 #line 107 "calc-sintaxis.y"
-                                {(yyval.arbol) = createTree(OTHERS, "&&", (yyvsp[-2].arbol), (yyvsp[0].arbol));}
-#line 1185 "calc-sintaxis.tab.c"
+                                {(yyval.arbol) = createTree(EAND, "&&", (yyvsp[-2].arbol), (yyvsp[0].arbol));}
+#line 1221 "calc-sintaxis.tab.c"
     break;
 
   case 23: /* expr: expr OR expr  */
 #line 108 "calc-sintaxis.y"
-                                {(yyval.arbol) = createTree(OTHERS, "||", (yyvsp[-2].arbol), (yyvsp[0].arbol));}
-#line 1191 "calc-sintaxis.tab.c"
+                                {(yyval.arbol) = createTree(EOR, "||", (yyvsp[-2].arbol), (yyvsp[0].arbol));}
+#line 1227 "calc-sintaxis.tab.c"
     break;
 
   case 24: /* expr: NOT expr  */
 #line 109 "calc-sintaxis.y"
-                                {(yyval.arbol) = createTree(OTHERS, "!", NULL, (yyvsp[0].arbol));}
-#line 1197 "calc-sintaxis.tab.c"
+                                {(yyval.arbol) = createTree(ENOT, "!", NULL, (yyvsp[0].arbol));}
+#line 1233 "calc-sintaxis.tab.c"
+    break;
+
+  case 25: /* valor: INT  */
+#line 112 "calc-sintaxis.y"
+                                {(yyval.arbol) = createTree(CONSINT, "int", NULL, NULL);}
+#line 1239 "calc-sintaxis.tab.c"
+    break;
+
+  case 26: /* valor: ID  */
+#line 113 "calc-sintaxis.y"
+                                {(yyval.arbol) = createTree(OTHERS, "ID", NULL, NULL);}
+#line 1245 "calc-sintaxis.tab.c"
+    break;
+
+  case 27: /* valor: TMENOS INT  */
+#line 114 "calc-sintaxis.y"
+                                {(yyval.arbol) = createTree(CONSINT, "int", NULL, NULL);}
+#line 1251 "calc-sintaxis.tab.c"
+    break;
+
+  case 28: /* valor: TTRUE  */
+#line 115 "calc-sintaxis.y"
+                                {(yyval.arbol) = createTree(CONSBOOL, "TRUE", NULL, NULL);}
+#line 1257 "calc-sintaxis.tab.c"
+    break;
+
+  case 29: /* valor: TFALSE  */
+#line 116 "calc-sintaxis.y"
+                                {(yyval.arbol) = createTree(CONSBOOL, "FALSE", NULL, NULL);}
+#line 1263 "calc-sintaxis.tab.c"
     break;
 
   case 30: /* retorno: RETURN expr ';'  */
 #line 118 "calc-sintaxis.y"
-                         {(yyval.arbol) = createTree(FUNC, "return", (yyvsp[-1].arbol), NULL);}
-#line 1203 "calc-sintaxis.tab.c"
+                         {(yyval.arbol) = createTree(ERETURN, "return", (yyvsp[-1].arbol), NULL);}
+#line 1269 "calc-sintaxis.tab.c"
     break;
 
   case 31: /* retorno: RETURN ';'  */
 #line 119 "calc-sintaxis.y"
-                         {(yyval.arbol) = createTree(FUNC, "return", NULL, NULL);}
-#line 1209 "calc-sintaxis.tab.c"
+                         {(yyval.arbol) = createTree(ERETURN, "return", NULL, NULL);}
+#line 1275 "calc-sintaxis.tab.c"
     break;
 
 
-#line 1213 "calc-sintaxis.tab.c"
+#line 1279 "calc-sintaxis.tab.c"
 
       default: break;
     }
