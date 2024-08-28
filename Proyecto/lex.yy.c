@@ -861,12 +861,12 @@ YY_RULE_SETUP
 case 10:
 YY_RULE_SETUP
 #line 31 "calc-lexico.l"
-{ printf("%s\n", yytext); yylval.bolean = yytext; return TTRUE;}
+{ printf("%s\n", yytext); yylval.bolean = 1; return TTRUE;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 32 "calc-lexico.l"
-{ printf("%s\n", yytext); yylval.bolean = yytext; return TFALSE; }
+{ printf("%s\n", yytext); yylval.bolean = 0; return TFALSE; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP

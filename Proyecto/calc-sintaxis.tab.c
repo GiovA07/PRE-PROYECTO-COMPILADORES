@@ -70,10 +70,10 @@
 #line 1 "calc-sintaxis.y"
 
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
 #include "AST.h"
 
 

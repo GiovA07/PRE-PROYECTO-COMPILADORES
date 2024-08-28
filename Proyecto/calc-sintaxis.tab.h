@@ -90,7 +90,7 @@ union YYSTYPE
 
     char* id;
     int i;
-    bool bolean;
+    int bolean;
     struct AST *arbol;
 
 #line 97 "calc-sintaxis.tab.h"

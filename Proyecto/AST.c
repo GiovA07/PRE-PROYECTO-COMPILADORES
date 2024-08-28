@@ -10,6 +10,16 @@ struct AST* createTree(enum TYPES type, char* c, struct AST *l, struct AST *r) {
     return arbol;
 }
 
+struct AST* createNode(enum TYPES type, char* c, struct AST *l, struct AST *r) {
+    AST *arbol = (AST *)malloc(sizeof(AST));
+    arbol->nodetype = type;
+    arbol->varname = c;
+    arbol->left = l;
+    arbol->right = r;
+    return arbol;
+}
+
+
 void showTree(AST* tree) {
     if (tree != NULL) {
         printf("< %s >",tree->varname);

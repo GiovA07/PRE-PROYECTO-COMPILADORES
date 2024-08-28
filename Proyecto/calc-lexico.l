@@ -28,8 +28,8 @@ digito [0-9]
 
 "while"                 	{  printf("%s\n",yytext);   return WHILE;}
 
-"TRUE"						{ printf("%s\n", yytext); yylval.bolean = yytext; return TTRUE;}
-"FALSE"						{ printf("%s\n", yytext); yylval.bolean = yytext; return TFALSE; }
+"TRUE"						{ printf("%s\n", yytext); yylval.bolean = 1; return TTRUE;}
+"FALSE"						{ printf("%s\n", yytext); yylval.bolean = 0; return TFALSE; }
 
 {digito}+     				{ printf("INT : %d\n",atoi(yytext)); yylval.i= atoi(yytext);  return INT;}
 
