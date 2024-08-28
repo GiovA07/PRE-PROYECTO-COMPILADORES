@@ -61,7 +61,7 @@
 %left TPAR_OP
 
 /*Types*/
-%type <arbol> prog expr asignacion retorno
+%type <arbol> prog expr asignacion retorno valor
 
 
 %%
@@ -99,7 +99,7 @@ declaracion: TYPE_INT ID ';'
            | TYPE_BOOL ID ',' declaracion
            ;
 
-expr: valor                     {$$ = createTree(CONS, NULL, NULL, NULL);}
+expr: valor                     {$$ = $1;}
     | expr TMAS expr            {$$ = createTree(OTHERS, "+", $1, $3);}
     | expr TPOR expr            {$$ = createTree(OTHERS, "*", $1, $3);}
     | TPAR_OP expr TPAR_CL      {$$ = $2;}
@@ -109,11 +109,11 @@ expr: valor                     {$$ = createTree(CONS, NULL, NULL, NULL);}
     | NOT expr                  {$$ = createTree(OTHERS, "!", NULL, $2);}
     ;
 
-valor: INT 
-     | ID
-     | TMENOS INT
-     | TTRUE
-     | TFALSE
+valor: INT                      {$$ = createTree($1, NULL, NULL, NULL);}
+     | ID                       {$$ = createTree($1, NULL, NULL, NULL);}
+     | TMENOS INT               {$$ = createTree($2, NULL, NULL, NULL);}
+     | TTRUE                    {$$ = createTree($1, NULL, NULL, NULL);}
+     | TFALSE                   {$$ = createTree($1, NULL, NULL, NULL);}
 
 retorno: RETURN expr ';' {$$ = createTree(FUNC, "return", $2, NULL);}
        | RETURN ';'      {$$ = createTree(FUNC, "return", NULL, NULL);}
