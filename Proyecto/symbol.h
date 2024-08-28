@@ -5,8 +5,31 @@
 #ifndef SYMBOL_H
 #define SYMBOL_H
 
+enum TYPES {
+    VAR,
+    EMAIN,
+    VARINT,
+    VARBOOL,
+    CONSINT,
+    CONSBOOL,
+    CONS,
+    SUMA,
+    RESTA,
+    PROD,
+    EOR,
+    EAND,
+    ENOT,
+    ASIG,
+    DECLA,
+    SENTEN,
+    EID,
+    ERETURN,
+    OTHERS
+};
+
 typedef struct Tsymbol {
-    char* name;       // name of the variable
+    enum TYPES type;
+    char* varname;       // name of the variable
     int type;         // type of the variable
     int size;         // size of the type of the variable
     struct Tsymbol *next;
@@ -19,5 +42,8 @@ void Install(char *name, int type, int size);   // Creates a symbol table entry.
 void DeleteList();
 
 void prinTable();
+
+void CreateSymbol(char *name, int type, int size);
+
 
 #endif

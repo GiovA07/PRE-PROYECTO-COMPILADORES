@@ -66,7 +66,7 @@
 
 %%
 
-prog: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  { $$ = createTree(MAIN, "main pro", $6, $7); showTree($$);}
+prog: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  { struct AST* arbol = createTree(MAIN, "main pro", $6, $7); showTree(arbol);}
     ;
 
 type: TYPE_BOOL
@@ -90,13 +90,13 @@ sentencia: asignacion                               {$$ = $1;}
          | retorno                                  {$$ = $1;}
          ;
 
-asignacion: ID ASIGNACION expr ';' {$$ = createTree(ASIG, "asignacion", $1, $3);}
+asignacion: ID ASIGNACION expr ';' {struct AST* aux =createTree(EID, $1, NULL, NULL); $$ = createTree(ASIG, "asignacion", aux, $3);}
           ;
 
-declaracion: TYPE_INT ID ';'
-           | TYPE_BOOL ID ';'
-           | TYPE_INT ID ',' declaracion
-           | TYPE_BOOL ID ',' declaracion
+declaracion: TYPE_INT ID ';' {$$ = NULL;}
+           | TYPE_BOOL ID ';' {$$ = NULL;}
+           | TYPE_INT ID ',' declaracion {$$ = NULL;}
+           | TYPE_BOOL ID ',' declaracion {$$ = NULL;}
            ;
 
 expr: valor                     {$$ = $1;}
@@ -110,7 +110,7 @@ expr: valor                     {$$ = $1;}
     ;
 
 valor: INT                      {$$ = createTree(CONSINT, "int", NULL, NULL);}
-     | ID                       {$$ = createTree(OTHERS, "ID", NULL, NULL);}
+     | ID                       {$$ = createTree(EID, $1, NULL, NULL);}
      | TMENOS INT               {$$ = createTree(CONSINT, "int", NULL, NULL);}
      | TTRUE                    {$$ = createTree(CONSBOOL, "TRUE", NULL, NULL);}
      | TFALSE                   {$$ = createTree(CONSBOOL, "FALSE", NULL, NULL);}

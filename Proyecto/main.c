@@ -29,6 +29,8 @@ int main(){
 
         // AST izq1 = createTree(20,valor->type,valor->name,NULL,NULL);
         // AST der1 = createTree(30,1,sum,&izq2,&der2);
+        struct Tsymbol symbolo;
+        symbolo = CreateSymbol();
         AST *der = createTree(OTHERS,sum,NULL,NULL);
 
         AST *izq = createTree(VAR,valor->name,NULL,NULL);

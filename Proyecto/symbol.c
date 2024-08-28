@@ -7,7 +7,7 @@ struct Tsymbol *Lookup(char * name){
     return NULL;
   }
   while(head != NULL) {
-    if(strcmp(name, head->name)==0){
+    if(strcmp(name, head->varname)==0){
       return head;
     }
     head = head->next;
@@ -18,12 +18,19 @@ struct Tsymbol *Lookup(char * name){
 void Install(char *name, int type, int size){
   if(Lookup(name) == NULL){
     Tsymbol *newSymbol = (Tsymbol *)malloc(sizeof(Tsymbol));
-    newSymbol->name = name;
+    newSymbol->varname = name;
     newSymbol->type = type;
     newSymbol->size = size;
     newSymbol->next =  table;
     table = newSymbol;
   }
+}
+
+void CreateSymbol(char *name, int type, int size){
+    Tsymbol *newSymbol = (Tsymbol *)malloc(sizeof(Tsymbol));
+    newSymbol->varname = name;
+    newSymbol->type = type;
+    newSymbol->size = size;
 }
 
 void DeleteList(){
@@ -35,12 +42,12 @@ void DeleteList(){
   }
 }
 
-void prinTable(){ 
-    Tsymbol *aux = table;  
+void prinTable(){
+    Tsymbol *aux = table;
     printf("TABLA DE SIMBOLOS\n");
     printf("| nam |typ|siz|\n");
     while(aux != NULL) {
-        printf("| %s |", aux->name);
+        printf("| %s |", aux->varname);
         printf(" %d |", aux->type);
         printf(" %d |\n", aux->size);
         aux = aux->next;
