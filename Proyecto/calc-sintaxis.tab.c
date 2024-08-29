@@ -1182,7 +1182,7 @@ yyreduce:
   case 12: /* asignacion: ID ASIGNACION expr ';'  */
 #line 92 "calc-sintaxis.y"
                                    {char * name = (yyvsp[-3].symbol)->varname;struct Tsymbol* aux = CreateSymbol(name,EID,1);struct AST* aux3 = createTree(aux, NULL, NULL); 
-                                    char * nameAsig = "asignacion";struct Tsymbol* aux1 = CreateSymbol(nameAsig,ASIG,1);(yyval.arbol) = createTree(aux1, aux3, (yyvsp[-1].arbol));}
+                                    char * nameAsig = "asignacion";struct Tsymbol* aux1 = CreateSymbol(name,ASIG,1);(yyval.arbol) = createTree(aux1, aux3, (yyvsp[-1].arbol));}
 #line 1187 "calc-sintaxis.tab.c"
     break;
 

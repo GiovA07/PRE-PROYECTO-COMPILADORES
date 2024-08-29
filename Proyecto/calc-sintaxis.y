@@ -90,7 +90,7 @@ sentencia: asignacion                               {$$ = $1;}
          ;
 
 asignacion: ID ASIGNACION expr ';' {char * name = $1->varname;struct Tsymbol* aux = CreateSymbol(name,EID,1);struct AST* aux3 = createTree(aux, NULL, NULL); 
-                                    char * nameAsig = "asignacion";struct Tsymbol* aux1 = CreateSymbol(nameAsig,ASIG,1);$$ = createTree(aux1, aux3, $3);}
+                                    char * nameAsig = "asignacion";struct Tsymbol* aux1 = CreateSymbol(name,ASIG,1);$$ = createTree(aux1, aux3, $3);}
           ;
 
 declaracion: TYPE_INT ID ';' {$$ = NULL;}
