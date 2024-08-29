@@ -1,0 +1,8 @@
+
+int main(){
+    int n;
+    int sum;
+    sum = n;
+    n = sum + sum * sum;
+    return n;
+}

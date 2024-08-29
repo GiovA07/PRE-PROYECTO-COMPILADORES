@@ -1,0 +1,13 @@
+
+
+int main() {
+    int x = 5;
+    int y = 3;
+    int z = 2;
+    int resultado = (x + y) * z;
+    int otroResultado = x - y + z;
+    int flag = true;
+    return flag;
+    resultado = resultado + 1;
+    return resultado + otroResultado;
+}

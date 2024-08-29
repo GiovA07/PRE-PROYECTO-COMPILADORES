@@ -1,0 +1,8 @@
+
+
+void main(){
+    n = 2 + 3;
+    int n;
+    n = n + 5;
+    return n;
+}

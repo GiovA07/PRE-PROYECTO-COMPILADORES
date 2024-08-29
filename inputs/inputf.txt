@@ -1,0 +1,5 @@
+
+true main() {
+    int a = true;
+    return ;
+}
