@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "calc-sintaxis.tab.h"
-#include "AST.h"
 #include "symbol.h"
+#include "AST.h"
+#include "calc-sintaxis.tab.h"
 
 
 %}
