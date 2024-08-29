@@ -28,3 +28,27 @@ void showTree(AST* tree) {
         }
     }
 }
+
+void print_tree(AST* ar, int level, int is_last) {
+    // op5
+    if (ar == NULL) return;
+    for (int i = 0; i < level; i++) {
+        printf("| ");
+    }
+    if (is_last) {
+        printf("\\__ ");
+    } else {
+        printf("|-- ");
+    }
+    printf("%s\n", (ar->symbol)->varname);
+    int num_children = 0;
+    if (ar->left != NULL) num_children++;
+    if (ar->right != NULL) num_children++;
+    if (ar->left != NULL) {
+        print_tree(ar->left, level + 1, num_children == 1);
+    }
+    if (ar->right != NULL) {
+        print_tree(ar->right, level + 1, num_children == 1);
+    }
+
+}
