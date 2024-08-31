@@ -1,4 +1,7 @@
 void main(){
-    int a,bool b,int c;
+    int a,int b,int c;
+    bool aux;
+    bool aux1;
+    bool aux2;
     return;
 }

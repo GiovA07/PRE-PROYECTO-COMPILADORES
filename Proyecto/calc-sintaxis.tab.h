@@ -86,7 +86,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 12 "calc-sintaxis.y"
+#line 10 "calc-sintaxis.y"
 
     struct Tsymbol* symbol;
     struct AST *arbol;

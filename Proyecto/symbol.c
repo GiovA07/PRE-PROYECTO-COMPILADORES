@@ -1,5 +1,8 @@
 #include "symbol.h"
 Tsymbol *table = NULL;
+
+int num = 0;
+
 struct Tsymbol *Lookup(char * name){
   Tsymbol *head = table;
   if(name == NULL) {
@@ -25,9 +28,9 @@ void Install(char *name, enum TYPES type, int size){
   }
 }
 
-struct Tsymbol * CreateSymbol(char *name,int id, enum TYPES type, int size){
+struct Tsymbol * CreateSymbol(char *name, enum TYPES type, int size){
     Tsymbol *newSymbol = (Tsymbol *)malloc(sizeof(Tsymbol));
-    newSymbol->id=id;
+    newSymbol->id=num++;
     newSymbol->varname = name;
     newSymbol->type = type;
     newSymbol->size = size;

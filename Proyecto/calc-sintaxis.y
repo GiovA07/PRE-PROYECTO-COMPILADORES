@@ -5,8 +5,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "AST.h"
-int num = 0;
-
 
 %}
 %union {
@@ -64,7 +62,7 @@ int num = 0;
 
 %%
 
-prog: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  {char * name = "MAIN";struct Tsymbol* aux = CreateSymbol(name,0,MAIN,1); 
+prog: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  {char * name = "MAIN";struct Tsymbol* aux = CreateSymbol(name,MAIN,1); 
                                                                                             struct AST* arbol = createTree(aux, $6, $7); printDot(arbol,"Arbol.dot");}
     ;
 
@@ -78,40 +76,37 @@ type: TYPE_BOOL
     ; */
 
 list_declaraciones:                                 {$$ = NULL;}
-                  |list_declaraciones declaracion   {char * name = "DECLARACION";struct Tsymbol* aux = CreateSymbol(name,num++,DECLA,1); $$ = createTree(aux, $1, $2);}
+                  |list_declaraciones declaracion   {char * name = "DECLARACION";struct Tsymbol* aux = CreateSymbol(name,DECLA,1); $$ = createTree(aux, $1, $2);}
                   ;
 
 list_sentencias:sentencia                           {$$ = $1;}
-               |list_sentencias sentencia           {char * name = "SENTENCIA";struct Tsymbol* aux = CreateSymbol(name,num++,SENTEN,1); $$ = createTree(aux, $1, $2);}
+               |list_sentencias sentencia           {char * name = "SENTENCIA";struct Tsymbol* aux = CreateSymbol(name,SENTEN,1); $$ = createTree(aux, $1, $2);}
                ;
 
 sentencia: asignacion                               {$$ = $1;}
          | retorno                                  {$$ = $1;}
          ;
 
-asignacion: ID ASIGNACION expr ';' {char * name = $1->varname;struct Tsymbol* aux = CreateSymbol(name,num++,EID,1);struct AST* aux3 = createTree(aux, NULL, NULL); 
-                                    char * nameAsig = "asignacion";struct Tsymbol* aux1 = CreateSymbol(nameAsig,num++,ASIG,1);$$ = createTree(aux1, aux3, $3);}
+asignacion: ID ASIGNACION expr ';' {char * name = $1->varname;struct Tsymbol* aux = CreateSymbol(name,EID,1);struct AST* aux3 = createTree(aux, NULL, NULL); 
+                                    char * nameAsig = "asignacion";struct Tsymbol* aux1 = CreateSymbol(nameAsig,ASIG,1);$$ = createTree(aux1, aux3, $3);}
           ;
 
-          /*Posible reprecentacion para eso TYPE_INT ID ',' declaracion 
-          {char * nameId = $2->varname;struct Tsymbol* auxId = CreateSymbol(nameId,0,EID,1); AST* aux3 = createTree(auxId, NULL, NULL);
-                                          char * name = "DECLARACION";struct Tsymbol* aux = CreateSymbol(name,num++,DECLA,1); $$ = createTree(aux, aux3, $4);}
-          */
-
-declaracion: TYPE_INT ID ';' {char * nameId = $2->varname;struct Tsymbol* auxId = CreateSymbol(nameId,num++,EID,1);$$ = createTree(auxId, NULL, NULL);}
-           | TYPE_BOOL ID ';' {char * nameId = $2->varname;struct Tsymbol* auxId = CreateSymbol(nameId,num++,EID,1);$$ = createTree(auxId, NULL, NULL);}
-           | TYPE_INT ID ',' declaracion {char * nameId = $2->varname;struct Tsymbol* auxId = CreateSymbol(nameId,0,EID,1);$$ = createTree(auxId, NULL, $4);}
-           | TYPE_BOOL ID ',' declaracion {char * nameId = $2->varname;struct Tsymbol* auxId = CreateSymbol(nameId,0,EID,1);$$ = createTree(auxId, NULL, $4);}
+declaracion: TYPE_INT ID ';' {char * nameId = $2->varname;struct Tsymbol* auxId = CreateSymbol(nameId,VARINT,1);$$ = createTree(auxId, NULL, NULL);}
+           | TYPE_BOOL ID ';' {char * nameId = $2->varname;struct Tsymbol* auxId = CreateSymbol(nameId,VARBOOL,1);$$ = createTree(auxId, NULL, NULL);}
+           | TYPE_INT ID ',' declaracion {char * nameId = $2->varname;struct Tsymbol* auxId = CreateSymbol(nameId,VARINT,1);AST* aux3 = createTree(auxId, NULL, NULL);
+                                          char * name = "dec";struct Tsymbol* aux = CreateSymbol(name,DECLA,1); $$ = createTree(aux, aux3, $4);}
+           | TYPE_BOOL ID ',' declaracion {char * nameId = $2->varname;struct Tsymbol* auxId = CreateSymbol(nameId,VARBOOL,1);AST* aux3 = createTree(auxId, NULL, $4);
+                                            char * name = "dec";struct Tsymbol* aux = CreateSymbol(name,DECLA,1); $$ = createTree(aux, aux3, $4);}
            ;
 
 expr: valor                     {$$ = $1;}
-    | expr TMAS expr            {char * name = "+";struct Tsymbol* aux = CreateSymbol(name,num++,SUMA,1); $$ = createTree(aux, $1, $3);}
-    | expr TPOR expr            {char * name = "*";struct Tsymbol* aux = CreateSymbol(name,num++,PROD,1); $$ = createTree(aux, $1, $3);}
+    | expr TMAS expr            {char * name = "+";struct Tsymbol* aux = CreateSymbol(name,SUMA,1); $$ = createTree(aux, $1, $3);}
+    | expr TPOR expr            {char * name = "*";struct Tsymbol* aux = CreateSymbol(name,PROD,1); $$ = createTree(aux, $1, $3);}
     | TPAR_OP expr TPAR_CL      {$$ = $2;}
-    | expr TMENOS expr          {char * name = "-";struct Tsymbol* aux = CreateSymbol(name,num++,RESTA,1); $$ = createTree(aux,$1, $3);}
-    | expr AND expr             {char * name = "&&";struct Tsymbol* aux = CreateSymbol(name,num++,EAND,1); $$ = createTree(aux, $1, $3);}
-    | expr OR expr              {char * name = "||";struct Tsymbol* aux = CreateSymbol(name,num++,EOR,1); $$ = createTree(aux, $1, $3);}
-    | NOT expr                  {char * name = "!";struct Tsymbol* aux = CreateSymbol(name,num++,ENOT,1); $$ = createTree(aux, NULL, $2);}
+    | expr TMENOS expr          {char * name = "-";struct Tsymbol* aux = CreateSymbol(name,RESTA,1); $$ = createTree(aux,$1, $3);}
+    | expr AND expr             {char * name = "&&";struct Tsymbol* aux = CreateSymbol(name,EAND,1); $$ = createTree(aux, $1, $3);}
+    | expr OR expr              {char * name = "||";struct Tsymbol* aux = CreateSymbol(name,EOR,1); $$ = createTree(aux, $1, $3);}
+    | NOT expr                  {char * name = "!";struct Tsymbol* aux = CreateSymbol(name,ENOT,1); $$ = createTree(aux, NULL, $2);}
     ;
 
 valor: INT                      {$$ = createTree($1, NULL, NULL);}
@@ -120,8 +115,8 @@ valor: INT                      {$$ = createTree($1, NULL, NULL);}
      | TTRUE                    {$$ = createTree($1, NULL, NULL);}
      | TFALSE                   {$$ = createTree($1, NULL, NULL);}
 
-retorno: RETURN expr ';' {char * name = "return";struct Tsymbol* aux = CreateSymbol(name,num++,ERETURN,1); $$ = createTree(aux, $2, NULL);}
-       | RETURN ';'      {char * name = "return";struct Tsymbol* aux = CreateSymbol(name,num++,ERETURN,1); $$ = createTree(aux, NULL, NULL);}
+retorno: RETURN expr ';' {char * name = "return";struct Tsymbol* aux = CreateSymbol(name,ERETURN,1); $$ = createTree(aux, $2, NULL);}
+       | RETURN ';'      {char * name = "return";struct Tsymbol* aux = CreateSymbol(name,ERETURN,1); $$ = createTree(aux, NULL, NULL);}
        ;
 
 

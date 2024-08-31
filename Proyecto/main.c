@@ -37,12 +37,12 @@ int main(){
         struct Tsymbol *symboloDer1;
         struct Tsymbol *symboloIzq1;
         
-        symboloDer1 = CreateSymbol(var,0,VAR,1);
-        symboloIzq1 = CreateSymbol(var,1,VAR,1);
+        symboloDer1 = CreateSymbol(var,VAR,1);
+        symboloIzq1 = CreateSymbol(var,VAR,1);
 
-        symbolo = CreateSymbol(igu,ASIG,2,1);
-        symboloDer = CreateSymbol(sum,3,SUMA,1);
-        symboloIzq = CreateSymbol(var1,4,VAR,1);
+        symbolo = CreateSymbol(igu,ASIG,1);
+        symboloDer = CreateSymbol(sum,SUMA,1);
+        symboloIzq = CreateSymbol(var1,VAR,1);
                 
         AST *der1 = createTree(symboloDer1,NULL,NULL);
         AST *izq1 = createTree(symboloIzq1,NULL,NULL);
@@ -52,16 +52,5 @@ int main(){
         showTree(createTree(symbolo,izq,der));
         printDot(createTree(symbolo,izq,der),"prueba.dot");
         DeleteList();
-  //  }
- /* y = 2 + 1;
-    x = x + var + 3
-                =
-              /    \
-           varX      +
-                    /  \
-                varX    +
-                       / \
-                    var    nu3
- */
     return 0;
 }

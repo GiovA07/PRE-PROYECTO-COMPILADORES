@@ -43,7 +43,7 @@ void DeleteList();
 
 void prinTable();
 
-struct Tsymbol * CreateSymbol(char *name,int id, enum TYPES type, int size);
+struct Tsymbol * CreateSymbol(char *name, enum TYPES type, int size);
 
 
 #endif

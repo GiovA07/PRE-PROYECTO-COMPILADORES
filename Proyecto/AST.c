@@ -8,6 +8,7 @@ struct AST* createTree(Tsymbol* symbol, struct AST *l, struct AST *r) {
     arbol->right = r;
     return arbol;
 }
+
 void showTree(AST* tree) {
     if (tree != NULL) {
         printf("< %s >",(tree->symbol)->varname);
@@ -27,32 +28,20 @@ void showTree(AST* tree) {
         }
     }
 }
-/*
-digraph{
 
-rankdir=LR;
-
-inic[shape=point];
- "=" -> "1var";
- "=" -> "1+" ;
- "1+" -> "var";
- "1+" -> "2+";
-}
-*/
 void showTreeDot(AST* tree,FILE* file) {
     if (tree == NULL) return;
     if(tree->left && tree->right ) {
-
-        fprintf(file, "\"%d | %s\" -> \"%d | %s\", \"%d | %s\";\n",(tree->symbol)->id,(tree->symbol)->varname,((tree->left)->symbol)->id, ((tree->left)->symbol)->varname,((tree->right)->symbol)->id,((tree->right)->symbol)->varname);
+        fprintf(file, "\"%d|  %s\" -> \"%d|  %s\", \"%d|  %s\";\n",(tree->symbol)->id,(tree->symbol)->varname,((tree->left)->symbol)->id, ((tree->left)->symbol)->varname,((tree->right)->symbol)->id,((tree->right)->symbol)->varname);
         showTreeDot(tree->left, file);
         showTreeDot(tree->right, file);
     }else {
         if (tree->left) {
-        fprintf(file, "\"%d | %s\" -> \"%d | %s\" ;\n",(tree->symbol)->id,(tree->symbol)->varname,((tree->left)->symbol)->id, ((tree->left)->symbol)->varname);
+        fprintf(file, "\"%d|  %s\" -> \"%d|  %s\" ;\n",(tree->symbol)->id,(tree->symbol)->varname,((tree->left)->symbol)->id, ((tree->left)->symbol)->varname);
         showTreeDot(tree->left, file);
         }
         if (tree->right) {
-        fprintf(file, "\"%d | %s\" -> \"%d | %s\" ;\n",(tree->symbol)->id,(tree->symbol)->varname,((tree->right)->symbol)->id, ((tree->right)->symbol)->varname);
+        fprintf(file, "\"%d|  %s\" -> \"%d|  %s\" ;\n",(tree->symbol)->id,(tree->symbol)->varname,((tree->right)->symbol)->id, ((tree->right)->symbol)->varname);
         showTreeDot(tree->right, file);
         }
     }
@@ -72,7 +61,6 @@ void printDot(AST* tree, const char* filename) {
     fprintf(file, "}\n");
     fclose(file);
 }
-
 
 void print_tree(AST* ar, int level, int is_last) {
     // op5

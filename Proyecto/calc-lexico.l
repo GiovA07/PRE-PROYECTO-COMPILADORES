@@ -6,8 +6,6 @@
 #include "symbol.h"
 #include "AST.h"
 #include "calc-sintaxis.tab.h"
-int numAux = 0;
-
 
 %}
 
@@ -31,12 +29,12 @@ digito [0-9]
 
 "while"                 	{  printf("%s\n",yytext);   return WHILE;}
 
-"TRUE"						{ printf("%s\n", yytext); yylval.symbol = CreateSymbol(strdup(yytext),numAux++,CONSBOOL,1); return TTRUE;}
-"FALSE"						{ printf("%s\n", yytext); yylval.symbol = CreateSymbol(strdup(yytext),numAux++,CONSBOOL,1); return TFALSE; }
+"TRUE"						{ printf("%s\n", yytext); yylval.symbol = CreateSymbol(strdup(yytext),CONSBOOL,1); return TTRUE;}
+"FALSE"						{ printf("%s\n", yytext); yylval.symbol = CreateSymbol(strdup(yytext),CONSBOOL,1); return TFALSE; }
 
-{digito}+     				{ printf("INT : %d\n",atoi(yytext));yylval.symbol = CreateSymbol(strdup(yytext),numAux++,CONSINT,1);return INT;}
+{digito}+     				{ printf("INT : %d\n",atoi(yytext));yylval.symbol = CreateSymbol(strdup(yytext),CONSINT,1);return INT;}
 
-{letra}({letra}|{digito})*  { printf("ID : %s\n",yytext); yylval.symbol = CreateSymbol(strdup(yytext),numAux++,EID,1); return ID; }
+{letra}({letra}|{digito})*  { printf("ID : %s\n",yytext); yylval.symbol = CreateSymbol(strdup(yytext),EID,1); return ID; }
 
 "||"                        {  printf(" OR ");;  return OR;}
 "&&"                        {  printf(" AND ");  return AND;}
