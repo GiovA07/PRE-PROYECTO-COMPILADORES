@@ -10,6 +10,7 @@ int main(){
     char *igu = "=";
     char *x = "vax";
     char *var = "var";
+    char *var1 = "var1";
 
     //tabla de simbolos solo las variables
      Install(var,1,1);
@@ -36,19 +37,20 @@ int main(){
         struct Tsymbol *symboloDer1;
         struct Tsymbol *symboloIzq1;
         
-        symboloDer1 = CreateSymbol(var,VAR,1);
-        symboloIzq1 = CreateSymbol(var,VAR,1);
+        symboloDer1 = CreateSymbol(var,0,VAR,1);
+        symboloIzq1 = CreateSymbol(var,1,VAR,1);
 
-        symbolo = CreateSymbol(igu,ASIG,1);
-        symboloDer = CreateSymbol(sum,SUMA,1);
-        symboloIzq = CreateSymbol(var,VAR,1);
+        symbolo = CreateSymbol(igu,ASIG,2,1);
+        symboloDer = CreateSymbol(sum,3,SUMA,1);
+        symboloIzq = CreateSymbol(var1,4,VAR,1);
                 
-        AST *der1 = createTree(symboloDer,NULL,NULL);
-        AST *izq1 = createTree(symboloIzq,NULL,NULL);
+        AST *der1 = createTree(symboloDer1,NULL,NULL);
+        AST *izq1 = createTree(symboloIzq1,NULL,NULL);
         
         AST *der = createTree(symboloDer,izq1,der1);
         AST *izq = createTree(symboloIzq,NULL,NULL);
-        showTree(createTree(symbolo,NULL,der));
+        showTree(createTree(symbolo,izq,der));
+        printDot(createTree(symbolo,izq,der),"prueba.dot");
         DeleteList();
   //  }
  /* y = 2 + 1;

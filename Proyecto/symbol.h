@@ -28,6 +28,7 @@ enum TYPES {
 };
 
 typedef struct Tsymbol {
+    int id;
     enum TYPES type;
     char* varname;       // name of the variable
     int size;         // size of the type of the variable
@@ -42,7 +43,7 @@ void DeleteList();
 
 void prinTable();
 
-struct Tsymbol * CreateSymbol(char *name, enum TYPES type, int size);
+struct Tsymbol * CreateSymbol(char *name,int id, enum TYPES type, int size);
 
 
 #endif

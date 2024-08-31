@@ -1,5 +1,4 @@
 void main(){
-    int a;
-    bool b;
+    int a,bool b,int c;
     return;
 }
