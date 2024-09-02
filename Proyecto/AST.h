@@ -18,6 +18,5 @@ void showTree(AST* tree);
 void showTreeDot(AST* tree,FILE* file);
 void printDot(AST* tree, const char* filename);
 
-void print_tree(AST* ar, int level, int is_last);
-
+void createTable(AST* ar);
 #endif

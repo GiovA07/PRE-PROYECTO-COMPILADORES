@@ -13,8 +13,11 @@ int main(){
     char *var1 = "var1";
 
     //tabla de simbolos solo las variables
-     Install(var,1,1);
-     Install(x,1,1);
+    Tsymbol * new = CreateSymbol(var, 1,1,1);
+     Install(new);
+     new = CreateSymbol(x,1,1,2);
+     Install(new);
+     Install(new);
      prinTable();
 
     // //Busqueda en la tabla
@@ -37,12 +40,12 @@ int main(){
         struct Tsymbol *symboloDer1;
         struct Tsymbol *symboloIzq1;
         
-        symboloDer1 = CreateSymbol(var,VAR,1);
-        symboloIzq1 = CreateSymbol(var,VAR,1);
+        symboloDer1 = CreateSymbol(var,VAR,1,3);
+        symboloIzq1 = CreateSymbol(var,VAR,1,3);
 
-        symbolo = CreateSymbol(igu,ASIG,1);
-        symboloDer = CreateSymbol(sum,SUMA,1);
-        symboloIzq = CreateSymbol(var1,VAR,1);
+        symbolo = CreateSymbol(igu,ASIG,1,4);
+        symboloDer = CreateSymbol(sum,SUMA,1,4);
+        symboloIzq = CreateSymbol(var1,VAR,1,4);
                 
         AST *der1 = createTree(symboloDer1,NULL,NULL);
         AST *izq1 = createTree(symboloIzq1,NULL,NULL);

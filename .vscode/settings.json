@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.y": "yacc",
+        "errno.h": "c",
+        "errors.h": "c",
+        "symbol.h": "c"
+    }
+}

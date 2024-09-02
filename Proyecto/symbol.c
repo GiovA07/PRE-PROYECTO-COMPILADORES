@@ -17,23 +17,23 @@ struct Tsymbol *Lookup(char * name){
   return NULL;
 }
 
-void Install(char *name, enum TYPES type, int size){
-  if(Lookup(name) == NULL){
-    Tsymbol *newSymbol = (Tsymbol *)malloc(sizeof(Tsymbol));
-    newSymbol->varname = name;
-    newSymbol->type = type;
-    newSymbol->size = size;
-    newSymbol->next =  table;
-    table = newSymbol;
+void Install(Tsymbol *symbol){
+  if(Lookup(symbol->varname) == NULL){
+    symbol->next =  table;
+    table = symbol;
+  } else {
+    printf("Simbolo existen, linea de error: %d", symbol->line);
+    exit(1);
   }
 }
 
-struct Tsymbol * CreateSymbol(char *name, enum TYPES type, int size){
+struct Tsymbol * CreateSymbol(char *name, enum TYPES type, int size, int line){
     Tsymbol *newSymbol = (Tsymbol *)malloc(sizeof(Tsymbol));
     newSymbol->id=num++;
     newSymbol->varname = name;
     newSymbol->type = type;
     newSymbol->size = size;
+    newSymbol->line = line;
     return newSymbol;
 }
 
@@ -49,10 +49,10 @@ void DeleteList(){
 void prinTable(){
     Tsymbol *aux = table;
     printf("TABLA DE SIMBOLOS\n");
-    printf("| nam |typ|siz|\n");
+    printf("| nam | typ | siz |\n");
     while(aux != NULL) {
         printf("| %s |", aux->varname);
-        //printf(" %s |", aux->type);
+        printf(" %s |", string[aux->type]);
         printf(" %d |\n", aux->size);
         aux = aux->next;
     }
