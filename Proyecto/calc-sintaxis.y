@@ -67,6 +67,10 @@ prog: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLL
                                                                                          struct AST* arbol = createTree(aux, $6, $7); printDot(arbol,"Arbol.dot");
                                                                                          createTable(arbol);
                                                                                          typeError(arbol);
+                                                                                         if(getError()) {
+                                                                                            DeleteList();
+                                                                                            exit(1);
+                                                                                         }
                                                                                          prinTable(); DeleteList();}
     ;
 

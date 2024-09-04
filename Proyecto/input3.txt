@@ -5,7 +5,7 @@ int main(){
     bool z;
     bool x;
     x = TRUE;
-    z = s || x && x || 10 ;
+    z = s || x && x;
     n = a + sum + FALSE + sum + a;
     return n;
 }

@@ -21,4 +21,5 @@ void printDot(AST* tree, const char* filename);
 
 void createTable(AST* ar);
 void typeError(AST* ar);
+bool getError();
 #endif
