@@ -12,7 +12,6 @@ enum TYPES {
     VARBOOL,
     CONSINT,
     CONSBOOL,
-    CONS,
     SUMA,
     RESTA,
     PROD,

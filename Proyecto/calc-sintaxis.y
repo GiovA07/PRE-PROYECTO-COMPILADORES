@@ -65,7 +65,9 @@ extern int yylineno;
 
 prog: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  {char * name = "MAIN";struct Tsymbol* aux = CreateSymbol(name,MAIN,1,yylineno); 
                                                                                          struct AST* arbol = createTree(aux, $6, $7); printDot(arbol,"Arbol.dot");
-                                                                                         createTable(arbol); prinTable(); DeleteList();}
+                                                                                         createTable(arbol);
+                                                                                         typeError(arbol);
+                                                                                         prinTable(); DeleteList();}
     ;
 
 type: TYPE_BOOL

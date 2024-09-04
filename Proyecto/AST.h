@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "symbol.h"
 #ifndef AST_H
 #define AST_H
@@ -19,4 +20,5 @@ void showTreeDot(AST* tree,FILE* file);
 void printDot(AST* tree, const char* filename);
 
 void createTable(AST* ar);
+void typeError(AST* ar);
 #endif

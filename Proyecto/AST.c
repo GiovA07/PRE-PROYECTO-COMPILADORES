@@ -1,5 +1,6 @@
 #include "AST.h"
 #include "symbol.h"
+#include <stdbool.h>
 
 struct AST* createTree(Tsymbol* symbol, struct AST *l, struct AST *r) {
     AST *arbol = (AST *)malloc(sizeof(AST));
@@ -32,16 +33,16 @@ void showTree(AST* tree) {
 void showTreeDot(AST* tree,FILE* file) {
     if (tree == NULL) return;
     if(tree->left && tree->right ) {
-        fprintf(file, "\"%d|  %s\" -> \"%d|  %s\", \"%d|  %s\";\n",(tree->symbol)->line,(tree->symbol)->varname,((tree->left)->symbol)->line, ((tree->left)->symbol)->varname,((tree->right)->symbol)->line,((tree->right)->symbol)->varname);
+        fprintf(file, "\"%d|  %s\" -> \"%d|  %s\", \"%d|  %s\";\n",(tree->symbol)->id,(tree->symbol)->varname,((tree->left)->symbol)->id, ((tree->left)->symbol)->varname,((tree->right)->symbol)->id,((tree->right)->symbol)->varname);
         showTreeDot(tree->left, file);
         showTreeDot(tree->right, file);
     }else {
         if (tree->left) {
-        fprintf(file, "\"%d|  %s\" -> \"%d|  %s\" ;\n",(tree->symbol)->line,(tree->symbol)->varname,((tree->left)->symbol)->line, ((tree->left)->symbol)->varname);
+        fprintf(file, "\"%d|  %s\" -> \"%d|  %s\" ;\n",(tree->symbol)->id,(tree->symbol)->varname,((tree->left)->symbol)->id, ((tree->left)->symbol)->varname);
         showTreeDot(tree->left, file);
         }
         if (tree->right) {
-        fprintf(file, "\"%d|  %s\" -> \"%d|  %s\" ;\n",(tree->symbol)->line,(tree->symbol)->varname,((tree->right)->symbol)->line, ((tree->right)->symbol)->varname);
+        fprintf(file, "\"%d|  %s\" -> \"%d|  %s\" ;\n",(tree->symbol)->id,(tree->symbol)->varname,((tree->right)->symbol)->id, ((tree->right)->symbol)->varname);
         showTreeDot(tree->right, file);
         }
     }
@@ -64,17 +65,132 @@ void printDot(AST* tree, const char* filename) {
 
 
 void createTable(AST* ar) {
-
     if ((ar->symbol)->type == VARBOOL || (ar->symbol)->type == VARINT )  {
         Install(ar->symbol);
     }
-
     if (ar->left != NULL) {
         createTable(ar->left);
     }
     if (ar->right != NULL) {
-    createTable(ar->right);
+        createTable(ar->right);
+    }
+}
+
+void typeError(AST* ar) {
+    bool err = false;
+    if (ar->right != NULL && ar->left != NULL) {
+        
+        Tsymbol* auxDer = Lookup(((ar->right)->symbol)->varname);
+        Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
+        
+        enum TYPES tipoDer = ((ar->right)->symbol)->type;
+        enum TYPES tipoIzq = ((ar->left)->symbol)->type;
+
+        bool errorDer = (tipoDer != SUMA && tipoDer != RESTA && tipoDer != PROD && tipoDer != CONSINT);
+        bool errorIzq = (tipoIzq != SUMA && tipoIzq != RESTA && tipoIzq != PROD && tipoIzq != CONSINT);
+
+        bool errorBoolDer = (tipoDer != EOR && tipoDer != EAND && tipoDer != ENOT && tipoDer != CONSBOOL);
+        bool errorBoolIzq = (tipoIzq != EOR && tipoIzq != EAND && tipoIzq != ENOT && tipoIzq != CONSBOOL);
+        //errores de variables no declaradas
+        if (tipoIzq == EID){
+            if(!auxIzq){
+                printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
+                err = true;
+            } 
+        }
+        if (tipoDer == EID){
+            if(!auxDer){
+                printf("Variable no declarada, linea de error: %d\n", ((ar->right)->symbol)->line);
+                err = true;
+            } 
+        }        
+        // errores de asignacion
+        if ((ar->symbol)->type == ASIG) {
+            if(auxIzq != NULL && auxDer != NULL){
+                if(auxIzq->type != auxDer->type){
+                    printf("Error de tipo, linea de error: %d\n", ((ar->left)->symbol)->line);
+                    err = true;
+                }
+            }
+            if(auxIzq != NULL && auxDer == NULL) {
+                if(auxIzq->type == VARINT) {
+                    if(errorDer){
+                            printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                            err = true;
+                    }
+                }
+                if(auxIzq->type == VARBOOL) {
+                        if(errorBoolDer){
+                            printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                            err = true;
+                    }
+                } 
+            }   
+        }
+        // errores de tipos con operacion enteras
+        if((ar->symbol)->type == SUMA || (ar->symbol)->type == RESTA || (ar->symbol)->type == PROD) {
+            if(auxIzq != NULL && auxDer != NULL){
+                if(auxIzq->type != VARINT || auxDer->type != VARINT){
+                    printf("Error de tipo, linea de error: %d\n", ((ar->left)->symbol)->line);
+                    err = true;
+                }
+            }
+            if(auxIzq != NULL && auxDer == NULL){ 
+                if(auxIzq->type != VARINT || errorDer){
+                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                    err = true;
+                }
+            }
+            if(auxIzq == NULL && auxDer != NULL){ 
+                if(auxDer->type != VARINT || errorIzq){
+                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                    err = true;  
+                }
+            }
+            if(auxIzq == NULL && auxDer == NULL){ 
+                if(errorDer || errorIzq){
+                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                    err = true;
+                }
+            }
+        }
+        // errores de tipos con operacion bool
+        if((ar->symbol)->type == EOR || (ar->symbol)->type == EAND || (ar->symbol)->type == ENOT) {
+            if(auxIzq != NULL && auxDer != NULL){
+                if(auxIzq->type != VARBOOL || auxDer->type != VARBOOL){
+                    printf("Error de tipo, linea de error: %d\n", ((ar->left)->symbol)->line);
+                    err = true;
+                }
+            }
+            if(auxIzq != NULL && auxDer == NULL){ 
+                if(auxIzq->type != VARBOOL || errorBoolDer){
+                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                    err = true;
+                }
+            }
+            if(auxIzq == NULL && auxDer != NULL){ 
+                if(auxDer->type != VARBOOL || errorBoolIzq){
+                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                    err = true;
+                     
+                }
+            }
+            if(auxIzq == NULL && auxDer == NULL){ 
+                if(errorBoolIzq|| errorBoolDer){
+                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                    err = true;
+                }
+            }
+        }
+    }
+    if (ar->left != NULL) {
+        typeError(ar->left);
+    }
+    if (ar->right != NULL) {
+        typeError(ar->right);
     }
     
-    
 }
+
+
+
