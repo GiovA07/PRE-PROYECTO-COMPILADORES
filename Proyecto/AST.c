@@ -96,33 +96,39 @@ void typeError(AST* ar) {
         // errores de asignacion
 
         if ((ar->symbol)->type == ASIG) {
-            if(auxIzq != NULL && auxDer != NULL){
-                if(auxIzq->type != auxDer->type){
-                    printf("Error de tipo, linea de error: %d\n", ((ar->left)->symbol)->line);
-                    err = true;
-                }
-            }
-            if(auxIzq != NULL && auxDer == NULL) {
-                if (tipoDer == EID){
-                    printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
-                    err = true;
-                } else {
-                    if(auxIzq->type == VARINT) {
-                        if(errorDer){
-                                printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
-                                err = true;
-                        }
+            if(auxIzq == NULL && tipoIzq == EID){
+                printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
+                err = true;
+            }else{
+                if(auxIzq != NULL && auxDer != NULL){
+                    if(auxIzq->type != auxDer->type){
+                        printf("Error de tipo, linea de error: %d\n", ((ar->left)->symbol)->line);
+                        err = true;
                     }
-                    if(auxIzq->type == VARBOOL) {
-                            if(errorBoolDer){
-                                printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
-                                err = true;
-                        }
-                    } 
                 }
-                
-            }   
+                if(auxIzq != NULL && auxDer == NULL) {
+                    if (tipoDer == EID){
+                        printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
+                        err = true;
+                    } else {
+                        if(auxIzq->type == VARINT) {
+                            if(errorDer){
+                                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                                    err = true;
+                            }
+                        }
+                        if(auxIzq->type == VARBOOL) {
+                                if(errorBoolDer){
+                                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                                    err = true;
+                            }
+                        } 
+                    }
+
+                }   
+            }
         }
+            
         // errores de tipos con operacion enteras
         if((ar->symbol)->type == SUMA || (ar->symbol)->type == RESTA || (ar->symbol)->type == PROD) {
             if(auxIzq != NULL && auxDer != NULL){

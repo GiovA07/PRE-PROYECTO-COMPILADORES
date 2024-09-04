@@ -58,7 +58,7 @@ digito [0-9]
 %%
 
 void yyerror(){
-	/* printf("%s%d\n","-> ERROR Sintactico en la linea: ",0); */
+	 printf("%s%d\n","-> ERROR Sintactico en la linea: ",yylineno); 
 }
 
 int main(int argc,char *argv[]){

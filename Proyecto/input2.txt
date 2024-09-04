@@ -1,7 +1,7 @@
 void main(){
     int a;
     bool b;
-    x = y + 3;
-    z = 4;
+    a = a + 3;
+    b = TRUE;
     return x;
 }
