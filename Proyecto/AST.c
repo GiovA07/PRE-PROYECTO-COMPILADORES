@@ -87,7 +87,7 @@ void typeError(AST* ar) {
         enum TYPES tipoDer = ((ar->right)->symbol)->type;
         enum TYPES tipoIzq = ((ar->left)->symbol)->type;
 
-        bool errorDer = (tipoDer != SUMA && tipoDer != RESTA && tipoDer != PROD && tipoDer != CONSINT);
+        bool errorIntDer = (tipoDer != SUMA && tipoDer != RESTA && tipoDer != PROD && tipoDer != CONSINT);
         bool errorIzq = (tipoIzq != SUMA && tipoIzq != RESTA && tipoIzq != PROD && tipoIzq != CONSINT);
 
         bool errorBoolDer = (tipoDer != EOR && tipoDer != EAND && tipoDer != ENOT && tipoDer != CONSBOOL);
@@ -96,133 +96,249 @@ void typeError(AST* ar) {
         // errores de asignacion
 
         if ((ar->symbol)->type == ASIG) {
-            if(auxIzq == NULL && tipoIzq == EID){
+            if(auxIzq == NULL && tipoIzq == EID) {
                 printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
                 err = true;
-            }else{
-                if(auxIzq != NULL && auxDer != NULL){
-                    if(auxIzq->type != auxDer->type){
-                        printf("Error de tipo, linea de error: %d\n", ((ar->left)->symbol)->line);
-                        err = true;
-                    }
-                }
-                if(auxIzq != NULL && auxDer == NULL) {
-                    if (tipoDer == EID){
-                        printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
-                        err = true;
-                    } else {
-                        if(auxIzq->type == VARINT) {
-                            if(errorDer){
-                                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
-                                    err = true;
-                            }
-                        }
-                        if(auxIzq->type == VARBOOL) {
-                                if(errorBoolDer){
-                                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
-                                    err = true;
-                            }
-                        } 
-                    }
-
-                }   
-            }
-        }
-            
-        // errores de tipos con operacion enteras
-        if((ar->symbol)->type == SUMA || (ar->symbol)->type == RESTA || (ar->symbol)->type == PROD) {
-            if(auxIzq != NULL && auxDer != NULL){
-                if(auxIzq->type != VARINT || auxDer->type != VARINT){
-                    printf("Error de tipo, linea de error: %d\n", ((ar->left)->symbol)->line);
-                    err = true;
-                }
-            }
-            if(auxIzq != NULL && auxDer == NULL){ 
+            } else if(auxIzq != NULL && auxDer != NULL && auxIzq->type != auxDer->type) {
+                printf("Error de tipo, linea de error: %d\n", ((ar->left)->symbol)->line);
+                err = true;
+            } else if(auxIzq != NULL && auxDer == NULL) {
                 if (tipoDer == EID){
                     printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
                     err = true;
-                } else {
-                    if(auxIzq->type != VARINT || errorDer){
-                        printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
-                        err = true;
-                    }
+                } else if(auxIzq->type == VARINT && errorIntDer) {
+                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                    err = true;
+                } else if(auxIzq->type == VARBOOL && errorBoolDer) {
+                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                    err = true;
                 }
-            }
-            if(auxIzq == NULL && auxDer != NULL){
-                if (tipoIzq == EID){
+            }   
+        }
+            
+        // errores de tipos con operacion enteras
+        else if((ar->symbol)->type == SUMA || (ar->symbol)->type == RESTA || (ar->symbol)->type == PROD) {
+            if(auxIzq != NULL && auxDer != NULL){
+                if(auxIzq->type != VARINT || auxDer->type != VARINT) {
+                    printf("Error de tipo, linea de error: %d\n", ((ar->left)->symbol)->line);
+                    err = true;
+                }
+            } else if(auxIzq != NULL && auxDer == NULL) { 
+                if (tipoDer == EID){
                     printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
                     err = true;
-                } else {
-                    if(auxDer->type != VARINT || errorIzq){
-                        printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
-                        err = true;  
-                    }
+                } else if(auxIzq->type != VARINT || errorIntDer) {
+                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                    err = true;
                 }
-            }
-            if(auxIzq == NULL && auxDer == NULL){ 
+            } else if(auxIzq == NULL && auxDer != NULL) {
+                if (tipoIzq == EID) {
+                    printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
+                    err = true;
+                } else if(auxDer->type != VARINT || errorIzq) {
+                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                    err = true;  
+                }
+            } else  if(auxIzq == NULL && auxDer == NULL){ 
                 if (tipoIzq == EID || tipoDer == EID){
                     printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
                     err = true;
-                } else {
-                    if(errorDer || errorIzq){
-                        printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
-                        err = true;
-                    }
+                } else if(errorIntDer || errorIzq){
+                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                    err = true;
                 }
             }
         }
         // errores de tipos con operacion bool
-        if((ar->symbol)->type == EOR || (ar->symbol)->type == EAND || (ar->symbol)->type == ENOT) {
+        else if((ar->symbol)->type == EOR || (ar->symbol)->type == EAND || (ar->symbol)->type == ENOT) {
             if(auxIzq != NULL && auxDer != NULL){
                 if(auxIzq->type != VARBOOL || auxDer->type != VARBOOL){
                     printf("Error de tipo, linea de error: %d\n", ((ar->left)->symbol)->line);
                     err = true;
                 }
-            }
-            if(auxIzq != NULL && auxDer == NULL){ 
-                if (tipoDer == EID){
+            } else if(auxIzq != NULL && auxDer == NULL) {
+                if (tipoDer == EID) {
                     printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
                     err = true;
-                } else {
-                    if(auxIzq->type != VARBOOL || errorBoolDer){
-                        printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
-                        err = true;
-                    }
+                } else if(auxIzq->type != VARBOOL || errorBoolDer) {
+                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                    err = true;
                 }
-            }
-            if(auxIzq == NULL && auxDer != NULL){
+            } else if(auxIzq == NULL && auxDer != NULL){
                 if (tipoIzq == EID){
                     printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
                     err = true;
-                } else { 
-                    if(auxDer->type != VARBOOL || errorBoolIzq){
-                        printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
-                        err = true;
-
-                    }
+                } else if(auxDer->type != VARBOOL || errorBoolIzq){
+                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                    err = true;
                 }
-            }
-            if(auxIzq == NULL && auxDer == NULL){ 
+            } else if(auxIzq == NULL && auxDer == NULL){ 
                 if (tipoIzq == EID || tipoDer == EID){
                     printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
                     err = true;
-                } else {
-                    if(errorBoolIzq|| errorBoolDer){
-                        printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
-                        err = true;
-                    }
+                } else if(errorBoolIzq|| errorBoolDer){
+                    printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+                    err = true;
                 }
             }
         }
-    }
-    if (ar->left != NULL) {
+    } 
+    else if (ar->left != NULL) {
         typeError(ar->left);
     }
-    if (ar->right != NULL) {
+    else if (ar->right != NULL) {
         typeError(ar->right);
     }
     
 }
+
+
+/* void typeError(AST* ar) {
+//     if (ar->right != NULL && ar->left != NULL) {
+        
+//         Tsymbol* auxDer = Lookup(((ar->right)->symbol)->varname);
+//         Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
+        
+//         enum TYPES tipoDer = ((ar->right)->symbol)->type;
+//         enum TYPES tipoIzq = ((ar->left)->symbol)->type;
+
+//         bool errorDer = (tipoDer != SUMA && tipoDer != RESTA && tipoDer != PROD && tipoDer != CONSINT);
+//         bool errorIzq = (tipoIzq != SUMA && tipoIzq != RESTA && tipoIzq != PROD && tipoIzq != CONSINT);
+
+//         bool errorBoolDer = (tipoDer != EOR && tipoDer != EAND && tipoDer != ENOT && tipoDer != CONSBOOL);
+//         bool errorBoolIzq = (tipoIzq != EOR && tipoIzq != EAND && tipoIzq != ENOT && tipoIzq != CONSBOOL);
+
+//         // errores de asignacion
+
+//         if ((ar->symbol)->type == ASIG) {
+//             if(auxIzq == NULL && tipoIzq == EID){
+//                 printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
+//                 err = true;
+//             }else{
+//                 if(auxIzq != NULL && auxDer != NULL){
+//                     if(auxIzq->type != auxDer->type){
+//                         printf("Error de tipo, linea de error: %d\n", ((ar->left)->symbol)->line);
+//                         err = true;
+//                     }
+//                 }
+//                 if(auxIzq != NULL && auxDer == NULL) {
+//                     if (tipoDer == EID){
+//                         printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
+//                         err = true;
+//                     } else {
+//                         if(auxIzq->type == VARINT) {
+//                             if(errorDer){
+//                                     printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+//                                     err = true;
+//                             }
+//                         }
+//                         if(auxIzq->type == VARBOOL) {
+//                                 if(errorBoolDer){
+//                                     printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+//                                     err = true;
+//                             }
+//                         } 
+//                     }
+
+//                 }   
+//             }
+//         }
+            
+//         // errores de tipos con operacion enteras
+//         if((ar->symbol)->type == SUMA || (ar->symbol)->type == RESTA || (ar->symbol)->type == PROD) {
+//             if(auxIzq != NULL && auxDer != NULL){
+//                 if(auxIzq->type != VARINT || auxDer->type != VARINT){
+//                     printf("Error de tipo, linea de error: %d\n", ((ar->left)->symbol)->line);
+//                     err = true;
+//                 }
+//             }
+//             if(auxIzq != NULL && auxDer == NULL){ 
+//                 if (tipoDer == EID){
+//                     printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
+//                     err = true;
+//                 } else {
+//                     if(auxIzq->type != VARINT || errorDer){
+//                         printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+//                         err = true;
+//                     }
+//                 }
+//             }
+//             if(auxIzq == NULL && auxDer != NULL){
+//                 if (tipoIzq == EID){
+//                     printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
+//                     err = true;
+//                 } else {
+//                     if(auxDer->type != VARINT || errorIzq){
+//                         printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+//                         err = true;  
+//                     }
+//                 }
+//             }
+//             if(auxIzq == NULL && auxDer == NULL){ 
+//                 if (tipoIzq == EID || tipoDer == EID){
+//                     printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
+//                     err = true;
+//                 } else {
+//                     if(errorDer || errorIzq){
+//                         printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+//                         err = true;
+//                     }
+//                 }
+//             }
+//         }
+//         // errores de tipos con operacion bool
+//         if((ar->symbol)->type == EOR || (ar->symbol)->type == EAND || (ar->symbol)->type == ENOT) {
+//             if(auxIzq != NULL && auxDer != NULL){
+//                 if(auxIzq->type != VARBOOL || auxDer->type != VARBOOL){
+//                     printf("Error de tipo, linea de error: %d\n", ((ar->left)->symbol)->line);
+//                     err = true;
+//                 }
+//             }
+//             if(auxIzq != NULL && auxDer == NULL){ 
+//                 if (tipoDer == EID){
+//                     printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
+//                     err = true;
+//                 } else {
+//                     if(auxIzq->type != VARBOOL || errorBoolDer){
+//                         printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+//                         err = true;
+//                     }
+//                 }
+//             }
+//             if(auxIzq == NULL && auxDer != NULL){
+//                 if (tipoIzq == EID){
+//                     printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
+//                     err = true;
+//                 } else { 
+//                     if(auxDer->type != VARBOOL || errorBoolIzq){
+//                         printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+//                         err = true;
+
+//                     }
+//                 }
+//             }
+//             if(auxIzq == NULL && auxDer == NULL){ 
+//                 if (tipoIzq == EID || tipoDer == EID){
+//                     printf("Variable no declarada, linea de error: %d\n", ((ar->left)->symbol)->line); 
+//                     err = true;
+//                 } else {
+//                     if(errorBoolIzq|| errorBoolDer){
+//                         printf("Error de tipo, linea de error: %d\n", ((ar->right)->symbol)->line);
+//                         err = true;
+//                     }
+//                 }
+//             }
+//         }
+//     }
+//     if (ar->left != NULL) {
+//         typeError(ar->left);
+//     }
+//     if (ar->right != NULL) {
+//         typeError(ar->right);
+//     }
+    
+*/
+
 
 bool getError() {
     return err;
