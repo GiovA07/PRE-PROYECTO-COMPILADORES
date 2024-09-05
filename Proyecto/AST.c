@@ -183,10 +183,12 @@ void typeError(AST* ar) {
             }
         }
     } 
-    else if (ar->left != NULL) {
+
+    if (ar->left != NULL) {
         typeError(ar->left);
     }
-    else if (ar->right != NULL) {
+    
+    if (ar->right != NULL) {
         typeError(ar->right);
     }
     
