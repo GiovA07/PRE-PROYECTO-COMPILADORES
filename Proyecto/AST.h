@@ -21,5 +21,7 @@ void printDot(AST* tree, const char* filename);
 
 void createTable(AST* ar);
 void typeError(AST* ar);
+void errorOpera(AST *ar, enum TYPES type);
+void errorAsig(AST *ar);
 bool getError();
 #endif

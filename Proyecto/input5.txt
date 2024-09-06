@@ -3,9 +3,9 @@ int main() {
     int x;
     int y;
     int z;
-    x = 1;
+    x=3;
     z=3;
-    x = x + 3 * 2 * y - z;
+    x = x + 3 + 2 * y - z;
     return x;
     x = 2;
     y = 4;
