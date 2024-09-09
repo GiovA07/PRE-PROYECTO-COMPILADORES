@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "AST.h"
-
+void interprete(struct AST *arbol);  
 extern int yylineno;
 %}
 %union {
@@ -63,23 +63,12 @@ extern int yylineno;
 
 %%
 
-prog: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  {char * name = "MAIN";struct Tsymbol* aux = CreateSymbol(name,MAIN,1,yylineno); 
-                                                                                         struct AST* arbol = createTree(aux, $6, $7);
-                                                                                         createTable(arbol);
-                                                                                         typeError(arbol);
-                                                                                         if(getError()) {
-                                                                                            DeleteList();
-                                                                                            exit(1);
-                                                                                         }
-                                                                                         evaluate(arbol);
-                                                                                        //  printf("Resultado: %d\n", arbol->symbol->value);
-                                                                                         printDot(arbol,"Arbol.dot");
-                                                                                         prinTable(); DeleteList();}
+prog: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  {char * name = "MAIN";struct Tsymbol* aux = CreateSymbol(name,EMAIN,1,yylineno);struct AST* arbol = createTree(aux, $6, $7);interprete(arbol);}
     ;
 
 type: TYPE_BOOL
-    | TYPE_INT
-    | TYPE_VOID
+    | TYPE_INT 
+    | TYPE_VOID 
     ;
 
 
@@ -145,4 +134,15 @@ while: WHILE TPAR_OP expr_bool TPAR_CL TLLAVE_OP list_sentencias TLLAVE_CL
 
 %%
 
+void interprete(struct AST* ar){
+    createTable(ar);
+    typeError(ar);
+    if(getError()) {
+       DeleteList();
+       exit(1);
+    }
+    evaluate(ar);
+    printDot(ar,"Arbol.dot");
+    prinTable(); DeleteList();
+}
 
