@@ -34,6 +34,7 @@ struct Tsymbol * CreateSymbol(char *name, enum TYPES type, int size, int line){
     newSymbol->type = type;
     newSymbol->size = size;
     newSymbol->line = line;
+    newSymbol->value = 0;
     return newSymbol;
 }
 
@@ -49,11 +50,20 @@ void DeleteList(){
 void prinTable(){
     Tsymbol *aux = table;
     printf("TABLA DE SIMBOLOS\n");
-    printf("| nam | typ | siz |\n");
+    printf("| nam | typ | siz | valor |\n");
     while(aux != NULL) {
         printf("| %s |", aux->varname);
         printf(" %s |", string[aux->type]);
-        printf(" %d |\n", aux->size);
+        printf(" %d |", aux->size);
+        printf(" %d |\n", aux->value);
         aux = aux->next;
+    }
+}
+
+void setValue(Tsymbol* symbol, int valor){
+    if(symbol != NULL) { 
+      symbol->value = valor;
+    } else {
+        printf("Error: simbolo es NULL\n");
     }
 }

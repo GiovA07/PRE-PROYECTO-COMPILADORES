@@ -1,7 +1,8 @@
 void main(){
-    int a;
+    bool a;
     bool b;
-    a = a + 3;
-    b = TRUE;
-    return x;
+    a = FALSE;
+    a = a || FALSE;
+    b = !TRUE;
+    return TRUE && FALSE;
 }

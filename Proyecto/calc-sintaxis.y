@@ -71,6 +71,8 @@ prog: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLL
                                                                                             DeleteList();
                                                                                             exit(1);
                                                                                          }
+                                                                                         evaluate(arbol);
+                                                                                        //  printf("Resultado: %d\n", arbol->symbol->value);
                                                                                          printDot(arbol,"Arbol.dot");
                                                                                          prinTable(); DeleteList();}
     ;
@@ -115,7 +117,7 @@ expr: valor                     {$$ = $1;}
     | expr TMENOS expr          {char * name = "-";struct Tsymbol* aux = CreateSymbol(name,RESTA,1,yylineno); $$ = createTree(aux,$1, $3);}
     | expr AND expr             {char * name = "&&";struct Tsymbol* aux = CreateSymbol(name,EAND,1,yylineno); $$ = createTree(aux, $1, $3);}
     | expr OR expr              {char * name = "||";struct Tsymbol* aux = CreateSymbol(name,EOR,1,yylineno); $$ = createTree(aux, $1, $3);}
-    | NOT expr                  {char * name = "!";struct Tsymbol* aux = CreateSymbol(name,ENOT,1,yylineno); $$ = createTree(aux, NULL, $2);}
+    | NOT expr                  {char * name = "!";struct Tsymbol* aux = CreateSymbol(name,ENOT,1,yylineno); $$ = createTree(aux, $2, NULL);}
     ;
 
 valor: INT                      {$$ = createTree($1, NULL, NULL);}

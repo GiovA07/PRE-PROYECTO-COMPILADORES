@@ -29,16 +29,16 @@ digito [0-9]
 
 "while"                 	{  printf("%s\n",yytext);   return WHILE;}
 
-"TRUE"						{ printf("%s\n", yytext); yylval.symbol = CreateSymbol(strdup(yytext),CONSBOOL,1,yylineno); return TTRUE;}
-"FALSE"						{ printf("%s\n", yytext); yylval.symbol = CreateSymbol(strdup(yytext),CONSBOOL,1,yylineno); return TFALSE; }
+"TRUE"						{ printf("%s\n", yytext); yylval.symbol = CreateSymbol(strdup(yytext),CONSBOOL,1,yylineno); setValue(yylval.symbol, 1); return TTRUE;}
+"FALSE"						{ printf("%s\n", yytext); yylval.symbol = CreateSymbol(strdup(yytext),CONSBOOL,1,yylineno); setValue(yylval.symbol, 0); return TFALSE; }
 
-{digito}+     				{ printf("INT : %d\n",atoi(yytext));yylval.symbol = CreateSymbol(strdup(yytext),CONSINT,1,yylineno);return INT;}
+{digito}+     				{ printf("INT : %d\n",atoi(yytext)); yylval.symbol = CreateSymbol(strdup(yytext),CONSINT,1,yylineno); setValue(yylval.symbol, atoi(yytext)); return INT;}
 
 {letra}({letra}|{digito})*  { printf("ID : %s\n",yytext); yylval.symbol = CreateSymbol(strdup(yytext),EID,1,yylineno); return ID; }
 
 "||"                        {  printf(" OR ");  return OR;}
 "&&"                        {  printf(" AND ");  return AND;}
-"NOT"|"!"                   {  printf(" NOT ");  return NOT;}
+"!"                   		{  printf(" NOT ");  return NOT;}
 
 "="                         {  printf("%s\n", yytext); return ASIGNACION; }
 "-"                         {  printf("%s\n",yytext);  return TMENOS;}
