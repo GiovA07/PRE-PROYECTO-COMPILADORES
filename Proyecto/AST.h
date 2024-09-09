@@ -25,4 +25,5 @@ void errorOpera(AST *ar, enum TYPES type);
 void errorAsig(AST *ar);
 bool getError();
 void evaluate(AST* ar);
+
 #endif

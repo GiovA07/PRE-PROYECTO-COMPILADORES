@@ -207,23 +207,34 @@ void errorOpera(AST *ar, enum TYPES type){
     }
 }
 
-void evaluate(AST* ar) {
-    if (ar->right != NULL && ar->left != NULL) {
+void evaluate(AST* ar) {        
+    
+    if((ar->symbol)->type == ERETURN){
+        struct Tsymbol* auxIzqRet = Lookup(((ar->left)->symbol)->varname);
+        evaluate(ar->left);
+        if(auxIzqRet){
+            printf("\033[32mValor retornado : \033[0m%d \n", auxIzqRet->value);
+        }else {
+             printf("\033[32mValor retornado : \033[0m%d \n", ((ar->left)->symbol)->value);
+        }
+    }
+    if ((ar->right != NULL && ar->left != NULL)) {
+        struct Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
+        struct Tsymbol* auxDer = Lookup(((ar->right)->symbol)->varname);
+        enum TYPES tipoActual = (ar->symbol)->type;
+    
         if (ar->left != NULL) {
             evaluate(ar->left);
         }
         if (ar->right != NULL) {
             evaluate(ar->right);
-        }    
-        enum TYPES tipoActual = (ar->symbol)->type;
-        struct Tsymbol* auxDer = Lookup(((ar->right)->symbol)->varname);
-        struct Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
-
-        if(tipoActual == ERETURN) {
-            printf("%d \n", ((ar->left)->symbol)->value);
         }
         if (tipoActual == ASIG) {
             setValue(auxIzq, (ar->right)->symbol->value);
+
+        }
+        if(tipoActual == EID){
+
         }
 
         if (tipoActual == SUMA) {
@@ -265,7 +276,7 @@ void evaluate(AST* ar) {
 
         if (tipoActual == EAND) {
             if (auxDer != NULL && auxIzq != NULL) {
-                (ar->symbol)->value =  (auxIzq->value && auxDer->value);
+                (ar->symbol)->value = (auxIzq->value && auxDer->value);
             } else if (auxDer == NULL && auxIzq != NULL) {   
                 (ar->symbol)->value =  (auxIzq->value && (ar->right)->symbol->value);
             } else if(auxDer != NULL && auxIzq == NULL){
@@ -297,14 +308,8 @@ void evaluate(AST* ar) {
         }
     }
 }
-/*
-// return (ar->right)->symbol->value + (ar->left)->symbol->value;
- if (tipoActual == SUMA || tipoActual == PROD || tipoActual == RESTA){
-    // return (ar->right)->symbol->value  + (ar->left)->symbol->value;
-    // return (ar->right)->symbol->value- (ar->left)->symbol->value;
-    // return (ar->right)->symbol->value    * (ar->left)->symbol->value;
- }
-*/
+
+
 bool getError() {
     return err;
 }
