@@ -269,6 +269,15 @@ void evaluate(AST* ar) {
              printf("\033[32mValor retornado : \033[0m%d \n", ((ar->left)->symbol)->value);
         }
     }
+    if ((ar->symbol)->type  == ENOT) {
+            struct Tsymbol* auxIzqRet = Lookup(((ar->left)->symbol)->varname);
+            evaluate(ar->left);
+            if (auxIzqRet != NULL) {   
+                (ar->symbol)->value =  (!auxIzqRet->value);
+            } else {
+                (ar->symbol)->value = (!(ar->left)->symbol->value);
+            } 
+    }
     if ((ar->right != NULL && ar->left != NULL)) {
         struct Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
         struct Tsymbol* auxDer = Lookup(((ar->right)->symbol)->varname);
@@ -350,14 +359,6 @@ void evaluate(AST* ar) {
             } 
         }
 
-        if (tipoActual == ENOT) {
-            printf("ee");
-            if (auxIzq != NULL) {   
-                (ar->symbol)->value =  (auxIzq->value);
-            } else {
-                (ar->symbol)->value = (!(ar->left)->symbol->value);
-            } 
-        }
     }
 }
 

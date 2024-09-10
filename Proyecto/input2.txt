@@ -1,9 +1,7 @@
 bool main(){
     bool a;
     bool b;
-    a = FALSE;
-    a = a || TRUE;
-    b = FALSE && !TRUE;
     a = !FALSE;
-    return TRUE;
+    b = FALSE && FALSE;
+    return a || b;
 }
