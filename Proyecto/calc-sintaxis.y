@@ -63,13 +63,15 @@ extern int yylineno;
 
 %%
 
-prog: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  {char * name = "MAIN";struct Tsymbol* aux = CreateSymbol(name,EMAIN,1,yylineno);struct AST* arbol = createTree(aux, $6, $7);interprete(arbol);}
+prog: TYPE_BOOL MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  {char * name = "MAIN";struct Tsymbol* aux = CreateSymbol(name,RETBOL,1,yylineno);struct AST* arbol = createTree(aux, $6, $7);interprete(arbol);}
+    | TYPE_INT MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  {char * name = "MAIN";struct Tsymbol* aux = CreateSymbol(name,RETINT,1,yylineno);struct AST* arbol = createTree(aux, $6, $7);interprete(arbol);}
+    | TYPE_VOID MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  {char * name = "MAIN";struct Tsymbol* aux = CreateSymbol(name,RETVOID,1,yylineno);struct AST* arbol = createTree(aux, $6, $7);interprete(arbol);}
     ;
 
-type: TYPE_BOOL
+/* type: TYPE_BOOL
     | TYPE_INT 
     | TYPE_VOID 
-    ;
+    ; */
 
 
 /* main: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL
@@ -107,6 +109,7 @@ expr: valor                     {$$ = $1;}
     | expr AND expr             {char * name = "&&";struct Tsymbol* aux = CreateSymbol(name,EAND,1,yylineno); $$ = createTree(aux, $1, $3);}
     | expr OR expr              {char * name = "||";struct Tsymbol* aux = CreateSymbol(name,EOR,1,yylineno); $$ = createTree(aux, $1, $3);}
     | NOT expr                  {char * name = "!";struct Tsymbol* aux = CreateSymbol(name,ENOT,1,yylineno); $$ = createTree(aux, $2, NULL);}
+    // ver eso, permite !100 lo permite porque true = 100
     ;
 
 valor: INT                      {$$ = createTree($1, NULL, NULL);}
@@ -117,7 +120,7 @@ valor: INT                      {$$ = createTree($1, NULL, NULL);}
 
 
 retorno: RETURN expr ';' {char * name = "return"; struct Tsymbol* aux = CreateSymbol(name,ERETURN,1,yylineno); $$ = createTree(aux, $2, NULL);}
-       | RETURN ';'      {char * name = "return";struct Tsymbol* aux = CreateSymbol(name,ERETURN,1,yylineno); $$ = createTree(aux, NULL, NULL);}
+       //| RETURN ';'      {char * name = "return";struct Tsymbol* aux = CreateSymbol(name,ERETURN,1,yylineno); $$ = createTree(aux, NULL, NULL);}
        ;
 
 /* constante:
@@ -136,6 +139,7 @@ while: WHILE TPAR_OP expr_bool TPAR_CL TLLAVE_OP list_sentencias TLLAVE_CL
 
 void interprete(struct AST* ar){
     createTable(ar);
+    retError();
     typeError(ar);
     if(getError()) {
        DeleteList();

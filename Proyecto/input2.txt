@@ -1,8 +1,9 @@
-void main(){
+bool main(){
     bool a;
     bool b;
     a = FALSE;
-    a = a || FALSE;
-    b = !TRUE;
+    a = a || TRUE;
+    b = FALSE && !TRUE;
+    a = !FALSE;
     return TRUE;
 }

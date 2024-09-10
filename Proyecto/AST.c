@@ -77,7 +77,8 @@ void createTable(AST* ar) {
 }
 
 bool err = false;
-
+enum TYPES aux = RETVOID;
+bool errRet = false;
 void typeError(AST* ar) {
     if (ar->right != NULL && ar->left != NULL) {
         enum TYPES tipoActual = (ar->symbol)->type;
@@ -87,12 +88,61 @@ void typeError(AST* ar) {
             errorOpera(ar, tipoActual);
         } 
     }
+    if(strcmp(ar->symbol->varname, "MAIN") == 0){
+        aux = ar->symbol->type;
+    }
     if (ar->left != NULL) {
+        if(aux == RETBOL ||aux == RETINT) {
+            errRet = true;
+        }
+        if(ar->symbol->type == ERETURN){
+            errRet = false;
+            errorRet(ar, aux);
+        }
+        if(ar->symbol->type == ENOT){
+            Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
+            enum TYPES tipoIzq = ((ar->left)->symbol)->type;
+            if(!auxIzq){
+                if(tipoIzq != EOR && tipoIzq != EAND && tipoIzq != ENOT && tipoIzq != CONSBOOL){
+                    printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+                    err = true;
+                }   
+            }else{
+                if(auxIzq->type != VARBOOL){
+                    printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+                    err = true;  
+                }
+            }
+        }
+        
         typeError(ar->left);
     }
     if (ar->right != NULL) {
         typeError(ar->right);
     }    
+}
+// ver tipo de retorno void y solucionar bollean
+void errorRet(AST* ar,enum TYPES type){
+    Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
+    enum TYPES tipoActualIzq = ((ar->left)->symbol)->type;
+    if(!auxIzq){
+        if(type == RETINT && tipoActualIzq != SUMA && tipoActualIzq != RESTA && tipoActualIzq != PROD && tipoActualIzq != CONSINT) {
+            printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+            err = true;
+        }else if(type == RETBOL && tipoActualIzq != EOR && tipoActualIzq != EAND && tipoActualIzq != ENOT && tipoActualIzq != CONSBOOL) {
+            printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+            err = true;
+        }else if(type == RETVOID ){
+            printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+            err = true;
+        }
+    }else if(auxIzq && auxIzq->type != VARBOOL && type == RETBOL){
+        printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+        err = true;
+    }else if(auxIzq && auxIzq->type != VARINT && type == RETINT){
+        printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+        err = true;
+    }
 }
 
 void errorAsig(AST *ar){
@@ -125,6 +175,7 @@ void errorAsig(AST *ar){
     }
 
 }
+
 
 void errorOpera(AST *ar, enum TYPES type){
 
@@ -300,15 +351,23 @@ void evaluate(AST* ar) {
         }
 
         if (tipoActual == ENOT) {
+            printf("ee");
             if (auxIzq != NULL) {   
-                (ar->symbol)->value =  (auxIzq->value || (ar->right)->symbol->value);
+                (ar->symbol)->value =  (auxIzq->value);
             } else {
-                (ar->symbol)->value = ((ar->left)->symbol->value || (ar->right)->symbol->value);
+                (ar->symbol)->value = (!(ar->left)->symbol->value);
             } 
         }
     }
 }
 
+void retError(){
+    if(errRet){
+       printf("\033[31mTe falta un return \033[0m\n");
+       err= true;
+    }
+
+}
 
 bool getError() {
     return err;

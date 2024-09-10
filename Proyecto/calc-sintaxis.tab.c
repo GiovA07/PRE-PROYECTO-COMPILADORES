@@ -136,15 +136,14 @@ enum yysymbol_kind_t
   YYSYMBOL_27_ = 27,                       /* ';'  */
   YYSYMBOL_YYACCEPT = 28,                  /* $accept  */
   YYSYMBOL_prog = 29,                      /* prog  */
-  YYSYMBOL_type = 30,                      /* type  */
-  YYSYMBOL_list_declaraciones = 31,        /* list_declaraciones  */
-  YYSYMBOL_list_sentencias = 32,           /* list_sentencias  */
-  YYSYMBOL_sentencia = 33,                 /* sentencia  */
-  YYSYMBOL_asignacion = 34,                /* asignacion  */
-  YYSYMBOL_declaracion = 35,               /* declaracion  */
-  YYSYMBOL_expr = 36,                      /* expr  */
-  YYSYMBOL_valor = 37,                     /* valor  */
-  YYSYMBOL_retorno = 38                    /* retorno  */
+  YYSYMBOL_list_declaraciones = 30,        /* list_declaraciones  */
+  YYSYMBOL_list_sentencias = 31,           /* list_sentencias  */
+  YYSYMBOL_sentencia = 32,                 /* sentencia  */
+  YYSYMBOL_asignacion = 33,                /* asignacion  */
+  YYSYMBOL_declaracion = 34,               /* declaracion  */
+  YYSYMBOL_expr = 35,                      /* expr  */
+  YYSYMBOL_valor = 36,                     /* valor  */
+  YYSYMBOL_retorno = 37                    /* retorno  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -470,18 +469,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  6
+#define YYFINAL  8
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   69
+#define YYLAST   82
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  28
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  11
+#define YYNNTS  10
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  29
+#define YYNRULES  27
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  55
+#define YYNSTATES  67
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   281
@@ -533,9 +532,9 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    66,    66,    69,    70,    71,    78,    79,    82,    83,
-      86,    87,    90,    94,    95,   102,   103,   104,   105,   106,
-     107,   108,   109,   112,   113,   114,   115,   116,   119,   120
+       0,    66,    66,    67,    68,    80,    81,    84,    85,    88,
+      89,    92,    96,    97,   104,   105,   106,   107,   108,   109,
+     110,   111,   115,   116,   117,   118,   119,   122
 };
 #endif
 
@@ -555,9 +554,8 @@ static const char *const yytname[] =
   "INT", "TTRUE", "TFALSE", "TYPE_INT", "TYPE_BOOL", "TYPE_VOID", "TMAS",
   "TPOR", "TMENOS", "ASIGNACION", "TPAR_OP", "TPAR_CL", "TLLAVE_OP",
   "TLLAVE_CL", "OR", "AND", "NOT", "IF", "ELSE", "WHILE", "RETURN", "MAIN",
-  "';'", "$accept", "prog", "type", "list_declaraciones",
-  "list_sentencias", "sentencia", "asignacion", "declaracion", "expr",
-  "valor", "retorno", YY_NULLPTR
+  "';'", "$accept", "prog", "list_declaraciones", "list_sentencias",
+  "sentencia", "asignacion", "declaracion", "expr", "valor", "retorno", YY_NULLPTR
 };
 
 static const char *
@@ -567,7 +565,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-22)
+#define YYPACT_NINF (-33)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -581,12 +579,13 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      45,   -22,   -22,   -22,    19,   -19,   -22,    18,    20,    21,
-     -22,     7,    30,    31,    42,    -1,     9,   -22,   -22,   -22,
-     -22,    24,    16,    36,   -22,   -22,   -22,   -22,    52,    24,
-      24,   -22,    29,   -22,   -22,   -22,    39,   -22,   -22,   -22,
-      49,   -22,    24,    24,    24,    24,    24,   -22,   -22,   -22,
-      -2,   -18,    -2,    27,   -22
+      -6,   -25,     9,    15,    46,    41,    43,    45,   -33,    31,
+      50,    51,    40,    53,    56,   -33,   -33,   -33,     2,     2,
+       2,    60,    71,    72,    27,     3,   -33,   -33,   -33,   -33,
+      11,    12,    27,    54,    55,   -33,   -33,   -33,   -33,    73,
+      27,    27,    32,   -33,   -33,   -33,   -33,   -33,    42,   -33,
+     -33,   -33,    52,   -33,    27,    27,    27,    27,    27,   -33,
+     -33,   -33,    -7,    -2,    -7,    57,   -33
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -594,26 +593,25 @@ static const yytype_int8 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     4,     3,     5,     0,     0,     1,     0,     0,     0,
-       6,     0,     0,     0,     0,     0,     0,     8,    10,     7,
-      11,     0,     0,     0,    24,    23,    26,    27,     0,     0,
-       0,    29,     0,    15,     2,     9,     0,    13,    14,    25,
-       0,    22,     0,     0,     0,     0,     0,    28,    12,    18,
-      16,    17,    19,    21,    20
+       0,     0,     0,     0,     0,     0,     0,     0,     1,     0,
+       0,     0,     0,     0,     0,     5,     5,     5,     0,     0,
+       0,     0,     0,     0,     0,     0,     7,     9,     6,    10,
+       0,     0,     0,     0,     0,    23,    22,    25,    26,     0,
+       0,     0,     0,    14,     3,     8,     2,     4,     0,    12,
+      13,    24,     0,    21,     0,     0,     0,     0,     0,    27,
+      11,    17,    15,    16,    18,    20,    19
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -22,   -22,   -22,   -22,   -22,    48,   -22,   -22,   -21,   -22,
-     -22
+     -33,   -33,    22,    30,   -11,   -33,   -33,   -32,   -33,   -33
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     4,     5,    11,    16,    17,    18,    19,    32,    33,
-      20
+       0,     4,    18,    25,    26,    27,    28,    42,    43,    29
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -621,52 +619,57 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      36,    45,    46,    24,    25,    26,    27,     7,    40,    41,
-      43,    12,    28,    12,    29,    13,    14,    45,    46,     6,
-      30,    50,    51,    52,    53,    54,    31,    34,    24,    25,
-      26,    27,    15,     8,    15,    22,     9,    28,    10,    29,
-      42,    43,    44,    37,    21,    30,    23,    46,    45,    46,
-      42,    43,    44,     1,     2,     3,    47,    39,    45,    46,
-      42,    43,    44,    38,    35,    49,    48,     0,    45,    46
+      48,     5,     1,     2,     3,    55,    21,    21,    52,    53,
+      22,    23,    57,    58,    45,    21,    21,    57,    58,    45,
+      45,    44,    62,    63,    64,    65,    66,    24,    24,    46,
+      47,    35,    36,    37,    38,     6,    24,    24,    19,    20,
+      39,     7,    40,    54,    55,    56,     8,    12,    41,    30,
+      31,    57,    58,    54,    55,    56,     9,    15,    10,    59,
+      11,    57,    58,    54,    55,    56,    13,    14,    61,    60,
+      16,    57,    58,    17,    32,    33,    34,    58,    51,     0,
+       0,    49,    50
 };
 
 static const yytype_int8 yycheck[] =
 {
-      21,    19,    20,     4,     5,     6,     7,    26,    29,    30,
-      12,     4,    13,     4,    15,     8,     9,    19,    20,     0,
-      21,    42,    43,    44,    45,    46,    27,    18,     4,     5,
-       6,     7,    25,    15,    25,     4,    16,    13,    17,    15,
-      11,    12,    13,    27,    14,    21,     4,    20,    19,    20,
-      11,    12,    13,     8,     9,    10,    27,     5,    19,    20,
-      11,    12,    13,    27,    16,    16,    27,    -1,    19,    20
+      32,    26,     8,     9,    10,    12,     4,     4,    40,    41,
+       8,     9,    19,    20,    25,     4,     4,    19,    20,    30,
+      31,    18,    54,    55,    56,    57,    58,    25,    25,    18,
+      18,     4,     5,     6,     7,    26,    25,    25,    16,    17,
+      13,    26,    15,    11,    12,    13,     0,    16,    21,    19,
+      20,    19,    20,    11,    12,    13,    15,    17,    15,    27,
+      15,    19,    20,    11,    12,    13,    16,    16,    16,    27,
+      17,    19,    20,    17,    14,     4,     4,    20,     5,    -1,
+      -1,    27,    27
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     8,     9,    10,    29,    30,     0,    26,    15,    16,
-      17,    31,     4,     8,     9,    25,    32,    33,    34,    35,
-      38,    14,     4,     4,     4,     5,     6,     7,    13,    15,
-      21,    27,    36,    37,    18,    33,    36,    27,    27,     5,
-      36,    36,    11,    12,    13,    19,    20,    27,    27,    16,
-      36,    36,    36,    36,    36
+       0,     8,     9,    10,    29,    26,    26,    26,     0,    15,
+      15,    15,    16,    16,    16,    17,    17,    17,    30,    30,
+      30,     4,     8,     9,    25,    31,    32,    33,    34,    37,
+      31,    31,    14,     4,     4,     4,     5,     6,     7,    13,
+      15,    21,    35,    36,    18,    32,    18,    18,    35,    27,
+      27,     5,    35,    35,    11,    12,    13,    19,    20,    27,
+      27,    16,    35,    35,    35,    35,    35
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    28,    29,    30,    30,    30,    31,    31,    32,    32,
-      33,    33,    34,    35,    35,    36,    36,    36,    36,    36,
-      36,    36,    36,    37,    37,    37,    37,    37,    38,    38
+       0,    28,    29,    29,    29,    30,    30,    31,    31,    32,
+      32,    33,    34,    34,    35,    35,    35,    35,    35,    35,
+      35,    35,    36,    36,    36,    36,    36,    37
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     8,     1,     1,     1,     0,     2,     1,     2,
-       1,     1,     4,     3,     3,     1,     3,     3,     3,     3,
-       3,     3,     2,     1,     1,     2,     1,     1,     3,     2
+       0,     2,     8,     8,     8,     0,     2,     1,     2,     1,
+       1,     4,     3,     3,     1,     3,     3,     3,     3,     3,
+       3,     2,     1,     1,     2,     1,     1,     3
 };
 
 
@@ -1129,159 +1132,165 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 2: /* prog: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  */
+  case 2: /* prog: TYPE_BOOL MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  */
 #line 66 "calc-sintaxis.y"
-                                                                                        {char * name = "MAIN";struct Tsymbol* aux = CreateSymbol(name,EMAIN,1,yylineno);struct AST* arbol = createTree(aux, (yyvsp[-2].arbol), (yyvsp[-1].arbol));interprete(arbol);}
-#line 1136 "calc-sintaxis.tab.c"
+                                                                                             {char * name = "MAIN";struct Tsymbol* aux = CreateSymbol(name,RETBOL,1,yylineno);struct AST* arbol = createTree(aux, (yyvsp[-2].arbol), (yyvsp[-1].arbol));interprete(arbol);}
+#line 1139 "calc-sintaxis.tab.c"
     break;
 
-  case 6: /* list_declaraciones: %empty  */
-#line 78 "calc-sintaxis.y"
+  case 3: /* prog: TYPE_INT MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  */
+#line 67 "calc-sintaxis.y"
+                                                                                            {char * name = "MAIN";struct Tsymbol* aux = CreateSymbol(name,RETINT,1,yylineno);struct AST* arbol = createTree(aux, (yyvsp[-2].arbol), (yyvsp[-1].arbol));interprete(arbol);}
+#line 1145 "calc-sintaxis.tab.c"
+    break;
+
+  case 4: /* prog: TYPE_VOID MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  */
+#line 68 "calc-sintaxis.y"
+                                                                                             {char * name = "MAIN";struct Tsymbol* aux = CreateSymbol(name,RETVOID,1,yylineno);struct AST* arbol = createTree(aux, (yyvsp[-2].arbol), (yyvsp[-1].arbol));interprete(arbol);}
+#line 1151 "calc-sintaxis.tab.c"
+    break;
+
+  case 5: /* list_declaraciones: %empty  */
+#line 80 "calc-sintaxis.y"
                                                     {(yyval.arbol) = NULL;}
-#line 1142 "calc-sintaxis.tab.c"
+#line 1157 "calc-sintaxis.tab.c"
     break;
 
-  case 7: /* list_declaraciones: list_declaraciones declaracion  */
-#line 79 "calc-sintaxis.y"
+  case 6: /* list_declaraciones: list_declaraciones declaracion  */
+#line 81 "calc-sintaxis.y"
                                                     {char * name = "DECLARACION";struct Tsymbol* aux = CreateSymbol(name,DECLA,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-1].arbol), (yyvsp[0].arbol));}
-#line 1148 "calc-sintaxis.tab.c"
+#line 1163 "calc-sintaxis.tab.c"
     break;
 
-  case 8: /* list_sentencias: sentencia  */
-#line 82 "calc-sintaxis.y"
+  case 7: /* list_sentencias: sentencia  */
+#line 84 "calc-sintaxis.y"
                                                     {(yyval.arbol) = (yyvsp[0].arbol);}
-#line 1154 "calc-sintaxis.tab.c"
+#line 1169 "calc-sintaxis.tab.c"
     break;
 
-  case 9: /* list_sentencias: list_sentencias sentencia  */
-#line 83 "calc-sintaxis.y"
+  case 8: /* list_sentencias: list_sentencias sentencia  */
+#line 85 "calc-sintaxis.y"
                                                     {char * name = "SENTENCIA";struct Tsymbol* aux = CreateSymbol(name,SENTEN,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-1].arbol), (yyvsp[0].arbol));}
-#line 1160 "calc-sintaxis.tab.c"
+#line 1175 "calc-sintaxis.tab.c"
     break;
 
-  case 10: /* sentencia: asignacion  */
-#line 86 "calc-sintaxis.y"
+  case 9: /* sentencia: asignacion  */
+#line 88 "calc-sintaxis.y"
                                                     {(yyval.arbol) = (yyvsp[0].arbol);}
-#line 1166 "calc-sintaxis.tab.c"
+#line 1181 "calc-sintaxis.tab.c"
     break;
 
-  case 11: /* sentencia: retorno  */
-#line 87 "calc-sintaxis.y"
+  case 10: /* sentencia: retorno  */
+#line 89 "calc-sintaxis.y"
                                                     {(yyval.arbol) = (yyvsp[0].arbol);}
-#line 1172 "calc-sintaxis.tab.c"
+#line 1187 "calc-sintaxis.tab.c"
     break;
 
-  case 12: /* asignacion: ID ASIGNACION expr ';'  */
-#line 90 "calc-sintaxis.y"
+  case 11: /* asignacion: ID ASIGNACION expr ';'  */
+#line 92 "calc-sintaxis.y"
                                    {char * name = (yyvsp[-3].symbol)->varname;struct Tsymbol* aux = CreateSymbol(name,EID,1,yylineno);struct AST* aux3 = createTree(aux, NULL, NULL); 
                                     char * nameAsig = "asignacion";struct Tsymbol* aux1 = CreateSymbol(nameAsig,ASIG,1,yylineno);(yyval.arbol) = createTree(aux1, aux3, (yyvsp[-1].arbol));}
-#line 1179 "calc-sintaxis.tab.c"
+#line 1194 "calc-sintaxis.tab.c"
     break;
 
-  case 13: /* declaracion: TYPE_INT ID ';'  */
-#line 94 "calc-sintaxis.y"
+  case 12: /* declaracion: TYPE_INT ID ';'  */
+#line 96 "calc-sintaxis.y"
                              {char * nameId = (yyvsp[-1].symbol)->varname;struct Tsymbol* auxId = CreateSymbol(nameId,VARINT,1,yylineno);  (yyval.arbol) = createTree(auxId, NULL, NULL);}
-#line 1185 "calc-sintaxis.tab.c"
+#line 1200 "calc-sintaxis.tab.c"
     break;
 
-  case 14: /* declaracion: TYPE_BOOL ID ';'  */
-#line 95 "calc-sintaxis.y"
+  case 13: /* declaracion: TYPE_BOOL ID ';'  */
+#line 97 "calc-sintaxis.y"
                               {char * nameId = (yyvsp[-1].symbol)->varname;struct Tsymbol* auxId = CreateSymbol(nameId,VARBOOL,1,yylineno);(yyval.arbol) = createTree(auxId, NULL, NULL);}
-#line 1191 "calc-sintaxis.tab.c"
+#line 1206 "calc-sintaxis.tab.c"
     break;
 
-  case 15: /* expr: valor  */
-#line 102 "calc-sintaxis.y"
-                                {(yyval.arbol) = (yyvsp[0].arbol);}
-#line 1197 "calc-sintaxis.tab.c"
-    break;
-
-  case 16: /* expr: expr TMAS expr  */
-#line 103 "calc-sintaxis.y"
-                                {char * name = "+";struct Tsymbol* aux = CreateSymbol(name,SUMA,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-2].arbol), (yyvsp[0].arbol));}
-#line 1203 "calc-sintaxis.tab.c"
-    break;
-
-  case 17: /* expr: expr TPOR expr  */
+  case 14: /* expr: valor  */
 #line 104 "calc-sintaxis.y"
-                                {char * name = "*";struct Tsymbol* aux = CreateSymbol(name,PROD,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-2].arbol), (yyvsp[0].arbol));}
-#line 1209 "calc-sintaxis.tab.c"
+                                {(yyval.arbol) = (yyvsp[0].arbol);}
+#line 1212 "calc-sintaxis.tab.c"
     break;
 
-  case 18: /* expr: TPAR_OP expr TPAR_CL  */
+  case 15: /* expr: expr TMAS expr  */
 #line 105 "calc-sintaxis.y"
-                                {(yyval.arbol) = (yyvsp[-1].arbol);}
-#line 1215 "calc-sintaxis.tab.c"
+                                {char * name = "+";struct Tsymbol* aux = CreateSymbol(name,SUMA,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-2].arbol), (yyvsp[0].arbol));}
+#line 1218 "calc-sintaxis.tab.c"
     break;
 
-  case 19: /* expr: expr TMENOS expr  */
+  case 16: /* expr: expr TPOR expr  */
 #line 106 "calc-sintaxis.y"
-                                {char * name = "-";struct Tsymbol* aux = CreateSymbol(name,RESTA,1,yylineno); (yyval.arbol) = createTree(aux,(yyvsp[-2].arbol), (yyvsp[0].arbol));}
-#line 1221 "calc-sintaxis.tab.c"
+                                {char * name = "*";struct Tsymbol* aux = CreateSymbol(name,PROD,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-2].arbol), (yyvsp[0].arbol));}
+#line 1224 "calc-sintaxis.tab.c"
     break;
 
-  case 20: /* expr: expr AND expr  */
+  case 17: /* expr: TPAR_OP expr TPAR_CL  */
 #line 107 "calc-sintaxis.y"
-                                {char * name = "&&";struct Tsymbol* aux = CreateSymbol(name,EAND,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-2].arbol), (yyvsp[0].arbol));}
-#line 1227 "calc-sintaxis.tab.c"
+                                {(yyval.arbol) = (yyvsp[-1].arbol);}
+#line 1230 "calc-sintaxis.tab.c"
     break;
 
-  case 21: /* expr: expr OR expr  */
+  case 18: /* expr: expr TMENOS expr  */
 #line 108 "calc-sintaxis.y"
-                                {char * name = "||";struct Tsymbol* aux = CreateSymbol(name,EOR,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-2].arbol), (yyvsp[0].arbol));}
-#line 1233 "calc-sintaxis.tab.c"
+                                {char * name = "-";struct Tsymbol* aux = CreateSymbol(name,RESTA,1,yylineno); (yyval.arbol) = createTree(aux,(yyvsp[-2].arbol), (yyvsp[0].arbol));}
+#line 1236 "calc-sintaxis.tab.c"
     break;
 
-  case 22: /* expr: NOT expr  */
+  case 19: /* expr: expr AND expr  */
 #line 109 "calc-sintaxis.y"
+                                {char * name = "&&";struct Tsymbol* aux = CreateSymbol(name,EAND,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-2].arbol), (yyvsp[0].arbol));}
+#line 1242 "calc-sintaxis.tab.c"
+    break;
+
+  case 20: /* expr: expr OR expr  */
+#line 110 "calc-sintaxis.y"
+                                {char * name = "||";struct Tsymbol* aux = CreateSymbol(name,EOR,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-2].arbol), (yyvsp[0].arbol));}
+#line 1248 "calc-sintaxis.tab.c"
+    break;
+
+  case 21: /* expr: NOT expr  */
+#line 111 "calc-sintaxis.y"
                                 {char * name = "!";struct Tsymbol* aux = CreateSymbol(name,ENOT,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[0].arbol), NULL);}
-#line 1239 "calc-sintaxis.tab.c"
+#line 1254 "calc-sintaxis.tab.c"
     break;
 
-  case 23: /* valor: INT  */
-#line 112 "calc-sintaxis.y"
-                                {(yyval.arbol) = createTree((yyvsp[0].symbol), NULL, NULL);}
-#line 1245 "calc-sintaxis.tab.c"
-    break;
-
-  case 24: /* valor: ID  */
-#line 113 "calc-sintaxis.y"
-                                {(yyval.arbol) = createTree((yyvsp[0].symbol), NULL, NULL);}
-#line 1251 "calc-sintaxis.tab.c"
-    break;
-
-  case 25: /* valor: TMENOS INT  */
-#line 114 "calc-sintaxis.y"
-                                {(yyval.arbol) = createTree((yyvsp[0].symbol), NULL, NULL);}
-#line 1257 "calc-sintaxis.tab.c"
-    break;
-
-  case 26: /* valor: TTRUE  */
+  case 22: /* valor: INT  */
 #line 115 "calc-sintaxis.y"
                                 {(yyval.arbol) = createTree((yyvsp[0].symbol), NULL, NULL);}
-#line 1263 "calc-sintaxis.tab.c"
+#line 1260 "calc-sintaxis.tab.c"
     break;
 
-  case 27: /* valor: TFALSE  */
+  case 23: /* valor: ID  */
 #line 116 "calc-sintaxis.y"
                                 {(yyval.arbol) = createTree((yyvsp[0].symbol), NULL, NULL);}
-#line 1269 "calc-sintaxis.tab.c"
+#line 1266 "calc-sintaxis.tab.c"
     break;
 
-  case 28: /* retorno: RETURN expr ';'  */
+  case 24: /* valor: TMENOS INT  */
+#line 117 "calc-sintaxis.y"
+                                {(yyval.arbol) = createTree((yyvsp[0].symbol), NULL, NULL);}
+#line 1272 "calc-sintaxis.tab.c"
+    break;
+
+  case 25: /* valor: TTRUE  */
+#line 118 "calc-sintaxis.y"
+                                {(yyval.arbol) = createTree((yyvsp[0].symbol), NULL, NULL);}
+#line 1278 "calc-sintaxis.tab.c"
+    break;
+
+  case 26: /* valor: TFALSE  */
 #line 119 "calc-sintaxis.y"
+                                {(yyval.arbol) = createTree((yyvsp[0].symbol), NULL, NULL);}
+#line 1284 "calc-sintaxis.tab.c"
+    break;
+
+  case 27: /* retorno: RETURN expr ';'  */
+#line 122 "calc-sintaxis.y"
                          {char * name = "return"; struct Tsymbol* aux = CreateSymbol(name,ERETURN,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-1].arbol), NULL);}
-#line 1275 "calc-sintaxis.tab.c"
-    break;
-
-  case 29: /* retorno: RETURN ';'  */
-#line 120 "calc-sintaxis.y"
-                         {char * name = "return";struct Tsymbol* aux = CreateSymbol(name,ERETURN,1,yylineno); (yyval.arbol) = createTree(aux, NULL, NULL);}
-#line 1281 "calc-sintaxis.tab.c"
+#line 1290 "calc-sintaxis.tab.c"
     break;
 
 
-#line 1285 "calc-sintaxis.tab.c"
+#line 1294 "calc-sintaxis.tab.c"
 
       default: break;
     }
@@ -1474,11 +1483,12 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 135 "calc-sintaxis.y"
+#line 138 "calc-sintaxis.y"
 
 
 void interprete(struct AST* ar){
     createTable(ar);
+    retError();
     typeError(ar);
     if(getError()) {
        DeleteList();

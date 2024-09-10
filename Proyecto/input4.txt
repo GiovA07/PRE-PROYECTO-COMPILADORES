@@ -4,5 +4,5 @@ void main() {
     y = 1;
     x = 1;
     x = x + 3 * 2 * y;
-    return ;
+    return x;
 }

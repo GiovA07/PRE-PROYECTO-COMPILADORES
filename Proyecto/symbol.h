@@ -24,10 +24,13 @@ enum TYPES {
     SENTEN,
     EID,
     ERETURN,
+    RETINT,
+    RETBOL,
+    RETVOID,
     OTHERS
 };
 
-char static string[19][20] = {"VAR","EMAIN","VARINT","VARBOOL","CONSINT","CONSBOOL","CONS","SUMA","RESTA","PROD","EOR","EAND","ENOT","ASIG","DECLA","SENTEN","EID","ERETURN","OTHERS"};
+char static string[22][23] = {"VAR","EMAIN","VARINT","VARBOOL","CONSINT","CONSBOOL","SUMA","RESTA","PROD","EOR","EAND","ENOT","ASIG","DECLA","SENTEN","EID","ERETURN","RETINT","RETBOL","RETVOID","OTHERS"};
 
 
 typedef struct Tsymbol {
