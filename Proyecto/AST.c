@@ -291,10 +291,6 @@ void evaluate(AST* ar) {
         }
         if (tipoActual == ASIG) {
             setValue(auxIzq, (ar->right)->symbol->value);
-
-        }
-        if(tipoActual == EID){
-
         }
 
         if (tipoActual == SUMA) {

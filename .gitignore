@@ -397,3 +397,7 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 *.exe
+
+# cosas de interprete
+.Proyecto/calc-sintaxis.tab.c
+.Proyecto/calc-sintaxis.tab.h
