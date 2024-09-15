@@ -125,23 +125,25 @@ void typeError(AST* ar) {
 void errorRet(AST* ar,enum TYPES type){
     Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
     enum TYPES tipoActualIzq = ((ar->left)->symbol)->type;
-    if(!auxIzq){
-        if(type == RETINT && tipoActualIzq != SUMA && tipoActualIzq != RESTA && tipoActualIzq != PROD && tipoActualIzq != CONSINT) {
+    if(type == RETVOID ){
             printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
             err = true;
-        }else if(type == RETBOL && tipoActualIzq != EOR && tipoActualIzq != EAND && tipoActualIzq != ENOT && tipoActualIzq != CONSBOOL) {
+    } else {
+        if(!auxIzq){
+            if(type == RETINT && tipoActualIzq != SUMA && tipoActualIzq != RESTA && tipoActualIzq != PROD && tipoActualIzq != CONSINT) {
+                printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+                err = true;
+            }else if(type == RETBOL && tipoActualIzq != EOR && tipoActualIzq != EAND && tipoActualIzq != ENOT && tipoActualIzq != CONSBOOL) {
+                printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+                err = true;
+            }
+        }else if(auxIzq && auxIzq->type != VARBOOL && type == RETBOL){
             printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
             err = true;
-        }else if(type == RETVOID ){
+        }else if(auxIzq && auxIzq->type != VARINT && type == RETINT){
             printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
             err = true;
         }
-    }else if(auxIzq && auxIzq->type != VARBOOL && type == RETBOL){
-        printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-        err = true;
-    }else if(auxIzq && auxIzq->type != VARINT && type == RETINT){
-        printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-        err = true;
     }
 }
 
