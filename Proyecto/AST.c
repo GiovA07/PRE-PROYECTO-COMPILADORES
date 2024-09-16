@@ -10,6 +10,22 @@ struct AST* createTree(Tsymbol* symbol, struct AST *l, struct AST *r) {
     return arbol;
 }
 
+void elimArbol(AST* tree) {
+    if (tree != NULL) {
+        if (tree->symbol != NULL) {
+            free(tree->symbol);
+        }
+        if (tree->left != NULL) {
+            elimArbol(tree->left);
+        }
+        if (tree->right != NULL) {
+            elimArbol(tree->right);
+        }
+        free(tree);
+    }
+}
+
+
 void showTree(AST* tree) {
     if (tree != NULL) {
         printf("< %s >",(tree->symbol)->varname);
@@ -50,6 +66,10 @@ void showTreeDot(AST* tree,FILE* file) {
 }
 
 void printDot(AST* tree, const char* filename) {
+    if (tree == NULL) {
+        printf("arbol borrado");
+        exit(1);
+    }
     FILE* file = fopen(filename, "w");
     if (file == NULL) {
         fprintf(stderr, "Error al abrir el archivo %s\n", filename);
@@ -100,26 +120,29 @@ void typeError(AST* ar) {
             errorRet(ar, aux);
         }
         if(ar->symbol->type == ENOT){
-            Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
-            enum TYPES tipoIzq = ((ar->left)->symbol)->type;
-            if(!auxIzq){
-                if(tipoIzq != EOR && tipoIzq != EAND && tipoIzq != ENOT && tipoIzq != CONSBOOL){
-                    printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-                    err = true;
-                }   
-            }else{
-                if(auxIzq->type != VARBOOL){
-                    printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-                    err = true;  
-                }
-            }
+            errorNot(ar);
         }
-        
         typeError(ar->left);
     }
     if (ar->right != NULL) {
         typeError(ar->right);
     }    
+}
+
+void errorNot(AST* ar) {  
+    Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
+    enum TYPES tipoIzq = ((ar->left)->symbol)->type;
+    if(!auxIzq){
+        if(tipoIzq != EOR && tipoIzq != EAND && tipoIzq != ENOT && tipoIzq != CONSBOOL){
+            printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+            err = true;
+        }   
+    }else{
+        if(auxIzq->type != VARBOOL){
+            printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+            err = true;  
+        }
+    }
 }
 // ver tipo de retorno void y solucionar bollean
 void errorRet(AST* ar,enum TYPES type){

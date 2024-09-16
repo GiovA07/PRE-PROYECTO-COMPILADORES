@@ -18,6 +18,8 @@ void showTree(AST* tree);
 
 void showTreeDot(AST* tree,FILE* file);
 void printDot(AST* tree, const char* filename);
+void elimArbol(AST* tree);
+
 
 void createTable(AST* ar);
 void typeError(AST* ar);
@@ -25,6 +27,7 @@ void errorOpera(AST *ar, enum TYPES type);
 void errorAsig(AST *ar);
 bool getError();
 void evaluate(AST* ar);
+void errorNot(AST* ar);
 void errorRet(AST* ar,enum TYPES type);
 void retError();
 #endif

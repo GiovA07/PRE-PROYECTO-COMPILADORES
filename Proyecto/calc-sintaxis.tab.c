@@ -76,9 +76,10 @@
 #include <string.h>
 #include "AST.h"
 void interprete(struct AST *arbol);  
+struct AST* createTreeWhitSymbol(char * name,enum TYPES type,int size, int line, struct AST *l, struct AST *r);
 extern int yylineno;
 
-#line 82 "calc-sintaxis.tab.c"
+#line 83 "calc-sintaxis.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -532,7 +533,7 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    66,    66,    67,    68,    80,    81,    84,    85,    88,
+       0,    67,    67,    68,    69,    81,    82,    84,    85,    88,
       89,    92,    96,    97,   104,   105,   106,   107,   108,   109,
      110,   111,   115,   116,   117,   118,   119,   122
 };
@@ -1133,164 +1134,164 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* prog: TYPE_BOOL MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  */
-#line 66 "calc-sintaxis.y"
-                                                                                             {char * name = "MAIN";struct Tsymbol* aux = CreateSymbol(name,RETBOL,1,yylineno);struct AST* arbol = createTree(aux, (yyvsp[-2].arbol), (yyvsp[-1].arbol));interprete(arbol);}
-#line 1139 "calc-sintaxis.tab.c"
+#line 67 "calc-sintaxis.y"
+                                                                                             {char * name = "MAIN";interprete(createTreeWhitSymbol(name,RETBOL,1,yylineno,(yyvsp[-2].arbol), (yyvsp[-1].arbol)));}
+#line 1140 "calc-sintaxis.tab.c"
     break;
 
   case 3: /* prog: TYPE_INT MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  */
-#line 67 "calc-sintaxis.y"
-                                                                                            {char * name = "MAIN";struct Tsymbol* aux = CreateSymbol(name,RETINT,1,yylineno);struct AST* arbol = createTree(aux, (yyvsp[-2].arbol), (yyvsp[-1].arbol));interprete(arbol);}
-#line 1145 "calc-sintaxis.tab.c"
+#line 68 "calc-sintaxis.y"
+                                                                                            {char * name = "MAIN";interprete(createTreeWhitSymbol(name,RETINT,1,yylineno,(yyvsp[-2].arbol), (yyvsp[-1].arbol)));}
+#line 1146 "calc-sintaxis.tab.c"
     break;
 
   case 4: /* prog: TYPE_VOID MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL  */
-#line 68 "calc-sintaxis.y"
-                                                                                             {char * name = "MAIN";struct Tsymbol* aux = CreateSymbol(name,RETVOID,1,yylineno);struct AST* arbol = createTree(aux, (yyvsp[-2].arbol), (yyvsp[-1].arbol));interprete(arbol);}
-#line 1151 "calc-sintaxis.tab.c"
+#line 69 "calc-sintaxis.y"
+                                                                                            {char * name = "MAIN";interprete(createTreeWhitSymbol(name,RETVOID,1,yylineno,(yyvsp[-2].arbol), (yyvsp[-1].arbol)));}
+#line 1152 "calc-sintaxis.tab.c"
     break;
 
   case 5: /* list_declaraciones: %empty  */
-#line 80 "calc-sintaxis.y"
+#line 81 "calc-sintaxis.y"
                                                     {(yyval.arbol) = NULL;}
-#line 1157 "calc-sintaxis.tab.c"
+#line 1158 "calc-sintaxis.tab.c"
     break;
 
   case 6: /* list_declaraciones: list_declaraciones declaracion  */
-#line 81 "calc-sintaxis.y"
-                                                    {char * name = "DECLARACION";struct Tsymbol* aux = CreateSymbol(name,DECLA,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-1].arbol), (yyvsp[0].arbol));}
-#line 1163 "calc-sintaxis.tab.c"
+#line 82 "calc-sintaxis.y"
+                                                    {char * name = "DECLARACION"; (yyval.arbol) = createTreeWhitSymbol(name,DECLA,1,yylineno,(yyvsp[-1].arbol), (yyvsp[0].arbol));}
+#line 1164 "calc-sintaxis.tab.c"
     break;
 
   case 7: /* list_sentencias: sentencia  */
 #line 84 "calc-sintaxis.y"
                                                     {(yyval.arbol) = (yyvsp[0].arbol);}
-#line 1169 "calc-sintaxis.tab.c"
+#line 1170 "calc-sintaxis.tab.c"
     break;
 
   case 8: /* list_sentencias: list_sentencias sentencia  */
 #line 85 "calc-sintaxis.y"
-                                                    {char * name = "SENTENCIA";struct Tsymbol* aux = CreateSymbol(name,SENTEN,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-1].arbol), (yyvsp[0].arbol));}
-#line 1175 "calc-sintaxis.tab.c"
+                                                    {char * name = "SENTENCIA"; (yyval.arbol) = createTreeWhitSymbol(name,SENTEN,1,yylineno,(yyvsp[-1].arbol), (yyvsp[0].arbol));}
+#line 1176 "calc-sintaxis.tab.c"
     break;
 
   case 9: /* sentencia: asignacion  */
 #line 88 "calc-sintaxis.y"
                                                     {(yyval.arbol) = (yyvsp[0].arbol);}
-#line 1181 "calc-sintaxis.tab.c"
+#line 1182 "calc-sintaxis.tab.c"
     break;
 
   case 10: /* sentencia: retorno  */
 #line 89 "calc-sintaxis.y"
                                                     {(yyval.arbol) = (yyvsp[0].arbol);}
-#line 1187 "calc-sintaxis.tab.c"
+#line 1188 "calc-sintaxis.tab.c"
     break;
 
   case 11: /* asignacion: ID ASIGNACION expr ';'  */
 #line 92 "calc-sintaxis.y"
-                                   {char * name = (yyvsp[-3].symbol)->varname;struct Tsymbol* aux = CreateSymbol(name,EID,1,yylineno);struct AST* aux3 = createTree(aux, NULL, NULL); 
-                                    char * nameAsig = "asignacion";struct Tsymbol* aux1 = CreateSymbol(nameAsig,ASIG,1,yylineno);(yyval.arbol) = createTree(aux1, aux3, (yyvsp[-1].arbol));}
-#line 1194 "calc-sintaxis.tab.c"
+                                   {char * name = (yyvsp[-3].symbol)->varname;struct AST* aux3 = createTreeWhitSymbol(name,EID,1,yylineno,NULL, NULL);
+                                    char * nameAsig = "asignacion";(yyval.arbol) = createTreeWhitSymbol(nameAsig,ASIG,1,yylineno,aux3, (yyvsp[-1].arbol));}
+#line 1195 "calc-sintaxis.tab.c"
     break;
 
   case 12: /* declaracion: TYPE_INT ID ';'  */
 #line 96 "calc-sintaxis.y"
-                             {char * nameId = (yyvsp[-1].symbol)->varname;struct Tsymbol* auxId = CreateSymbol(nameId,VARINT,1,yylineno);  (yyval.arbol) = createTree(auxId, NULL, NULL);}
-#line 1200 "calc-sintaxis.tab.c"
+                             {char * name = (yyvsp[-1].symbol)->varname; (yyval.arbol) = createTreeWhitSymbol(name,VARINT,1,yylineno,NULL, NULL);}
+#line 1201 "calc-sintaxis.tab.c"
     break;
 
   case 13: /* declaracion: TYPE_BOOL ID ';'  */
 #line 97 "calc-sintaxis.y"
-                              {char * nameId = (yyvsp[-1].symbol)->varname;struct Tsymbol* auxId = CreateSymbol(nameId,VARBOOL,1,yylineno);(yyval.arbol) = createTree(auxId, NULL, NULL);}
-#line 1206 "calc-sintaxis.tab.c"
+                              {char * name = (yyvsp[-1].symbol)->varname;(yyval.arbol) = createTreeWhitSymbol(name,VARBOOL,1,yylineno,NULL, NULL);}
+#line 1207 "calc-sintaxis.tab.c"
     break;
 
   case 14: /* expr: valor  */
 #line 104 "calc-sintaxis.y"
                                 {(yyval.arbol) = (yyvsp[0].arbol);}
-#line 1212 "calc-sintaxis.tab.c"
+#line 1213 "calc-sintaxis.tab.c"
     break;
 
   case 15: /* expr: expr TMAS expr  */
 #line 105 "calc-sintaxis.y"
-                                {char * name = "+";struct Tsymbol* aux = CreateSymbol(name,SUMA,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-2].arbol), (yyvsp[0].arbol));}
-#line 1218 "calc-sintaxis.tab.c"
+                                {char * name = "+"; (yyval.arbol) = createTreeWhitSymbol(name,SUMA,1,yylineno,(yyvsp[-2].arbol), (yyvsp[0].arbol));}
+#line 1219 "calc-sintaxis.tab.c"
     break;
 
   case 16: /* expr: expr TPOR expr  */
 #line 106 "calc-sintaxis.y"
-                                {char * name = "*";struct Tsymbol* aux = CreateSymbol(name,PROD,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-2].arbol), (yyvsp[0].arbol));}
-#line 1224 "calc-sintaxis.tab.c"
+                                {char * name = "*"; (yyval.arbol) = createTreeWhitSymbol(name,PROD,1,yylineno,(yyvsp[-2].arbol), (yyvsp[0].arbol));}
+#line 1225 "calc-sintaxis.tab.c"
     break;
 
   case 17: /* expr: TPAR_OP expr TPAR_CL  */
 #line 107 "calc-sintaxis.y"
                                 {(yyval.arbol) = (yyvsp[-1].arbol);}
-#line 1230 "calc-sintaxis.tab.c"
+#line 1231 "calc-sintaxis.tab.c"
     break;
 
   case 18: /* expr: expr TMENOS expr  */
 #line 108 "calc-sintaxis.y"
-                                {char * name = "-";struct Tsymbol* aux = CreateSymbol(name,RESTA,1,yylineno); (yyval.arbol) = createTree(aux,(yyvsp[-2].arbol), (yyvsp[0].arbol));}
-#line 1236 "calc-sintaxis.tab.c"
+                                {char * name = "-"; (yyval.arbol) = createTreeWhitSymbol(name,RESTA,1,yylineno,(yyvsp[-2].arbol), (yyvsp[0].arbol));}
+#line 1237 "calc-sintaxis.tab.c"
     break;
 
   case 19: /* expr: expr AND expr  */
 #line 109 "calc-sintaxis.y"
-                                {char * name = "&&";struct Tsymbol* aux = CreateSymbol(name,EAND,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-2].arbol), (yyvsp[0].arbol));}
-#line 1242 "calc-sintaxis.tab.c"
+                                {char * name = "&&"; (yyval.arbol) = createTreeWhitSymbol(name,EAND,1,yylineno,(yyvsp[-2].arbol), (yyvsp[0].arbol));}
+#line 1243 "calc-sintaxis.tab.c"
     break;
 
   case 20: /* expr: expr OR expr  */
 #line 110 "calc-sintaxis.y"
-                                {char * name = "||";struct Tsymbol* aux = CreateSymbol(name,EOR,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-2].arbol), (yyvsp[0].arbol));}
-#line 1248 "calc-sintaxis.tab.c"
+                                {char * name = "||"; (yyval.arbol) = createTreeWhitSymbol(name,EOR,1,yylineno,(yyvsp[-2].arbol), (yyvsp[0].arbol));}
+#line 1249 "calc-sintaxis.tab.c"
     break;
 
   case 21: /* expr: NOT expr  */
 #line 111 "calc-sintaxis.y"
-                                {char * name = "!";struct Tsymbol* aux = CreateSymbol(name,ENOT,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[0].arbol), NULL);}
-#line 1254 "calc-sintaxis.tab.c"
+                                {char * name = "!"; (yyval.arbol) = createTreeWhitSymbol(name,ENOT,1,yylineno,(yyvsp[0].arbol), NULL);}
+#line 1255 "calc-sintaxis.tab.c"
     break;
 
   case 22: /* valor: INT  */
 #line 115 "calc-sintaxis.y"
                                 {(yyval.arbol) = createTree((yyvsp[0].symbol), NULL, NULL);}
-#line 1260 "calc-sintaxis.tab.c"
+#line 1261 "calc-sintaxis.tab.c"
     break;
 
   case 23: /* valor: ID  */
 #line 116 "calc-sintaxis.y"
                                 {(yyval.arbol) = createTree((yyvsp[0].symbol), NULL, NULL);}
-#line 1266 "calc-sintaxis.tab.c"
+#line 1267 "calc-sintaxis.tab.c"
     break;
 
   case 24: /* valor: TMENOS INT  */
 #line 117 "calc-sintaxis.y"
                                 {(yyval.arbol) = createTree((yyvsp[0].symbol), NULL, NULL);}
-#line 1272 "calc-sintaxis.tab.c"
+#line 1273 "calc-sintaxis.tab.c"
     break;
 
   case 25: /* valor: TTRUE  */
 #line 118 "calc-sintaxis.y"
                                 {(yyval.arbol) = createTree((yyvsp[0].symbol), NULL, NULL);}
-#line 1278 "calc-sintaxis.tab.c"
+#line 1279 "calc-sintaxis.tab.c"
     break;
 
   case 26: /* valor: TFALSE  */
 #line 119 "calc-sintaxis.y"
                                 {(yyval.arbol) = createTree((yyvsp[0].symbol), NULL, NULL);}
-#line 1284 "calc-sintaxis.tab.c"
+#line 1285 "calc-sintaxis.tab.c"
     break;
 
   case 27: /* retorno: RETURN expr ';'  */
 #line 122 "calc-sintaxis.y"
-                         {char * name = "return"; struct Tsymbol* aux = CreateSymbol(name,ERETURN,1,yylineno); (yyval.arbol) = createTree(aux, (yyvsp[-1].arbol), NULL);}
-#line 1290 "calc-sintaxis.tab.c"
+                         {char * name = "return";(yyval.arbol) = createTreeWhitSymbol(name,ERETURN,1,yylineno,(yyvsp[-1].arbol), NULL);}
+#line 1291 "calc-sintaxis.tab.c"
     break;
 
 
-#line 1294 "calc-sintaxis.tab.c"
+#line 1295 "calc-sintaxis.tab.c"
 
       default: break;
     }
@@ -1491,11 +1492,18 @@ void interprete(struct AST* ar){
     retError();
     typeError(ar);
     if(getError()) {
-       DeleteList();
+    elimArbol(ar);
        exit(1);
     }
     evaluate(ar);
+    prinTable(); 
     printDot(ar,"Arbol.dot");
-    prinTable(); DeleteList();
+    elimArbol(ar);
+
+}
+
+struct AST* createTreeWhitSymbol(char * name,enum TYPES type,int size, int line, struct AST *l, struct AST *r){
+    struct Tsymbol* aux = CreateSymbol(name,type,1,yylineno);
+    return createTree(aux,l,r);
 }
 

@@ -3,26 +3,19 @@ digraph{
 rankdir=TB;
 
 node[shape=box];
-"50|  MAIN" -> "11|  DECLARACION", "49|  SENTENCIA";
-"11|  DECLARACION" -> "8|  DECLARACION", "10|  d";
+"34|  MAIN" -> "8|  DECLARACION", "33|  SENTENCIA";
 "8|  DECLARACION" -> "5|  DECLARACION", "7|  c";
 "5|  DECLARACION" -> "2|  DECLARACION", "4|  b";
 "2|  DECLARACION" -> "1|  a" ;
-"49|  SENTENCIA" -> "46|  SENTENCIA", "48|  return";
-"46|  SENTENCIA" -> "38|  SENTENCIA", "45|  asignacion";
-"38|  SENTENCIA" -> "29|  SENTENCIA", "37|  asignacion";
-"29|  SENTENCIA" -> "22|  SENTENCIA", "28|  asignacion";
-"22|  SENTENCIA" -> "15|  asignacion", "21|  asignacion";
-"15|  asignacion" -> "14|  d", "13|  TRUE";
-"21|  asignacion" -> "20|  a", "19|  +";
-"19|  +" -> "17|  10", "18|  10";
-"28|  asignacion" -> "27|  b", "26|  +";
-"26|  +" -> "24|  20", "25|  20";
-"37|  asignacion" -> "36|  c", "35|  -";
-"35|  -" -> "33|  *", "34|  a";
-"33|  *" -> "31|  a", "32|  b";
-"45|  asignacion" -> "44|  d", "43|  &&";
-"43|  &&" -> "40|  d", "42|  !";
-"42|  !" -> "41|  d" ;
-"48|  return" -> "47|  10" ;
+"33|  SENTENCIA" -> "30|  SENTENCIA", "32|  return";
+"30|  SENTENCIA" -> "21|  SENTENCIA", "29|  asignacion";
+"21|  SENTENCIA" -> "14|  asignacion", "20|  asignacion";
+"14|  asignacion" -> "13|  a", "12|  +";
+"12|  +" -> "10|  10", "11|  10";
+"20|  asignacion" -> "19|  b", "18|  +";
+"18|  +" -> "16|  20", "17|  20";
+"29|  asignacion" -> "28|  c", "27|  -";
+"27|  -" -> "25|  *", "26|  a";
+"25|  *" -> "23|  a", "24|  b";
+"32|  return" -> "31|  b" ;
 }
