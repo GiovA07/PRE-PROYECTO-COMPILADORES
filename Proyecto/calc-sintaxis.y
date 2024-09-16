@@ -9,6 +9,7 @@ void interprete(struct AST *arbol);
 struct AST* createTreeWhitSymbol(char * name,enum TYPES type,int size, int line, struct AST *l, struct AST *r);
 extern int yylineno;
 %}
+
 %union {
     struct Tsymbol* symbol;
     struct AST *arbol;
@@ -21,8 +22,8 @@ extern int yylineno;
 
 /* tipos de datos */
 %token <symbol> INT
-%token <symbol>TTRUE
-%token <symbol>TFALSE
+%token <symbol> TTRUE
+%token <symbol> TFALSE
 %token TYPE_INT
 %token TYPE_BOOL
 %token TYPE_VOID

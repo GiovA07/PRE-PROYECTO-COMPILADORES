@@ -399,5 +399,7 @@ FodyWeavers.xsd
 *.exe
 
 # cosas de interprete
-.Proyecto/calc-sintaxis.tab.c
-.Proyecto/calc-sintaxis.tab.h
+calc-sintaxis.tab.c
+calc-sintaxis.tab.h
+lex.yy.c
+Arbol.dot

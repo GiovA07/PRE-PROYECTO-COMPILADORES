@@ -7,6 +7,10 @@
 #include "AST.h"
 #include "calc-sintaxis.tab.h"
 
+int yyparse();
+
+void current_token(enum TYPES type_sym);
+
 %}
 
 %option noyywrap
@@ -16,55 +20,63 @@ letra [a-zA-Z]
 digito [0-9]
 
 %%
-"@define"                   { printf("CONSTANTE "); return CONSTANTE; }
-"main"						{ printf("MAIN "); return MAIN; }
 
+"int"                       { return TYPE_INT;  } /** [int => integer] **/
+"void"                      { return TYPE_VOID; }
+"bool"                      { return TYPE_BOOL; }
 
-"return"                    { printf("%s\n", yytext); return RETURN; }
+"@define"                   { return CONSTANTE; }
 
-"extern"         			{  printf("%s\n",yytext);   return EXTERN;}
+"extern"         			{ printf("%s\n",yytext);   return EXTERN; }
 "program"                   { printf("%s\n", yytext); return PROGRAM; }
 
-"integer"                   { printf("TIPO ENTERO "); return TYPE_INT; }
-"void"                      { printf("%s\n", yytext); return TYPE_VOID; }
-"bool"                      { printf("TIPO BOOLEANA "); return TYPE_BOOL; }
+"main"						{ return MAIN; }
+"return"                    { return RETURN; }
 
-"if"         				{  printf("%s\n",yytext);   return IF;}
-"then"                      {  printf("%s\n",yytext);  return THEN; }
-"else"       				{  printf("%s\n",yytext);   return ELSE;}
+"if"         				{ printf("%s\n",yytext);   return IF;   }
+"then"                      { printf("%s\n",yytext);   return THEN; }
+"else"       				{ printf("%s\n",yytext);   return ELSE; }
 
-"while"                 	{  printf("%s\n",yytext);   return WHILE;}
+"while"                 	{ printf("%s\n",yytext);   return WHILE; }
 
-"true"						{ printf("%s\n", yytext); yylval.symbol = CreateSymbol(strdup(yytext),CONSBOOL,1,yylineno); setValue(yylval.symbol, 1); return TTRUE;}
-"false"						{ printf("%s\n", yytext); yylval.symbol = CreateSymbol(strdup(yytext),CONSBOOL,1,yylineno); setValue(yylval.symbol, 0); return TFALSE; }
+"true"						{ current_token(CONSBOOL); return TTRUE;  }
+"false"						{ current_token(CONSBOOL); return TFALSE; }
 
-{digito}+     				{ printf("INT : %d\n",atoi(yytext)); yylval.symbol = CreateSymbol(strdup(yytext),CONSINT,1,yylineno); setValue(yylval.symbol, atoi(yytext)); return INT;}
+{digito}+     				{ current_token(CONSINT); return INT; }
 
-{letra}({letra}|{digito})*  { printf("ID : %s\n",yytext); yylval.symbol = CreateSymbol(strdup(yytext),EID,1,yylineno); return ID; }
+{letra}({letra}|{digito})*  { yylval.symbol = CreateSymbol(strdup(yytext),EID,1,yylineno); return ID; }
 
-"||"                        {  printf(" OR ");  return OR;}
-"&&"                        {  printf(" AND ");  return AND;}
-"!"                   		{  printf(" NOT ");  return NOT;}
+"||"                        { return OR;  }
+"&&"                        { return AND; }
+"!"                   		{ return NOT; }
 
-"="                         {  printf("%s\n", yytext); return ASIGNACION; }
-"-"                         {  printf("%s\n",yytext);  return TMENOS;}
-"+"                         {  printf("%s\n",yytext);  return TMAS;}
-"*"                         {  printf("%s\n",yytext);  return TPOR;}
+"="                         { return ASIGNACION; }
+"-"                         { return TMENOS;     }
+"+"                         { return TMAS;       }
+"*"                         { return TPOR;       }
 
-"("                         {  printf("%s\n",yytext);  return TPAR_OP;}
-")"                         {  printf("%s\n",yytext);  return TPAR_CL;}
-"{"                         {  printf("%s\n",yytext);  return TLLAVE_OP;}
-"}"                         {  printf("%s\n",yytext);  return TLLAVE_CL;}
+"("                         { return TPAR_OP;   }
+")"                         { return TPAR_CL;   }
+"{"                         { return TLLAVE_OP; }
+"}"                         { return TLLAVE_CL; }
 
-"//".*						{ /* Comentario de linea*/}
-"/*"([^*]|[*][^/])*"*/"  	{ /* Comentario bloque */ }
+"//".*						/** Comentario de linea **/
+"/*"([^*]|[*][^/])*"*/"  	/**  Comentario bloque  **/
 
 
-[;,]                        { /*printf("%s\n",yytext);*/  return *yytext;}
+[;,]                        { return *yytext; }
 
-.|\n                      ; /* ignore all the rest */
+.|\n                      ; /** ignore all the rest **/
 
 %%
+
+void current_token(enum TYPES type_sym) {
+	yylval.symbol = CreateSymbol(strdup(yytext),type_sym,1,yylineno);
+	if (type_sym == CONSINT)
+		setValue(yylval.symbol, atoi(yytext));
+	else
+		setValue(yylval.symbol, 1);
+}
 
 void yyerror(){
 	 printf("%s%d\n","-> ERROR Sintactico en la linea: ",yylineno);
