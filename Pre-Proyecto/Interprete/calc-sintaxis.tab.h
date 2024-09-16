@@ -73,14 +73,11 @@ extern int yydebug;
     OR = 274,                      /* OR  */
     AND = 275,                     /* AND  */
     NOT = 276,                     /* NOT  */
-    PROGRAM = 277,                 /* PROGRAM  */
-    EXTERN = 278,                  /* EXTERN  */
-    THEN = 279,                    /* THEN  */
-    IF = 280,                      /* IF  */
-    ELSE = 281,                    /* ELSE  */
-    WHILE = 282,                   /* WHILE  */
-    RETURN = 283,                  /* RETURN  */
-    MAIN = 284                     /* MAIN  */
+    IF = 277,                      /* IF  */
+    ELSE = 278,                    /* ELSE  */
+    WHILE = 279,                   /* WHILE  */
+    RETURN = 280,                  /* RETURN  */
+    MAIN = 281                     /* MAIN  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -93,9 +90,8 @@ union YYSTYPE
 
     struct Tsymbol* symbol;
     struct AST *arbol;
-    char* string;
 
-#line 99 "calc-sintaxis.tab.h"
+#line 95 "calc-sintaxis.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

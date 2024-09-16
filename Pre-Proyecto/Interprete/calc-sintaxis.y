@@ -5,14 +5,13 @@
 #include <stdio.h>
 #include <string.h>
 #include "AST.h"
-void interprete(struct AST *arbol);
+void interprete(struct AST *arbol);  
 struct AST* createTreeWhitSymbol(char * name,enum TYPES type,int size, int line, struct AST *l, struct AST *r);
 extern int yylineno;
 %}
 %union {
     struct Tsymbol* symbol;
     struct AST *arbol;
-    char* string;
 }
 
 /*declaraciones*/
@@ -42,9 +41,6 @@ extern int yylineno;
 
 
 /* palabras reservadas */
-%token PROGRAM
-%token EXTERN
-%token THEN
 %token IF
 %token ELSE
 %token WHILE
@@ -73,11 +69,20 @@ prog: TYPE_BOOL MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencia
     | TYPE_VOID MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL {char * name = "MAIN";interprete(createTreeWhitSymbol(name,RETVOID,1,yylineno,$6, $7));}
     ;
 
+/* type: TYPE_BOOL
+    | TYPE_INT 
+    | TYPE_VOID 
+    ; */
+
+
+/* main: type MAIN TPAR_OP TPAR_CL TLLAVE_OP list_declaraciones list_sentencias TLLAVE_CL
+    ; */
+
 list_declaraciones:                                 {$$ = NULL;}
                   |list_declaraciones declaracion   {char * name = "DECLARACION"; $$ = createTreeWhitSymbol(name,DECLA,1,yylineno,$1, $2);}
                   ;
-list_sentencias: sentencia                           {$$ = $1;}
-                 |list_sentencias sentencia           {char * name = "SENTENCIA"; $$ = createTreeWhitSymbol(name,SENTEN,1,yylineno,$1, $2);}
+list_sentencias:sentencia                           {$$ = $1;}
+               |list_sentencias sentencia           {char * name = "SENTENCIA"; $$ = createTreeWhitSymbol(name,SENTEN,1,yylineno,$1, $2);}
                ;
 
 sentencia: asignacion                               {$$ = $1;}
@@ -107,25 +112,28 @@ expr: valor                     {$$ = $1;}
     // ver eso, permite !100 lo permite porque true = 100
     ;
 
-
-
 valor: INT                      {$$ = createTree($1, NULL, NULL);}
      | ID                       {$$ = createTree($1, NULL, NULL);}
      | TMENOS INT               {$$ = createTree($2, NULL, NULL);}
      | TTRUE                    {$$ = createTree($1, NULL, NULL);}
      | TFALSE                   {$$ = createTree($1, NULL, NULL);}
-     ;
+
 
 retorno: RETURN expr ';' {char * name = "return";$$ = createTreeWhitSymbol(name,ERETURN,1,yylineno,$2, NULL);}
        //| RETURN ';'      {char * name = "return";struct Tsymbol* aux = CreateSymbol(name,ERETURN,1,yylineno); $$ = createTree(aux, NULL, NULL);}
        ;
 
-/* if_else: IF TPAR_OP expr TPAR_CL TLLAVE_OP list_sentencias TLLAVE_CL THEN
-       | IF TPAR_OP expr TPAR_CL TLLAVE_OP list_sentencias TLLAVE_CL ELSE TLLAVE_OP list_sentencias TLLAVE_CL
+/* constante:
+         |constante CONSTANTE asignacion
+         ; */
+
+/* if_else: IF TPAR_OP expr_bool TPAR_CL TLLAVE_OP list_sentencias TLLAVE_CL
+       | IF TPAR_OP expr_bool TPAR_CL TLLAVE_OP list_sentencias TLLAVE_CL ELSE TLLAVE_OP list_sentencias TLLAVE_CL
        ;
 
-while: WHILE TPAR_OP expr TPAR_CL TLLAVE_OP list_sentencias TLLAVE_CL */
-     ;
+while: WHILE TPAR_OP expr_bool TPAR_CL TLLAVE_OP list_sentencias TLLAVE_CL
+     ; */
+
 
 %%
 
@@ -138,7 +146,7 @@ void interprete(struct AST* ar){
        exit(1);
     }
     evaluate(ar);
-    prinTable();
+    prinTable(); 
     printDot(ar,"Arbol.dot");
     elimArbol(ar);
 

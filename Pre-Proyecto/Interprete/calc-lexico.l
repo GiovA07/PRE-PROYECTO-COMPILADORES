@@ -18,25 +18,19 @@ digito [0-9]
 %%
 "@define"                   { printf("CONSTANTE "); return CONSTANTE; }
 "main"						{ printf("MAIN "); return MAIN; }
-
-
 "return"                    { printf("%s\n", yytext); return RETURN; }
 
-"extern"         			{  printf("%s\n",yytext);   return EXTERN;}
-"program"                   { printf("%s\n", yytext); return PROGRAM; }
-
-"integer"                   { printf("TIPO ENTERO "); return TYPE_INT; }
-"void"                      { printf("%s\n", yytext); return TYPE_VOID; }
+"int"                       { printf("TIPO ENTERO "); return TYPE_INT; }
 "bool"                      { printf("TIPO BOOLEANA "); return TYPE_BOOL; }
+"void"                      { printf("%s\n", yytext); return TYPE_VOID; }
 
 "if"         				{  printf("%s\n",yytext);   return IF;}
-"then"                      {  printf("%s\n",yytext);  return THEN; }
 "else"       				{  printf("%s\n",yytext);   return ELSE;}
 
 "while"                 	{  printf("%s\n",yytext);   return WHILE;}
 
-"true"						{ printf("%s\n", yytext); yylval.symbol = CreateSymbol(strdup(yytext),CONSBOOL,1,yylineno); setValue(yylval.symbol, 1); return TTRUE;}
-"false"						{ printf("%s\n", yytext); yylval.symbol = CreateSymbol(strdup(yytext),CONSBOOL,1,yylineno); setValue(yylval.symbol, 0); return TFALSE; }
+"TRUE"						{ printf("%s\n", yytext); yylval.symbol = CreateSymbol(strdup(yytext),CONSBOOL,1,yylineno); setValue(yylval.symbol, 1); return TTRUE;}
+"FALSE"						{ printf("%s\n", yytext); yylval.symbol = CreateSymbol(strdup(yytext),CONSBOOL,1,yylineno); setValue(yylval.symbol, 0); return TFALSE; }
 
 {digito}+     				{ printf("INT : %d\n",atoi(yytext)); yylval.symbol = CreateSymbol(strdup(yytext),CONSINT,1,yylineno); setValue(yylval.symbol, atoi(yytext)); return INT;}
 
@@ -56,18 +50,15 @@ digito [0-9]
 "{"                         {  printf("%s\n",yytext);  return TLLAVE_OP;}
 "}"                         {  printf("%s\n",yytext);  return TLLAVE_CL;}
 
-"//".*						{ /* Comentario de linea*/}
-"/*"([^*]|[*][^/])*"*/"  	{ /* Comentario bloque */ }
 
+[;,]                        {  printf("%s\n",yytext);  return *yytext;}
 
-[;,]                        { /*printf("%s\n",yytext);*/  return *yytext;}
-
-.|\n                      ; /* ignore all the rest */
+.|\n                          ; /* ignore all the rest */
 
 %%
 
 void yyerror(){
-	 printf("%s%d\n","-> ERROR Sintactico en la linea: ",yylineno);
+	 printf("%s%d\n","-> ERROR Sintactico en la linea: ",yylineno); 
 }
 
 int main(int argc,char *argv[]){
