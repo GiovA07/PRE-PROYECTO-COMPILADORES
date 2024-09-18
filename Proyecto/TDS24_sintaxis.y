@@ -57,8 +57,8 @@ extern int yylineno;
 
 
 /* presedencias */
-%left EQ                    // == 
 %left OR AND                // ||, &&
+%left EQ                    // == 
 %left MAYORQUE MENORQUE     // >, <
 %left TMAS TMENOS           // +, -
 %left TPOR TDIVISION TRESTO // *, /, %

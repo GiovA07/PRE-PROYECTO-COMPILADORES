@@ -6,7 +6,7 @@ bool main(){
     bool d;
     a = 20;
     b = 0;
-    d = a < b && true;
+    d = a < b && 1 == 1;
     /*
     if (a < b) then{
         a = 10;
