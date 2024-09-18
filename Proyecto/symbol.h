@@ -16,6 +16,8 @@ enum TYPES {
     SUMA,
     RESTA,
     PROD,
+    EDIV,
+    ERESTO,
     EOR,
     EAND,
     ENOT,
@@ -27,6 +29,13 @@ enum TYPES {
     RETINT,
     RETBOL,
     RETVOID,
+    EIF,
+    ETHEN,
+    EELSE,
+    EWHILE,
+    EMAYORQUE,
+    EMENORQUE,
+    EEQ,
     OTHERS
 };
 
