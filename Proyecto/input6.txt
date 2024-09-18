@@ -3,15 +3,21 @@ bool main(){
     int a;
     int b;
     int c;
+    bool d;
+    a = 20;
+    b = 0;
+    d = a < b && true;
+    /*
     if (a < b) then{
         a = 10;
         b = 20 + a;
     } else {
         a = 1000;
     }
-
+   
     while (true) {
         c = 10 + b;
     }
-    return false;
+    */
+    return a == 20;
 }

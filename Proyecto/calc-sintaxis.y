@@ -148,7 +148,7 @@ void interprete(struct AST* ar){
     evaluate(ar);
     prinTable();
     printDot(ar,"Arbol.dot");
-    elimArbol(ar);
+    elimArbol(ar); 
 
 }
 
