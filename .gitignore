@@ -399,7 +399,7 @@ FodyWeavers.xsd
 *.exe
 
 # cosas de interprete
-calc-sintaxis.tab.c
-calc-sintaxis.tab.h
-lex.yy.c
+syntax_tab.c
+syntax_tab.h
+lexer.c
 Arbol.dot

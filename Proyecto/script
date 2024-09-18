@@ -1,5 +1,5 @@
 #!/bin/bash
 
-flex calc-lexico.l
-bison -d calc-sintaxis.y
-gcc lex.yy.c calc-sintaxis.tab.c AST.c symbol.c
+flex -olexer.c TDS24_lexico.l
+bison -d TDS24_sintaxis.y -osyntax_tab.c
+gcc -o c-tds lexer.c syntax_tab.c AST.c symbol.c

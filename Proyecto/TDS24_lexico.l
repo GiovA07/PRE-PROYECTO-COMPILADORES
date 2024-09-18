@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include "symbol.h"
 #include "AST.h"
-#include "calc-sintaxis.tab.h"
+#include "syntax_tab.h"
 
 int yyparse();
 
