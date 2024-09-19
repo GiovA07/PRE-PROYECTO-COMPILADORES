@@ -30,4 +30,5 @@ void evaluate(AST* ar);
 void errorNot(AST* ar);
 void errorRet(AST* ar,enum TYPES type);
 void retError();
+void errorCond(AST *ar);
 #endif

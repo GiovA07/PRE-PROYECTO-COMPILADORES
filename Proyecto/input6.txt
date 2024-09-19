@@ -1,23 +1,15 @@
-
-bool main(){
+int main(){
     int a;
     int b;
     int c;
     bool d;
-    a = 20;
-    b = 0;
-    d = a < b && 1 == 1;
-    /*
-    if (a < b) then{
-        a = 10;
-        b = 20 + a;
-    } else {
-        a = 1000;
+    a = 0;
+    b = 20;
+    if (a + b) then {
+        b = 20 * 10;
     }
-   
-    while (true) {
-        c = 10 + b;
+    while(1) {
+        a = 20;
     }
-    */
-    return a == 20;
+    return b;
 }

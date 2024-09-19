@@ -125,7 +125,7 @@ retorno: RETURN expr ';' {char * name = "return";$$ = createTreeWhitSymbol(name,
        ;
 
 /// chequear errores y evaluarlo 
-if_else: IF TPAR_OP expr TPAR_CL THEN TLLAVE_OP list_sents TLLAVE_CL {char * name = "if_then"; $$ = createTreeWhitSymbol(name,ETHEN,1,yylineno,$3, $7);}
+if_else: IF TPAR_OP expr TPAR_CL THEN TLLAVE_OP list_sents TLLAVE_CL {char * name = "if_then"; $$ = createTreeWhitSymbol(name,EIF,1,yylineno,$3, $7);}
        | IF TPAR_OP expr TPAR_CL THEN TLLAVE_OP list_sents TLLAVE_CL ELSE TLLAVE_OP list_sents TLLAVE_CL {char * name = "then"; char * name2 = "else"; 
                                                                                                             struct AST* aux_else = createTreeWhitSymbol(name2,EELSE,1,yylineno,$11, NULL);
                                                                                                             struct AST* aux_then = createTreeWhitSymbol(name,ETHEN,1,yylineno,$7, aux_else);
@@ -139,8 +139,8 @@ while: WHILE TPAR_OP expr TPAR_CL TLLAVE_OP list_sents TLLAVE_CL {char * name = 
 
 void interprete(struct AST* ar){
     createTable(ar);
-    retError();
     typeError(ar);
+    retError();
     if(getError()) {
         elimArbol(ar);
        exit(1);

@@ -27,10 +27,10 @@ digito [0-9]
 "return"                    { return RETURN; }
 "@define"                   { return CONSTANTE; }
 
-"if"         				{ printf("%s\n",yytext);   return IF;   }
-"then"                      { printf("%s\n",yytext);   return THEN; }
-"else"       				{ printf("%s\n",yytext);   return ELSE; }
-"while"                 	{ printf("%s\n",yytext);   return WHILE; }
+"if"         				{ return IF;   }
+"then"                      { return THEN; }
+"else"       				{ return ELSE; }
+"while"                 	{ return WHILE; }
 
 
 
