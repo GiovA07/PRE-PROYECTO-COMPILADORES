@@ -5,11 +5,10 @@ int main(){
     bool d;
     a = 0;
     b = 20;
-    if (a + b) then {
+    if (true) then {
         b = 20 * 10;
-    }
-    while(1) {
-        a = 20;
+    }else {
+        b = 20 * 0;
     }
     return b;
 }

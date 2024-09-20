@@ -2,6 +2,16 @@
 #include "symbol.h"
 #include "stdio.h"
 #include <stdbool.h>
+// Variables globales
+
+// cheker error
+bool err = false;
+//Guardar tipo por defecto del main
+enum TYPES aux = RETVOID;
+//chekear error retorno
+bool errRet = false;
+
+
 
 struct AST* createTree(Tsymbol* symbol, struct AST *l, struct AST *r) {
     AST *arbol = (AST *)malloc(sizeof(AST));
@@ -23,27 +33,6 @@ void elimArbol(AST* tree) {
             elimArbol(tree->right);
         }
         free(tree);
-    }
-}
-
-
-void showTree(AST* tree) {
-    if (tree != NULL) {
-        printf("< %s >",(tree->symbol)->varname);
-        if((tree->left) != NULL){
-            printf("(LEFT:");
-            showTree(tree->left);
-            printf(")");
-        }else {
-            printf("Ø");
-        }
-        if((tree->right) != NULL){
-            printf("(RHIGT:");
-            showTree(tree->right);
-            printf(")");
-        }else {
-            printf("Ø ");
-        }
     }
 }
 
@@ -84,7 +73,6 @@ void printDot(AST* tree, const char* filename) {
     fclose(file);
 }
 
-
 void createTable(AST* ar) {
     if ((ar->symbol)->type == VARBOOL || (ar->symbol)->type == VARINT )  {
         Install(ar->symbol);
@@ -97,20 +85,16 @@ void createTable(AST* ar) {
     }
 }
 
-bool err = false;
-
-enum TYPES aux = RETVOID;
-
-bool errRet = false;
 
 void typeError(AST* ar) {
     if (ar->right != NULL && ar->left != NULL) {
         enum TYPES tipoActual = (ar->symbol)->type;
+        bool operArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
+        bool operBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT ); 
+        bool operCondi = (tipoActual == EMAYORQUE || tipoActual == EMENORQUE || tipoActual == EEQ);
         if (tipoActual == ASIG) {
             errorAsig(ar);
-        }else if(tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO
-                || tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT 
-                ||tipoActual == EMAYORQUE || tipoActual == EMENORQUE || tipoActual == EEQ ) {
+        }else if(operArit || operBool || operCondi) {
             errorOpera(ar, tipoActual);
         }else if(tipoActual == EIF || tipoActual == EWHILE) {
            errorCond(ar);
@@ -391,7 +375,35 @@ void evaluate(AST* ar) {
                 (ar->symbol)->value = (!(ar->left)->symbol->value);
             } 
     }
-    if ((ar->right != NULL && ar->left != NULL)) {
+    if((ar->symbol)->type  == EIF){
+        evaluate(ar->left);
+        struct Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
+        if((strcmp((ar->symbol)->varname,"if_then") == 0)){
+            if(auxIzq){
+                if(auxIzq->value){
+                    evaluate(ar->right);
+                }
+            }else{
+                if(((ar->left)->symbol)->value){
+                    evaluate(ar->right);
+                }
+            }
+        }else if((strcmp((ar->symbol)->varname,"if_else") == 0)){        
+            if(auxIzq){
+                if(auxIzq->value){
+                    evaluate((ar->right)->left);
+                }else{
+                    evaluate((ar->right)->right->left);
+                }
+            }else{
+                if(((ar->left)->symbol)->value){
+                    evaluate((ar->right)->left);
+                }else {
+                    evaluate((ar->right)->right->left);
+                }
+            }
+        }
+    }else if ((ar->right != NULL && ar->left != NULL)) {
         struct Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
         struct Tsymbol* auxDer = Lookup(((ar->right)->symbol)->varname);
         enum TYPES tipoActual = (ar->symbol)->type;
@@ -405,8 +417,6 @@ void evaluate(AST* ar) {
         if (tipoActual == ASIG) {
             setValue(auxIzq, (ar->right)->symbol->value);
         }
-
-        // NO ANDA /
 
         if (tipoActual == SUMA) {
             if (auxDer != NULL && auxIzq != NULL) {
