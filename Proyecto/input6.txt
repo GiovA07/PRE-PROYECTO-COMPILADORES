@@ -2,13 +2,21 @@ int main(){
     int a;
     int b;
     int c;
+    int w;
+    int x;
+    int z;
     bool d;
     a = 0;
     b = 20;
-    if (true) then {
+    if (false) then {
         b = 20 * 10;
+        z = 100;
+        x =10;
+        z=0;
+        return 10;
     }else {
-        b = 20 * 0;
+        b=11;
+        return 11;
     }
-    return b;
+    return 0;
 }
