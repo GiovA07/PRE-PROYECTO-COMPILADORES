@@ -84,7 +84,7 @@ void createTable(AST* ar) {
         createTable(ar->right);
     }
 }
-
+//AST* axuRet = NULL; 
 void typeError(AST* ar) {
     if (ar->right != NULL && ar->left != NULL) {
         enum TYPES tipoActual = (ar->symbol)->type;
@@ -97,11 +97,29 @@ void typeError(AST* ar) {
             errorOpera(ar, tipoActual);
         }else if(tipoActual == EIF || tipoActual == EWHILE) {
            errorCond(ar);
+        //    // posible violacion
+        //    if(strcmp(ar->symbol->varname, "if_then") == 0){
+        //     if(ar->right->left->left){
+        //         if( ar->right->left->left->symbol->type == "ERETURN"){
+        //             printf("existe");
+        //         }
+        //     }else if(ar->right->right->left){
+        //         printf("exixte44");
+        //     }
+        //    }else if(strcmp(ar->symbol->varname, "if_else") == 0){
+        //     if(ar->right->left->right->left->symbol->type == "ERETURN"){
+        //         printf("existe2");
+        //     }
+        //     if(ar->right->right->left->right->left){
+        //         printf("existe3");
+        //     }
+        //    }
         }
     }
     if(strcmp(ar->symbol->varname, "MAIN") == 0){
         aux = ar->symbol->type;
         if(aux == RETBOL ||aux == RETINT) {
+            // axuRet = ar->right->right->left
             errRet = true;
         }
     }

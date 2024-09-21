@@ -1,0 +1,16 @@
+digraph{
+
+rankdir=TB;
+
+node[shape=box];
+"36|  MAIN" -> "13|  DECLARACION", "35|  SENTENCIA";
+"13|  DECLARACION" -> "12|  y" ;
+"35|  SENTENCIA" -> "22|  SENTENCIA", "34|  if_else";
+"22|  SENTENCIA" -> "17|  asignacion", "21|  asignacion";
+"17|  asignacion" -> "16|  y", "15|  0";
+"21|  asignacion" -> "20|  y" ;
+"34|  if_else" -> "25|  ==", "33|  then";
+"25|  ==" -> "23|  y", "24|  1";
+"33|  then" -> "32|  else" ;
+"32|  else" -> "31|  return" ;
+}

@@ -16,16 +16,15 @@ void current_token(enum TYPES type_sym);
 %option noyywrap
 %option yylineno
 
-letra [a-zA-Z]
+letra [a-zA-Z_]
 digito [0-9]
 
 %%
 
 "extern"         			{ printf("%s\n",yytext);   return EXTERN; }
-"program"                   { printf("%s\n", yytext); return PROGRAM; }
+"Program"                   { printf("%s\n", yytext); return PROGRAM; }
 "main"						{ return MAIN; }
 "return"                    { return RETURN; }
-"@define"                   { return CONSTANTE; }
 
 "if"         				{ return IF;   }
 "then"                      { return THEN; }
