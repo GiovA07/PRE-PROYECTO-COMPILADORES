@@ -1,10 +1,11 @@
 %{
 
-#include <stdbool.h>
-#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "AST.h"
+#include <stdlib.h>
+#include <stdbool.h>
+#include "../include/AST.h"
+
 void interprete(struct AST *arbol);
 struct AST* createTreeWhitSymbol(char * name,enum TYPES type,int size, int line, struct AST *l, struct AST *r);
 extern int yylineno;
@@ -185,7 +186,7 @@ while: WHILE TPAR_OP expr TPAR_CL TLLAVE_OP list_sents TLLAVE_CL {char * name = 
 %%
 
 void interprete(struct AST* ar){
-    printDot(ar,"Arbol.dot");
+    printDot(ar,"output/Arbol.dot");
     /* createTable(ar);
     typeError(ar);
     retError();
@@ -195,8 +196,8 @@ void interprete(struct AST* ar){
     }
     
     evaluate(ar);
-    prinTable();
-    elimArbol(ar);  */
+    prinTable();*/
+    elimArbol(ar);  
 
 }
 

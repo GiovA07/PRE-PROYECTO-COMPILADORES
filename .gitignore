@@ -400,6 +400,4 @@ FodyWeavers.xsd
 *.out
 
 # cosas de interprete
-syntax_tab.c
-syntax_tab.h
-lexer.c
+default/

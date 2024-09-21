@@ -1,4 +1,4 @@
-#include "symbol.h"
+#include "../include/symbol.h"
 Tsymbol *table = NULL;
 
 int num = 0;

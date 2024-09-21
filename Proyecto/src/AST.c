@@ -1,7 +1,6 @@
-#include "AST.h"
-#include "symbol.h"
-#include "stdio.h"
-#include <stdbool.h>
+#include "../include/AST.h"
+#include "../include/symbol.h"
+
 // Variables globales
 
 // cheker error

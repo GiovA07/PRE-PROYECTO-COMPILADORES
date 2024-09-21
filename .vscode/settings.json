@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.y": "yacc",
+        "ast.h": "c",
+        "stdio.h": "c"
+    }
+}

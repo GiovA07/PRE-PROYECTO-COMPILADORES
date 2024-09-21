@@ -1,11 +1,10 @@
 %{
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
-#include "symbol.h"
-#include "AST.h"
-#include "syntax_tab.h"
+#include "../include/AST.h"
+#include "../default/syntax_tab.h"
 
 int yyparse();
 
