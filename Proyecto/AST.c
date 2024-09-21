@@ -85,7 +85,6 @@ void createTable(AST* ar) {
     }
 }
 
-
 void typeError(AST* ar) {
     if (ar->right != NULL && ar->left != NULL) {
         enum TYPES tipoActual = (ar->symbol)->type;
@@ -356,14 +355,15 @@ void errorOpera(AST *ar, enum TYPES type){
 }
 
 void evaluate(AST* ar) {        
-    
     if((ar->symbol)->type == ERETURN){
         struct Tsymbol* auxIzqRet = Lookup(((ar->left)->symbol)->varname);
         evaluate(ar->left);
         if(auxIzqRet){
             printf("\033[32mValor retornado : \033[0m%d \n", auxIzqRet->value);
+            exit(1);
         }else {
              printf("\033[32mValor retornado : \033[0m%d \n", ((ar->left)->symbol)->value);
+             exit(1);
         }
     }
     if ((ar->symbol)->type  == ENOT) {
@@ -375,6 +375,7 @@ void evaluate(AST* ar) {
                 (ar->symbol)->value = (!(ar->left)->symbol->value);
             } 
     }
+    // me rompe el retorno ver cual es el error
     if((ar->symbol)->type  == EIF){
         evaluate(ar->left);
         struct Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
