@@ -1,5 +1,7 @@
 Program {
     int inc(int x) {
+        int z;
+        z = 10 + 10;
         return x + 1;
     }
 
@@ -11,7 +13,7 @@ Program {
         y = 0;
         y = get_int();
         if (y == 1) then {
-            print_int(y);
+            print_int(y,0);
         } else {
             return print_int(inc(y));
         }

@@ -44,12 +44,12 @@ void showTreeDot(AST* tree,FILE* file) {
         showTreeDot(tree->right, file);
     }else {
         if (tree->left) {
-        fprintf(file, "\"%d|  %s\" -> \"%d|  %s\" ;\n",(tree->symbol)->id,(tree->symbol)->varname,((tree->left)->symbol)->id, ((tree->left)->symbol)->varname);
-        showTreeDot(tree->left, file);
+            fprintf(file, "\"%d|  %s\" -> \"%d|  %s\" ;\n",(tree->symbol)->id,(tree->symbol)->varname,((tree->left)->symbol)->id, ((tree->left)->symbol)->varname);
+            showTreeDot(tree->left, file);
         }
         if (tree->right) {
-        fprintf(file, "\"%d|  %s\" -> \"%d|  %s\" ;\n",(tree->symbol)->id,(tree->symbol)->varname,((tree->right)->symbol)->id, ((tree->right)->symbol)->varname);
-        showTreeDot(tree->right, file);
+            fprintf(file, "\"%d|  %s\" -> \"%d|  %s\" ;\n",(tree->symbol)->id,(tree->symbol)->varname,((tree->right)->symbol)->id, ((tree->right)->symbol)->varname);
+            showTreeDot(tree->right, file);
         }
     }
 

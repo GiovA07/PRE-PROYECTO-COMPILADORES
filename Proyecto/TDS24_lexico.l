@@ -21,8 +21,8 @@ digito [0-9]
 
 %%
 
-"extern"         			{ printf("%s\n",yytext);   return EXTERN; }
-"Program"                   { printf("%s\n", yytext); return PROGRAM; }
+"extern"         			{ return EXTERN; }
+"Program"                   { return PROGRAM; }
 "main"						{ return MAIN; }
 "return"                    { return RETURN; }
 
