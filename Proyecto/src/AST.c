@@ -1,5 +1,6 @@
 #include "../include/AST.h"
 #include "../include/symbol.h"
+#include "../include/Errors.h"
 
 // Variables globales
 
@@ -83,19 +84,19 @@ void createTable(AST* ar) {
         createTable(ar->right);
     }
 }
-//AST* axuRet = NULL; 
+//AST* axuRet = NULL;
 void typeError(AST* ar) {
     if (ar->right != NULL && ar->left != NULL) {
         enum TYPES tipoActual = (ar->symbol)->type;
         bool operArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
-        bool operBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT ); 
+        bool operBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
         bool operCondi = (tipoActual == EMAYORQUE || tipoActual == EMENORQUE || tipoActual == EEQ);
         if (tipoActual == ASIG) {
-            errorAsig(ar);
+            errorAsig(ar, &err);
         }else if(operArit || operBool || operCondi) {
-            errorOpera(ar, tipoActual);
+            errorOpera(ar, tipoActual, &err);
         }else if(tipoActual == EIF || tipoActual == EWHILE) {
-           errorCond(ar);
+           errorCond(ar, &err);
         //    // posible violacion
         //    if(strcmp(ar->symbol->varname, "if_then") == 0){
         //     if(ar->right->left->left){
@@ -125,253 +126,33 @@ void typeError(AST* ar) {
     if (ar->left != NULL) {
         if(ar->symbol->type == ERETURN){
             errRet = false;
-            errorRet(ar, aux);
+            errorRet(ar, aux, &err);
         }
         if(ar->symbol->type == ENOT){
-            errorNot(ar);
+            errorNot(ar, &err);
         }
         typeError(ar->left);
     }
+
     if (ar->right != NULL) {
         typeError(ar->right);
-    }    
+    }
 }
 
-void errorCond(AST *ar) {
-    Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
-    enum TYPES tipoIzq = ((ar->left)->symbol)->type;
-    if(!auxIzq){
-        if(tipoIzq != EOR && tipoIzq != EAND && tipoIzq != ENOT && tipoIzq != CONSBOOL && tipoIzq != EMAYORQUE && tipoIzq != EMENORQUE && tipoIzq != EEQ ){
-            printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-            err = true;
-        }  
-    }else{
-        if(auxIzq->type != VARBOOL){
-            printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-            err = true;  
-        } 
-    }
-    
-}
+
+
     //creo que no hace falta esto
     // else if(type == ETHEN) {
     //     //Tsymbol* auxDer = Lookup(((ar->right)->symbol)->varname);
     //     enum TYPES tipoDer = ((ar->right)->symbol)->type;
     //     if(tipoDer != EELSE){
     //         printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-    //         err = true;   
+    //         err = true;
     //     }
     // }
 
-void errorNot(AST* ar) {  
-    Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
-    enum TYPES tipoIzq = ((ar->left)->symbol)->type;
-    if(!auxIzq){
-        if(tipoIzq != EOR && tipoIzq != EAND && tipoIzq != ENOT && tipoIzq != CONSBOOL && tipoIzq != EMAYORQUE && tipoIzq != EMENORQUE && tipoIzq != EEQ ){
-            printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-            err = true;
-        }   
-    }else{
-        if(auxIzq->type != VARBOOL){
-            printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-            err = true;  
-        }
-    }
-}
 
-void errorRet(AST* ar,enum TYPES type){
-    Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
-    enum TYPES tipoActualIzq = ((ar->left)->symbol)->type;
-    if(type == RETVOID ){
-            printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-            err = true;
-    } else {
-        if(!auxIzq){
-            if(type == RETINT && tipoActualIzq != SUMA && tipoActualIzq != RESTA && tipoActualIzq != PROD && tipoActualIzq != ERESTO && tipoActualIzq != EDIV && tipoActualIzq != CONSINT) {
-                printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-                err = true;
-            }else if(type == RETBOL && tipoActualIzq != EOR && tipoActualIzq != EAND && tipoActualIzq != ENOT && tipoActualIzq != CONSBOOL && tipoActualIzq != EMAYORQUE && tipoActualIzq != EMENORQUE && tipoActualIzq != EEQ) {
-                printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-                err = true;
-            }
-        }else if(auxIzq && auxIzq->type != VARBOOL && type == RETBOL){
-            printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-            err = true;
-        }else if(auxIzq && auxIzq->type != VARINT && type == RETINT){
-            printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-            err = true;
-        }
-    }
-}
-
-void errorAsig(AST *ar){
-    Tsymbol* auxDer = Lookup(((ar->right)->symbol)->varname);
-    Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
-
-    enum TYPES tipoDer = ((ar->right)->symbol)->type;
-    enum TYPES tipoIzq = ((ar->left)->symbol)->type;
-
-    bool errorIntDer = (tipoDer != SUMA && tipoDer != RESTA && tipoDer != PROD && tipoDer != CONSINT && tipoDer != ERESTO && tipoDer != EDIV);
-    bool errorBoolDer = (tipoDer != EOR && tipoDer != EAND && tipoDer != ENOT && tipoDer != CONSBOOL && tipoDer != EMAYORQUE && tipoDer != EMENORQUE && tipoDer != EEQ);
-    
-    if(auxIzq == NULL && tipoIzq == EID) {
-        printf("\033[33mVariable no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line); 
-        err = true;
-    } else if(auxIzq != NULL && auxDer != NULL && auxIzq->type != auxDer->type) {
-        printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-        err = true;
-    } else if(auxIzq != NULL && auxDer == NULL) {
-        if (tipoDer == EID){
-            printf("\033[33mVariable no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line); 
-            err = true;
-        } else if(auxIzq->type == VARINT && errorIntDer) {
-            printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
-            err = true;
-        } else if(auxIzq->type == VARBOOL && errorBoolDer) {
-            printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
-            err = true;
-        }
-    }
-}
-
-
-
-
-void errorOpera(AST *ar, enum TYPES type){
-
-    Tsymbol* auxDer = Lookup(((ar->right)->symbol)->varname);
-    Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
-
-    enum TYPES tipoDer = ((ar->right)->symbol)->type;
-    enum TYPES tipoIzq = ((ar->left)->symbol)->type;
-
-    bool errorIntDer = (tipoDer != SUMA && tipoDer != RESTA && tipoDer != PROD && tipoDer != CONSINT && tipoDer != ERESTO && tipoDer != EDIV);
-    bool errorIzq = (tipoIzq != SUMA && tipoIzq != RESTA && tipoIzq != PROD && tipoIzq != CONSINT && tipoIzq != ERESTO && tipoIzq != EDIV);
-    
-    
-    if(type == SUMA || type == RESTA || type == PROD || type == ERESTO || type == EDIV) {
-        if(auxIzq != NULL && auxDer != NULL){
-            if(auxIzq->type != VARINT || auxDer->type != VARINT) {
-                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-                err = true;
-            }
-        } else if(auxIzq != NULL && auxDer == NULL) { 
-            if (tipoDer == EID){
-                printf("\033[33mVariable no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line); 
-                err = true;
-            } else if(auxIzq->type != VARINT || errorIntDer) {
-                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
-                err = true;
-            }
-        } else if(auxIzq == NULL && auxDer != NULL) {
-            if (tipoIzq == EID) {
-                printf("\033[33mVariable no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line); 
-                err = true;
-            } else if(auxDer->type != VARINT || errorIzq) {
-                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
-                err = true;  
-            }
-        } else  if(auxIzq == NULL && auxDer == NULL){ 
-            if (tipoIzq == EID || tipoDer == EID){
-                printf("\033[33mVariable no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line); 
-                err = true;
-            } else if(errorIntDer || errorIzq){
-                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
-                err = true;
-            }
-        }
-    } else if(type == EOR || type == EAND || type == ENOT){   
-        bool errorBoolDer = (tipoDer != EOR && tipoDer != EAND && tipoDer != ENOT && tipoDer != CONSBOOL && tipoDer != EMAYORQUE && tipoDer != EMENORQUE && tipoDer != EEQ);
-        bool errorBoolIzq = (tipoIzq != EOR && tipoIzq != EAND && tipoIzq != ENOT && tipoIzq != CONSBOOL && tipoIzq != EMAYORQUE && tipoIzq != EMENORQUE && tipoIzq != EEQ);
-        
-        if(auxIzq != NULL && auxDer != NULL){
-            if(auxIzq->type != VARBOOL || auxDer->type != VARBOOL){
-                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-                err = true;
-            }
-        } else if(auxIzq != NULL && auxDer == NULL) {
-            if (tipoDer == EID) {
-                printf("\033[33mVariable no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line); 
-                err = true;
-            } else if(auxIzq->type != VARBOOL || errorBoolDer ) {
-                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
-                err = true;
-            }
-        } else if(auxIzq == NULL && auxDer != NULL){
-            if (tipoIzq == EID){
-                printf("\033[33mVariable no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line); 
-                err = true;
-            } else if(auxDer->type != VARBOOL || errorBoolIzq){
-                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
-                err = true;
-            }
-        } else if(auxIzq == NULL && auxDer == NULL){ 
-            if (tipoIzq == EID || tipoDer == EID){
-                printf("\033[33mVariable no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line); 
-                err = true;
-            } else if(errorBoolIzq|| errorBoolDer){
-                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
-                err = true;
-            }
-        }
-    }else {
-        //chequer que los hijos de un comparador < > sean distinto de algo bool
-        // chequear que los hijos de comparadores sean distintos a comparadores si o si
-        bool errorIntDer = (tipoDer != SUMA && tipoDer != RESTA && tipoDer != PROD && tipoDer != CONSINT);
-        bool errorSintacticoDer = (tipoDer == EMAYORQUE || tipoDer == EMENORQUE || tipoDer == EEQ );
-
-        bool errorIntIzq = (tipoIzq != SUMA && tipoIzq != RESTA && tipoIzq != PROD && tipoIzq != CONSINT);
-        bool errorSintacticoIzq = (tipoIzq == EMAYORQUE || tipoIzq == EMENORQUE || tipoIzq == EEQ );
-        
-        if(auxIzq != NULL && auxDer != NULL){
-            if(auxIzq->type != VARINT || auxDer->type != VARINT){
-                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-                err = true;
-            }
-        } else if(auxIzq != NULL && auxDer == NULL) {
-            if (tipoDer == EID) {
-                printf("\033[33mVariable no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line); 
-                err = true;
-            } else if(auxIzq->type != VARINT || errorIntDer) {
-                if(errorSintacticoDer){
-                    printf("\033[31mError Sintactico \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
-                    err = true;
-                }else{
-                    printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
-                    err = true;
-                }
-            }
-        } else if(auxIzq == NULL && auxDer != NULL){
-            if (tipoIzq == EID){
-                printf("\033[33mVariable no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line); 
-                err = true;
-            } else if(auxDer->type != VARBOOL || errorIntIzq){
-                if(errorSintacticoIzq){
-                    printf("\033[31mError Sintactico \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
-                    err = true;
-                }else{
-                    printf("\033[31mError de tipo1 \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
-                    err = true;
-                }
-            }
-        } else if(auxIzq == NULL && auxDer == NULL){ 
-            if (tipoIzq == EID || tipoDer == EID){
-                printf("\033[33mVariable no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line); 
-                err = true;
-            } else if(errorIntDer || errorIntIzq){
-                if(errorSintacticoIzq || errorSintacticoDer){
-                    printf("\033[31mError Sintactico \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
-                    err = true;
-                }else{
-                    printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
-                    err = true;
-                }
-            }
-        }
-    }
-}
-
-void evaluate(AST* ar) {        
+void evaluate(AST* ar) {
     if((ar->symbol)->type == ERETURN){
         struct Tsymbol* auxIzqRet = Lookup(((ar->left)->symbol)->varname);
         evaluate(ar->left);
@@ -386,11 +167,11 @@ void evaluate(AST* ar) {
     if ((ar->symbol)->type  == ENOT) {
             struct Tsymbol* auxIzqRet = Lookup(((ar->left)->symbol)->varname);
             evaluate(ar->left);
-            if (auxIzqRet != NULL) {   
+            if (auxIzqRet != NULL) {
                 (ar->symbol)->value =  (!auxIzqRet->value);
             } else {
                 (ar->symbol)->value = (!(ar->left)->symbol->value);
-            } 
+            }
     }
     // me rompe el retorno ver cual es el error
     if((ar->symbol)->type  == EIF){
@@ -406,7 +187,7 @@ void evaluate(AST* ar) {
                     evaluate(ar->right);
                 }
             }
-        }else if((strcmp((ar->symbol)->varname,"if_else") == 0)){        
+        }else if((strcmp((ar->symbol)->varname,"if_else") == 0)){
             if(auxIzq){
                 if(auxIzq->value){
                     evaluate((ar->right)->left);
@@ -425,7 +206,7 @@ void evaluate(AST* ar) {
         struct Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
         struct Tsymbol* auxDer = Lookup(((ar->right)->symbol)->varname);
         enum TYPES tipoActual = (ar->symbol)->type;
-    
+
         if (ar->left != NULL) {
             evaluate(ar->left);
         }
@@ -439,39 +220,39 @@ void evaluate(AST* ar) {
         if (tipoActual == SUMA) {
             if (auxDer != NULL && auxIzq != NULL) {
                 (ar->symbol)->value = auxDer->value + auxIzq->value;
-            } else if (auxDer == NULL && auxIzq != NULL) {   
+            } else if (auxDer == NULL && auxIzq != NULL) {
                 (ar->symbol)->value = (ar->right)->symbol->value + auxIzq->value;
             } else if(auxDer != NULL && auxIzq == NULL){
                 (ar->symbol)->value = auxDer->value + (ar->left)->symbol->value;
             } else {
                 (ar->symbol)->value = (ar->right)->symbol->value + (ar->left)->symbol->value;
             }
-            
+
         }
         if (tipoActual == RESTA) {
             if (auxDer != NULL && auxIzq != NULL) {
                 (ar->symbol)->value =  auxIzq->value - auxDer->value;
-            } else if (auxDer == NULL && auxIzq != NULL) {   
+            } else if (auxDer == NULL && auxIzq != NULL) {
                 (ar->symbol)->value =  auxIzq->value - (ar->right)->symbol->value;
             } else if(auxDer != NULL && auxIzq == NULL){
                 (ar->symbol)->value = (ar->left)->symbol->value - auxDer->value;
             } else {
                 (ar->symbol)->value = (ar->left)->symbol->value - (ar->right)->symbol->value;
             }
-            
+
         }
 
         if (tipoActual == PROD) {
             if (auxDer != NULL && auxIzq != NULL) {
                 (ar->symbol)->value =  auxIzq->value * auxDer->value;
-            } else if (auxDer == NULL && auxIzq != NULL) {   
+            } else if (auxDer == NULL && auxIzq != NULL) {
                 (ar->symbol)->value =  auxIzq->value * (ar->right)->symbol->value;
             } else if(auxDer != NULL && auxIzq == NULL){
                 (ar->symbol)->value = (ar->left)->symbol->value * auxDer->value;
             } else {
                 (ar->symbol)->value = (ar->left)->symbol->value * (ar->right)->symbol->value;
             }
-            
+
         }
 
         if (tipoActual == ERESTO) {
@@ -482,29 +263,29 @@ void evaluate(AST* ar) {
                 }else {
                     (ar->symbol)->value =  auxIzq->value % auxDer->value;
                 }
-            } else if (auxDer == NULL && auxIzq != NULL) {  
+            } else if (auxDer == NULL && auxIzq != NULL) {
                 if((ar->right)->symbol->value == 0) {
                     printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", auxIzq->line);
                     exit(1);
-                }else { 
+                }else {
                     (ar->symbol)->value =  auxIzq->value % (ar->right)->symbol->value;
                 }
             } else if(auxDer != NULL && auxIzq == NULL){
                 if(auxDer->value == 0) {
                     printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
                     exit(1);
-                }else { 
+                }else {
                     (ar->symbol)->value = (ar->left)->symbol->value % auxDer->value ;
                 }
             } else {
                 if((ar->right)->symbol->value == 0) {
                     printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
                     exit(1);
-                }else { 
+                }else {
                     (ar->symbol)->value = (ar->left)->symbol->value % (ar->right)->symbol->value;
                 }
             }
-            
+
         }
 
         if (tipoActual == EDIV) {
@@ -515,90 +296,90 @@ void evaluate(AST* ar) {
                 }else {
                     (ar->symbol)->value =  auxIzq->value / auxDer->value;
                 }
-            } else if (auxDer == NULL && auxIzq != NULL) {  
+            } else if (auxDer == NULL && auxIzq != NULL) {
                 if((ar->right)->symbol->value == 0) {
                     printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", auxIzq->line);
                     exit(1);
-                }else { 
+                }else {
                     (ar->symbol)->value =  auxIzq->value / (ar->right)->symbol->value;
                 }
             } else if(auxDer != NULL && auxIzq == NULL){
                 if(auxDer->value == 0) {
                     printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
                     exit(1);
-                }else { 
+                }else {
                     (ar->symbol)->value = (ar->left)->symbol->value / auxDer->value ;
                 }
             } else {
                 if((ar->right)->symbol->value == 0) {
                     printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
                     exit(1);
-                }else { 
+                }else {
                     (ar->symbol)->value = (ar->left)->symbol->value / (ar->right)->symbol->value;
                 }
             }
-            
+
         }
-        
+
         if (tipoActual == EAND) {
             if (auxDer != NULL && auxIzq != NULL) {
                 (ar->symbol)->value = (auxIzq->value && auxDer->value);
-            } else if (auxDer == NULL && auxIzq != NULL) {   
+            } else if (auxDer == NULL && auxIzq != NULL) {
                 (ar->symbol)->value =  (auxIzq->value && (ar->right)->symbol->value);
             } else if(auxDer != NULL && auxIzq == NULL){
                 (ar->symbol)->value = (ar->left)->symbol->value && auxDer->value;
             } else {
                 (ar->symbol)->value = ((ar->left)->symbol->value && (ar->right)->symbol->value);
             }
-            
+
         }
 
         if (tipoActual == EOR) {
             if (auxDer != NULL && auxIzq != NULL) {
                 (ar->symbol)->value =  (auxIzq->value || auxDer->value);
-            } else if (auxDer == NULL && auxIzq != NULL) {   
+            } else if (auxDer == NULL && auxIzq != NULL) {
                 (ar->symbol)->value =  (auxIzq->value || (ar->right)->symbol->value);
             } else if(auxDer != NULL && auxIzq == NULL){
                 (ar->symbol)->value = (ar->left)->symbol->value || auxDer->value;
             } else {
                 (ar->symbol)->value = ((ar->left)->symbol->value || (ar->right)->symbol->value);
-            } 
+            }
         }
 
         if (tipoActual == EEQ) {
             if (auxDer != NULL && auxIzq != NULL) {
                 (ar->symbol)->value =  (auxIzq->value == auxDer->value);
-            } else if (auxDer == NULL && auxIzq != NULL) {   
+            } else if (auxDer == NULL && auxIzq != NULL) {
                 (ar->symbol)->value =  (auxIzq->value == (ar->right)->symbol->value);
             } else if(auxDer != NULL && auxIzq == NULL){
                 (ar->symbol)->value = (ar->left)->symbol->value == auxDer->value;
             } else {
                 (ar->symbol)->value = ((ar->left)->symbol->value == (ar->right)->symbol->value);
-            } 
+            }
         }
-        
+
         if (tipoActual == EMAYORQUE) {
             if (auxDer != NULL && auxIzq != NULL) {
                 (ar->symbol)->value =  (auxIzq->value > auxDer->value);
-            } else if (auxDer == NULL && auxIzq != NULL) {   
+            } else if (auxDer == NULL && auxIzq != NULL) {
                 (ar->symbol)->value =  (auxIzq->value > (ar->right)->symbol->value);
             } else if(auxDer != NULL && auxIzq == NULL){
                 (ar->symbol)->value = (ar->left)->symbol->value > auxDer->value;
             } else {
                 (ar->symbol)->value = ((ar->left)->symbol->value > (ar->right)->symbol->value);
-            } 
+            }
         }
-        
+
         if (tipoActual == EMENORQUE) {
             if (auxDer != NULL && auxIzq != NULL) {
                 (ar->symbol)->value =  (auxIzq->value < auxDer->value);
-            } else if (auxDer == NULL && auxIzq != NULL) {   
+            } else if (auxDer == NULL && auxIzq != NULL) {
                 (ar->symbol)->value =  (auxIzq->value < (ar->right)->symbol->value);
             } else if(auxDer != NULL && auxIzq == NULL){
                 (ar->symbol)->value = (ar->left)->symbol->value < auxDer->value;
             } else {
                 (ar->symbol)->value = ((ar->left)->symbol->value < (ar->right)->symbol->value);
-            } 
+            }
         }
     }
 }
@@ -614,7 +395,3 @@ void retError(){
 bool getError() {
     return err;
 }
-
-
-
-

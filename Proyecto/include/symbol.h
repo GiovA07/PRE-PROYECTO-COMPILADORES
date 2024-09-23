@@ -39,6 +39,7 @@ enum TYPES {
     EFUNC,
     EFUNCEXTERN,
     EPROGRAM,
+    EBLOQ,
     OTHERS
 };
 

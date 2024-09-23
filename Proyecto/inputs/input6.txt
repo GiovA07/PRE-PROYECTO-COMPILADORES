@@ -10,7 +10,10 @@ Program {
 
     void main() {
         int y;
-        y = 0;
+        bool s;
+        y = true;
+        y = true + 1;
+        s = 20;
         y = get_int();
         if (y == 1) then {
             print_int(y,0);

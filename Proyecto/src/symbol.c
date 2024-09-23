@@ -22,7 +22,7 @@ void Install(Tsymbol *symbol){
     symbol->next =  table;
     table = symbol;
   } else {
-    printf("Simbolo existen, linea de error: %d", symbol->line);
+    printf("Simbolo existente, linea de error: %d", symbol->line);
     exit(1);
   }
 }
@@ -61,7 +61,7 @@ void prinTable(){
 }
 
 void setValue(Tsymbol* symbol, int valor){
-    if(symbol != NULL) { 
+    if(symbol != NULL) {
       symbol->value = valor;
     } else {
         printf("Error: simbolo es NULL\n");

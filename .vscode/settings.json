@@ -1,7 +1,11 @@
 {
     "files.associations": {
+        "*.java": "java",
+        "*.c++": "cpp",
         "*.y": "yacc",
         "ast.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "symbol.h": "c",
+        "errors.h": "c"
     }
 }
