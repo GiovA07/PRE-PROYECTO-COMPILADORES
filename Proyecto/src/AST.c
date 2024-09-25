@@ -73,9 +73,19 @@ void printDot(AST* tree, const char* filename) {
     fclose(file);
 }
 
+
 void createTable(AST* ar) {
-    if ((ar->symbol)->type == VARBOOL || (ar->symbol)->type == VARINT )  {
+    enum TYPES tipoActual = (ar->symbol)->type;
+    if(tipoActual == RETINT || tipoActual == RETBOL || tipoActual == RETVOID) {
         Install(ar->symbol);
+    }
+    if (tipoActual == VARBOOL || tipoActual == VARINT )  {       
+        Tsymbol* aux = LookupTable(ar->symbol->size);
+        if(aux) {
+            InstallTable(ar->symbol,aux);
+        }else {
+            Install(ar->symbol);
+        }
     }
     if (ar->left != NULL) {
         createTable(ar->left);
@@ -93,38 +103,43 @@ void typeError(AST* ar) {
         bool operCondi = (tipoActual == EMAYORQUE || tipoActual == EMENORQUE || tipoActual == EEQ);
         if (tipoActual == ASIG) {
             errorAsig(ar, &err);
-        }else if(operArit || operBool || operCondi) {
+        }
+        else if(operArit || operBool || operCondi) {
             errorOpera(ar, tipoActual, &err);
         }else if(tipoActual == EIF || tipoActual == EWHILE) {
            errorCond(ar, &err);
-        //    // posible violacion
-        //    if(strcmp(ar->symbol->varname, "if_then") == 0){
+        
+        // posible violacion retorno
+        // if(strcmp(ar->symbol->varname, "if_then") == 0){
         //     if(ar->right->left->left){
-        //         if( ar->right->left->left->symbol->type == "ERETURN"){
+        //         if( ar->right->left->left->symbol->type == ERETURN){
         //             printf("existe");
         //         }
         //     }else if(ar->right->right->left){
         //         printf("exixte44");
         //     }
         //    }else if(strcmp(ar->symbol->varname, "if_else") == 0){
-        //     if(ar->right->left->right->left->symbol->type == "ERETURN"){
+        //     if(ar->right->left->right->left->symbol->type == ERETURN){
         //         printf("existe2");
         //     }
         //     if(ar->right->right->left->right->left){
         //         printf("existe3");
         //     }
         //    }
+        // 
         }
     }
-    if(strcmp(ar->symbol->varname, "MAIN") == 0){
+    if((ar->symbol->type == RETVOID)){
         aux = ar->symbol->type;
-        if(aux == RETBOL ||aux == RETINT) {
-            // axuRet = ar->right->right->left
-            errRet = true;
-        }
+    }
+    if(ar->symbol->type == RETINT || ar->symbol->type == RETBOL){
+        
+        aux = ar->symbol->type;
+        errRet = true;
     }
     if (ar->left != NULL) {
         if(ar->symbol->type == ERETURN){
+            //printf("%s\n", string[aux]);
             errRet = false;
             errorRet(ar, aux, &err);
         }
