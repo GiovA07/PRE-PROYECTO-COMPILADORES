@@ -229,7 +229,7 @@ void evaluate_op_booleanos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* err)
         enum TYPES tipoIzq = ((ar->left)->symbol)->type;
         bool errorBoolDer = (tipoDer != EOR && tipoDer != EAND && tipoDer != ENOT && tipoDer != CONSBOOL && tipoDer != EMAYORQUE && tipoDer != EMENORQUE && tipoDer != EEQ);
         bool errorBoolIzq = (tipoIzq != EOR && tipoIzq != EAND && tipoIzq != ENOT && tipoIzq != CONSBOOL && tipoIzq != EMAYORQUE && tipoIzq != EMENORQUE && tipoIzq != EEQ);
-        
+        // agregar a operaciones
         if(auxIzq != NULL && auxDer != NULL){
             if(auxIzq->type != VARBOOL || auxDer->type != VARBOOL){
                 printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
