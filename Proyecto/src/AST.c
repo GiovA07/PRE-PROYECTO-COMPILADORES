@@ -127,6 +127,8 @@ void typeError(AST* ar) {
         //     }
         //    }
         // 
+        // }else if(tipoActual == CALL_F){
+        //     errorCallF(ar,&err);
         }
     }
     if((ar->symbol->type == RETVOID)){
@@ -139,7 +141,6 @@ void typeError(AST* ar) {
     }
     if (ar->left != NULL) {
         if(ar->symbol->type == ERETURN){
-            //printf("%s\n", string[aux]);
             errRet = false;
             errorRet(ar, aux, &err);
         }
