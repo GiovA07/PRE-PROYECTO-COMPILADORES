@@ -13,5 +13,6 @@ void errorOpera(AST *ar, enum TYPES type, bool* err);
 void errorRet(AST* ar, enum TYPES type, bool* err);
 void evaluate_op_aritmeticos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* err);
 void evaluate_op_booleanos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* err);
+void errorCallF(AST* ar, bool* err);
 
 #endif

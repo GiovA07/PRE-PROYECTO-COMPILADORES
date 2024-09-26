@@ -9,7 +9,7 @@ Program {
     bool get_bool() extern;
 
     int get_int() extern;
-    void print_int(int i) extern;
+    void print_int(int i,int x, bool z) extern;
 
     bool main() {
         int y;
@@ -19,7 +19,8 @@ Program {
         y = inc(1);
         s = true;
         s = true;
-        if (y < 10) then {
+        print_int(s);
+        if ( get_bool() || y + y ) then {
             print_int(y);
         } else {
             print_int(y);

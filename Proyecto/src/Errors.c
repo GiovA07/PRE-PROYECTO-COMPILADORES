@@ -11,7 +11,7 @@ void errorCond(AST *ar, bool* err) {
         if(tipoIzq == CALL_F){
             Tsymbol *typeFunc = Lookup((ar->left)->left->symbol->varname);
             if(typeFunc->type != RETBOL){
-                printf("\033[31mError de tipo de retorno \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
                 *err = true;
             }
         }else if(tipoIzq != EOR && tipoIzq != EAND && tipoIzq != ENOT && tipoIzq != CONSBOOL && tipoIzq != EMAYORQUE && tipoIzq != EMENORQUE && tipoIzq != EEQ ){
@@ -225,41 +225,70 @@ void errorOpera(AST *ar, enum TYPES type, bool* err){
 
 
 void evaluate_op_booleanos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* err) {
-        enum TYPES tipoDer = ((ar->right)->symbol)->type;
-        enum TYPES tipoIzq = ((ar->left)->symbol)->type;
-        bool errorBoolDer = (tipoDer != EOR && tipoDer != EAND && tipoDer != ENOT && tipoDer != CONSBOOL && tipoDer != EMAYORQUE && tipoDer != EMENORQUE && tipoDer != EEQ);
-        bool errorBoolIzq = (tipoIzq != EOR && tipoIzq != EAND && tipoIzq != ENOT && tipoIzq != CONSBOOL && tipoIzq != EMAYORQUE && tipoIzq != EMENORQUE && tipoIzq != EEQ);
-        // agregar a operaciones
-        if(auxIzq != NULL && auxDer != NULL){
-            if(auxIzq->type != VARBOOL || auxDer->type != VARBOOL){
+    enum TYPES tipoDer = ((ar->right)->symbol)->type;
+    enum TYPES tipoIzq = ((ar->left)->symbol)->type;
+    bool errorBoolDer = (tipoDer != EOR && tipoDer != EAND && tipoDer != ENOT && tipoDer != CONSBOOL && tipoDer != EMAYORQUE && tipoDer != EMENORQUE && tipoDer != EEQ);
+    bool errorBoolIzq = (tipoIzq != EOR && tipoIzq != EAND && tipoIzq != ENOT && tipoIzq != CONSBOOL && tipoIzq != EMAYORQUE && tipoIzq != EMENORQUE && tipoIzq != EEQ);
+    //Tsymbol *typeFuncDer = Lookup((ar->right)->left->symbol->varname);
+    //Tsymbol *typeFuncIzq = Lookup((ar->left)->left->symbol->varname);
+    // agregar a operaciones
+    if(auxIzq != NULL && auxDer != NULL){
+        if(auxIzq->type != VARBOOL || auxDer->type != VARBOOL){
+            printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+            *err = true;
+        }
+    } else if(auxIzq != NULL && auxDer == NULL) {
+        if (tipoDer == EID) {
+            printf("\033[33mVariable no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+            *err = true;
+        } else if(tipoDer == CALL_F){
+            Tsymbol *typeFuncDer = Lookup((ar->right)->left->symbol->varname);
+            if(auxIzq->type != VARBOOL || typeFuncDer->type != RETBOL){
                 printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
                 *err = true;
             }
-        } else if(auxIzq != NULL && auxDer == NULL) {
-            if (tipoDer == EID) {
-                printf("\033[33mVariable no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-                *err = true;
-            } else if(auxIzq->type != VARBOOL || errorBoolDer ) {
-                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
-                *err = true;
-            }
-        } else if(auxIzq == NULL && auxDer != NULL){
-            if (tipoIzq == EID){
-                printf("\033[33mVariable no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-                *err = true;
-            } else if(auxDer->type != VARBOOL || errorBoolIzq){
-                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
+        }else if(auxIzq->type != VARBOOL || errorBoolDer ) {
+            printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
+            *err = true;
+        }
+    } else if(auxIzq == NULL && auxDer != NULL){
+        if (tipoIzq == EID){
+            printf("\033[33mVariable no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+            *err = true;
+        } else if(tipoIzq == CALL_F){
+            Tsymbol *typeFuncIzq = Lookup((ar->left)->left->symbol->varname);
+            if(auxDer->type != VARBOOL || typeFuncIzq->type != RETBOL){
+                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
                 *err = true;
             }
-        } else if(auxIzq == NULL && auxDer == NULL){
-            if (tipoIzq == EID || tipoDer == EID){
-                printf("\033[33mVariable no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-                *err = true;
-            } else if(errorBoolIzq|| errorBoolDer){
-                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
+        }else if(auxDer->type != VARBOOL || errorBoolIzq){
+            printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
+            *err = true;
+        }
+    } else if(auxIzq == NULL && auxDer == NULL){
+        if (tipoIzq == EID || tipoDer == EID){
+            printf("\033[33mVariable no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+            *err = true;
+        } 
+        if(tipoDer == CALL_F){
+            Tsymbol *typeFuncDer = Lookup((ar->right)->left->symbol->varname);
+            if(typeFuncDer->type != RETBOL){
+                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
                 *err = true;
             }
         }
+        if(tipoIzq == CALL_F){
+            Tsymbol *typeFuncIzq = Lookup((ar->left)->left->symbol->varname);
+            if(typeFuncIzq->type != RETBOL){
+                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+                *err = true;
+            }
+        }
+        if((errorBoolIzq && tipoIzq != CALL_F) || (errorBoolDer &&  tipoDer != CALL_F)){
+            printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
+            *err = true;
+        }
+    }
 }
 
 
@@ -281,7 +310,13 @@ void evaluate_op_aritmeticos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* er
         if (tipoDer == EID){
             printf("\033[33mVariablezzz no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
             *err = true;
-        } else if(auxIzq->type != VARINT || errorIntDer) {
+        } else if(tipoDer == CALL_F){
+            Tsymbol *typeFuncDer = Lookup((ar->right)->left->symbol->varname);
+            if(auxIzq->type != VARINT || typeFuncDer->type != RETINT){
+                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+                *err = true;
+            }
+        }else if(auxIzq->type != VARINT || errorIntDer) {
             printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
             *err = true;
         }
@@ -289,7 +324,13 @@ void evaluate_op_aritmeticos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* er
         if (tipoIzq == EID) {
             printf("\033[33mVariableeeee no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
             *err = true;
-        } else if(auxDer->type != VARINT || errorIzq) {
+        }  else if(tipoIzq == CALL_F){
+            Tsymbol *typeFuncIzq = Lookup((ar->left)->left->symbol->varname);
+            if(auxDer->type != VARINT || typeFuncIzq->type != RETINT){
+                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+                *err = true;
+            }
+        }else if(auxDer->type != VARINT || errorIzq) {
             printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
             *err = true;
         }
@@ -297,9 +338,38 @@ void evaluate_op_aritmeticos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* er
         if (tipoIzq == EID || tipoDer == EID){
             printf("\033[33mVariablexxx no declarada \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
             *err = true;
-        } else if(errorIntDer || errorIzq){
+        }
+        if(tipoDer == CALL_F){
+            Tsymbol *typeFuncDer = Lookup((ar->right)->left->symbol->varname);
+            if(typeFuncDer->type != RETINT){
+                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+                *err = true;
+            }
+        }
+        if(tipoIzq == CALL_F){
+            Tsymbol *typeFuncIzq = Lookup((ar->left)->left->symbol->varname);
+            if(typeFuncIzq->type != RETINT){
+                printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+                *err = true;
+            }
+        }
+        if((errorIzq && tipoIzq != CALL_F) || (errorIntDer &&  tipoDer != CALL_F)){
             printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
             *err = true;
         }
     }
 }
+
+// void errorCallF(AST* ar, bool* err){
+//     Tsymbol *typeFuncIzq = LookupTable((ar->left->)symbol->size);
+//     Tsymbol *head = typeFuncIzq->table;
+//     while(head != NULL) {
+//         if(ar)
+//         break;
+//     }
+//     if(!head){
+//         printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->right)->symbol)->line);
+//         *err = true;
+//     }
+
+// }
