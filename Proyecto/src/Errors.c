@@ -340,16 +340,3 @@ void evaluate_op_aritmeticos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* er
         }
 }
 
-// void errorCallF(AST* ar, bool* err){
-//     Tsymbol *typeFuncIzq = LookupTable((ar->left->)symbol->size);
-//     Tsymbol *head = typeFuncIzq->table;
-//     while(head != NULL) {
-//         if(ar)
-//         break;
-//     }
-//     if(!head){
-//         printf("\033[31mError de tipo \033[0m, error en la linea: %d\n", ((ar->right)->symbol)->line);
-//         *err = true;
-//     }
-
-// }

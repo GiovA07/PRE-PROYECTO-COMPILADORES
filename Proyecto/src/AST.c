@@ -147,11 +147,11 @@ void errorCall(AST *ar){
         int *typesParam = typeParam(func);
 
         for (int j = 0; j < len; j++) {
-            printf("Tipo de parametro: %s \n", string[typesParam[j]]);
-            printf("Tipo de argumento: %s \n", string[typesArg[j]]);
+            // printf("Tipo de parametro: %s \n", string[typesParam[j]]);
+            // printf("Tipo de argumento: %s \n", string[typesArg[j]]);
 
-            bool bolCond1 = (typesParam[j] == PARAMBOOL) && (typesArg[j] == VARINT || typesArg[j] == CONSINT);
-            bool bolCond2 = (typesParam[j] == PARAMINT ) && (typesArg[j] == VARBOOL || typesArg[j] == CONSBOOL);
+            bool bolCond1 = (typesParam[j] == PARAMBOOL) && (typesArg[j] == VARINT || typesArg[j] == CONSINT|| typesArg[j] == RETINT);
+            bool bolCond2 = (typesParam[j] == PARAMINT ) && (typesArg[j] == VARBOOL || typesArg[j] == CONSBOOL || typesArg[j] == RETBOL);
 
             if  ( bolCond1 || bolCond2 ) {
                 printf("\033[31mError de tipo en la funcion llamada \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
@@ -167,22 +167,25 @@ void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size){
     if(ar->left != NULL){
         recorrer(ar->left, tipos, index, maxArg, size);
     }
-
     if(ar->right != NULL){
         recorrer(ar->right, tipos, index, maxArg, size);
     }
-    if(ar->symbol->type != ARGS){
+    if(ar->symbol->type != ARGS && ar->symbol->type != EFUNC ){
         //guardar el tipo
         if(*index < maxArg) {
             Tsymbol* func1 = LookupTable(size);
-
             Tsymbol* arg = LookupInTable(ar->symbol->varname,func1);
+
             if (arg == NULL) {
-                if (ar->symbol->type == CONSINT || ar->symbol->type == CONSBOOL ) {
+                if(ar->symbol->type == CALL_F) {
+                    Tsymbol *typeFunc = Lookup(ar->left->symbol->varname);
+                    tipos[*index] = typeFunc->type;
+                    (*index)++;
+                }else if (ar->symbol->type == CONSINT || ar->symbol->type == CONSBOOL ) {
                     tipos[*index] = ar->symbol->type;
                     (*index)++;
-                } else {
-                    printf("Argumento no declarado %d\n",  ar->symbol->line);
+                }else {
+                    printf("\033[31mArgumento no declarado \033[0m, error en la linea: %d\n", (ar->symbol)->line);
                     err = true;
                 }
             } else {

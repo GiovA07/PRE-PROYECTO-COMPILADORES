@@ -15,7 +15,7 @@ Program {
         int s;
         int x;
         bool y;
-        print_int(1, 2, true);
+        print_int(1 , 2, get_bool());
         get_bool();
         inc(s);
         return 1;

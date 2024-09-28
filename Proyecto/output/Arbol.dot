@@ -3,7 +3,7 @@ digraph{
 rankdir=TB;
 
 node[shape=box];
-"72|  PROGRAM" -> "40|  LIS_FUNCION", "71|  MAIN";
+"74|  PROGRAM" -> "40|  LIS_FUNCION", "73|  MAIN";
 "40|  LIS_FUNCION" -> "29|  LIS_FUNCION", "39|  print_int";
 "29|  LIS_FUNCION" -> "26|  LIS_FUNCION", "28|  get_int";
 "26|  LIS_FUNCION" -> "23|  LIS_FUNCION", "25|  get_bool";
@@ -21,18 +21,19 @@ node[shape=box];
 "39|  print_int" -> "38|  DECLARACION" ;
 "38|  DECLARACION" -> "32|  i", "37|  DECLARACION";
 "37|  DECLARACION" -> "34|  x", "36|  z";
-"71|  MAIN" -> "49|  DECLARACION", "70|  SENTENCIA";
+"73|  MAIN" -> "49|  DECLARACION", "72|  SENTENCIA";
 "49|  DECLARACION" -> "46|  DECLARACION", "48|  y";
 "46|  DECLARACION" -> "43|  DECLARACION", "45|  x";
 "43|  DECLARACION" -> "42|  s" ;
-"70|  SENTENCIA" -> "67|  SENTENCIA", "69|  return";
-"67|  SENTENCIA" -> "62|  SENTENCIA", "66|  LLAMADA_FUNC";
-"62|  SENTENCIA" -> "58|  SENTENCIA", "61|  LLAMADA_FUNC";
-"58|  SENTENCIA" -> "57|  LLAMADA_FUNC" ;
-"57|  LLAMADA_FUNC" -> "56|  print_int", "55|  arguments";
-"55|  arguments" -> "53|  arguments", "54|  true";
+"72|  SENTENCIA" -> "69|  SENTENCIA", "71|  return";
+"69|  SENTENCIA" -> "64|  SENTENCIA", "68|  LLAMADA_FUNC";
+"64|  SENTENCIA" -> "60|  SENTENCIA", "63|  LLAMADA_FUNC";
+"60|  SENTENCIA" -> "59|  LLAMADA_FUNC" ;
+"59|  LLAMADA_FUNC" -> "58|  print_int", "57|  arguments";
+"57|  arguments" -> "53|  arguments", "56|  LLAMADA_FUNC";
 "53|  arguments" -> "51|  1", "52|  2";
-"61|  LLAMADA_FUNC" -> "60|  get_bool" ;
-"66|  LLAMADA_FUNC" -> "65|  inc", "64|  s";
-"69|  return" -> "68|  1" ;
+"56|  LLAMADA_FUNC" -> "55|  get_bool" ;
+"63|  LLAMADA_FUNC" -> "62|  get_bool" ;
+"68|  LLAMADA_FUNC" -> "67|  inc", "66|  s";
+"71|  return" -> "70|  1" ;
 }
