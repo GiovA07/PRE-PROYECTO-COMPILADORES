@@ -41,10 +41,13 @@ enum TYPES {
     EPROGRAM,
     EBLOQ,
     CALL_F,
+    ARGS,
+    PARAMINT,
+    PARAMBOOL,
     OTHERS
 };
 
-char static string[35][36] = {"VAR","EMAIN","VARINT","VARBOOL","CONSINT","CONSBOOL","SUMA","RESTA","PROD","EDIV","ERESTO","EOR","EAND","ENOT","ASIG","DECLA","SENTEN","EID","ERETURN","RETINT","RETBOL","RETVOID","EIF","ETHEN","EELSE","EWHILE","EMAYORQUE","EMENORQUE","EEQ","EFUNC","EFUNCEXTERN","EPROGRAM","EBLOQ","CALL_F","OTHERS"};
+char static string[38][39] = {"VAR","EMAIN","VARINT","VARBOOL","CONSINT","CONSBOOL","SUMA","RESTA","PROD","EDIV","ERESTO","EOR","EAND","ENOT","ASIG","DECLA","SENTEN","EID","ERETURN","RETINT","RETBOL","RETVOID","EIF","ETHEN","EELSE","EWHILE","EMAYORQUE","EMENORQUE","EEQ","EFUNC","EFUNCEXTERN","EPROGRAM","EBLOQ","CALL_F","ARGS", "PARAMINT", "PARAMBOOL","OTHERS"};
 
 
 typedef struct Tsymbol {
@@ -55,7 +58,7 @@ typedef struct Tsymbol {
     struct Tsymbol *next;
     int line;
     int value;
-    struct Tsymbol *table; 
+    struct Tsymbol *table;
 } Tsymbol;
 
 struct Tsymbol *Lookup(char * name);  // Returns a pointer to the symbol table entry for the variable, returns NULL otherwise.
@@ -68,5 +71,7 @@ void setValue(Tsymbol* symbol, int value);
 void InstallTable(Tsymbol *symbol,Tsymbol *symTabla);
 struct Tsymbol *LookupTable(int size);
 struct Tsymbol *LookupInTable(char * name,Tsymbol* symTabla);
-void DeleteListTable(Tsymbol* symbol);// no anda
+int cantArguments(Tsymbol* symTabla);
+int* typeParam(Tsymbol* symTabla);
+
 #endif

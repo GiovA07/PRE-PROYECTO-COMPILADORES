@@ -11,22 +11,14 @@ Program {
     int get_int() extern;
     void print_int(int i,int x, bool z) extern;
 
-    bool main() {
-        int y;
-        bool s;
+    int main() {
+        int s;
         int x;
-        y = 20;
-        y = inc(1);
-        s = true;
-        s = true;
-        print_int(s);
-        if ( get_bool() || y + y ) then {
-            print_int(y);
-        } else {
-            print_int(y);
-        }
-        return get_bool();
-
+        bool y;
+        print_int(1, 2, true);
+        get_bool();
+        inc(s);
+        return 1;
     }
 }
 

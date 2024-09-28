@@ -41,7 +41,7 @@ digito [0-9]
 
 {digito}+     				{ current_token(CONSINT); return INT; }
 
-{letra}({letra}|{digito})*  { yylval.symbol = CreateSymbol(strdup(yytext),EID,1,yylineno); return ID; }
+{letra}({letra}|{digito})*  { yylval.symbol = CreateSymbol(strdup(yytext),EID,0,yylineno); return ID; }
 
 
 "||"                        { return OR;  }

@@ -25,4 +25,8 @@ void evaluate(AST* ar);
 bool getError();
 void retError();
 
+
+void errorCall(AST *ar);
+void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size);
+
 #endif

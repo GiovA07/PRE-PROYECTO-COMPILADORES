@@ -114,7 +114,7 @@ declaracion: TYPE_INT ID ';'  {char * name = $2->varname; $$ = createTreeWhitSym
 
 argumento:                         {$$ = NULL;}
          | expr                    {$$ = $1;}
-         | argumento ',' expr      {char * name = "arguments"; $$ = createTreeWhitSymbol(name,OTHERS, blockNum, yylineno, $1, $3);}
+         | argumento ',' expr      {char * name = "arguments"; $$ = createTreeWhitSymbol(name,ARGS, blockNum, yylineno, $1, $3);}
          ;
 
 
@@ -123,8 +123,8 @@ parametros:                                 {$$ = NULL;}
           | dec_parametro ',' parametros    {char * name = "DECLARACION"; $$ = createTreeWhitSymbol(name,DECLA,blockNum,yylineno,$1, $3);}
           ;
 
-dec_parametro : TYPE_INT ID  {char * name = $2->varname; $$ = createTreeWhitSymbol(name,VARINT,blockNum,yylineno,NULL, NULL);}
-              | TYPE_BOOL ID  {char * name = $2->varname;$$ = createTreeWhitSymbol(name,VARBOOL,blockNum,yylineno,NULL, NULL);}
+dec_parametro : TYPE_INT ID  {char * name = $2->varname; $$ = createTreeWhitSymbol(name,PARAMINT,blockNum,yylineno,NULL, NULL);}
+              | TYPE_BOOL ID  {char * name = $2->varname;$$ = createTreeWhitSymbol(name,PARAMBOOL,blockNum,yylineno,NULL, NULL);}
               ;
 
 
