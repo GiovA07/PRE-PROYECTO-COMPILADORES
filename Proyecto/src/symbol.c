@@ -111,10 +111,36 @@ void InstallTable(Tsymbol *symbol,Tsymbol *symTabla){
   } else {
     printf("Simbolo existente, linea de error: %d", symbol->line);
     exit(1);
-  } 
+  }
 }
 
-// ver 
+int cantArguments(Tsymbol* symTabla){
+  int cant = 0;
+  Tsymbol *aux = symTabla->table;
+  while(aux != NULL) {
+    if (aux->type == PARAMBOOL || aux->type == PARAMINT) {
+      cant += 1;
+    }
+    aux = aux->next;
+  }
+  return cant;
+}
+
+int* typeParam(Tsymbol* symTabla){
+  int index = cantArguments(symTabla);
+  int* types = (int*) malloc(index * sizeof(int));
+  index -= 1;
+  Tsymbol *aux = symTabla->table;
+  while(aux != NULL) {
+    if (aux->type == PARAMINT || aux->type == PARAMBOOL) {
+      types[index] = aux->type;
+      index -= 1;
+    }
+    aux = aux->next;
+  }
+  return types;
+}
+// ver
 // void DeleteListTable(Tsymbol* symbol){
 //   Tsymbol *aux;
 //   while(symbol->table != NULL) {

@@ -79,7 +79,7 @@ void createTable(AST* ar) {
     if(tipoActual == RETINT || tipoActual == RETBOL || tipoActual == RETVOID) {
         Install(ar->symbol);
     }
-    if (tipoActual == VARBOOL || tipoActual == VARINT )  {       
+    if (tipoActual == VARBOOL || tipoActual == VARINT || tipoActual == PARAMINT || tipoActual == PARAMBOOL)  {
         Tsymbol* aux = LookupTable(ar->symbol->size);
         if(aux) {
             InstallTable(ar->symbol,aux);
@@ -108,36 +108,17 @@ void typeError(AST* ar) {
             errorOpera(ar, tipoActual, &err);
         }else if(tipoActual == EIF || tipoActual == EWHILE) {
            errorCond(ar, &err);
-        
-        // posible violacion retorno
-        // if(strcmp(ar->symbol->varname, "if_then") == 0){
-        //     if(ar->right->left->left){
-        //         if( ar->right->left->left->symbol->type == ERETURN){
-        //             printf("existe");
-        //         }
-        //     }else if(ar->right->right->left){
-        //         printf("exixte44");
-        //     }
-        //    }else if(strcmp(ar->symbol->varname, "if_else") == 0){
-        //     if(ar->right->left->right->left->symbol->type == ERETURN){
-        //         printf("existe2");
-        //     }
-        //     if(ar->right->right->left->right->left){
-        //         printf("existe3");
-        //     }
-        //    }
-        // 
-        // }else if(tipoActual == CALL_F){
-        //     errorCallF(ar,&err);
         }
     }
     if((ar->symbol->type == RETVOID)){
         aux = ar->symbol->type;
     }
     if(ar->symbol->type == RETINT || ar->symbol->type == RETBOL){
-        
         aux = ar->symbol->type;
         errRet = true;
+    }
+    if(ar->symbol->type == CALL_F) {
+        errorCall(ar);
     }
     if (ar->left != NULL) {
         if(ar->symbol->type == ERETURN){
@@ -149,23 +130,71 @@ void typeError(AST* ar) {
         }
         typeError(ar->left);
     }
-
     if (ar->right != NULL) {
         typeError(ar->right);
     }
 }
 
+void errorCall(AST *ar){
+    Tsymbol* func1 = Lookup(ar->left->symbol->varname);
+    Tsymbol* func = LookupTable(func1->size);
+    int len = cantArguments(func);
+    int index = 0;
+    if (len != 0) {
+        int typesArg[len];
+        recorrer(ar->right,typesArg, &index, len, ar->symbol->size);
+        int i = 0;
+        int *typesParam = typeParam(func);
 
+        for (int j = 0; j < len; j++) {
+            printf("Tipo de parametro: %s \n", string[typesParam[j]]);
+            printf("Tipo de argumento: %s \n", string[typesArg[j]]);
 
-    //creo que no hace falta esto
-    // else if(type == ETHEN) {
-    //     //Tsymbol* auxDer = Lookup(((ar->right)->symbol)->varname);
-    //     enum TYPES tipoDer = ((ar->right)->symbol)->type;
-    //     if(tipoDer != EELSE){
-    //         printf("\033[31mError de tipo \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-    //         err = true;
-    //     }
-    // }
+            bool bolCond1 = (typesParam[j] == PARAMBOOL) && (typesArg[j] == VARINT || typesArg[j] == CONSINT);
+            bool bolCond2 = (typesParam[j] == PARAMINT ) && (typesArg[j] == VARBOOL || typesArg[j] == CONSBOOL);
+
+            if  ( bolCond1 || bolCond2 ) {
+                printf("\033[31mError de tipo en la funcion llamada \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
+                err = true;
+            }
+        }
+
+    }
+
+}
+
+void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size){
+    if(ar->left != NULL){
+        recorrer(ar->left, tipos, index, maxArg, size);
+    }
+
+    if(ar->right != NULL){
+        recorrer(ar->right, tipos, index, maxArg, size);
+    }
+    if(ar->symbol->type != ARGS){
+        //guardar el tipo
+        if(*index < maxArg) {
+            Tsymbol* func1 = LookupTable(size);
+
+            Tsymbol* arg = LookupInTable(ar->symbol->varname,func1);
+            if (arg == NULL) {
+                if (ar->symbol->type == CONSINT || ar->symbol->type == CONSBOOL ) {
+                    tipos[*index] = ar->symbol->type;
+                    (*index)++;
+                } else {
+                    printf("Argumento no declarado %d\n",  ar->symbol->line);
+                    err = true;
+                }
+            } else {
+                tipos[*index] = arg->type;
+                (*index)++;
+            }
+        } else {
+            err = true;
+        }
+    }
+}
+
 
 
 void evaluate(AST* ar) {
@@ -411,3 +440,24 @@ void retError(){
 bool getError() {
     return err;
 }
+
+        // posible violacion retorno
+        // if(strcmp(ar->symbol->varname, "if_then") == 0){
+        //     if(ar->right->left->left){
+        //         if( ar->right->left->left->symbol->type == ERETURN){
+        //             printf("existe");
+        //         }
+        //     }else if(ar->right->right->left){
+        //         printf("exixte44");
+        //     }
+        //    }else if(strcmp(ar->symbol->varname, "if_else") == 0){
+        //     if(ar->right->left->right->left->symbol->type == ERETURN){
+        //         printf("existe2");
+        //     }
+        //     if(ar->right->right->left->right->left){
+        //         printf("existe3");
+        //     }
+        //    }
+        //
+        // }else if(tipoActual == CALL_F){
+        //     errorCallF(ar,&err);
