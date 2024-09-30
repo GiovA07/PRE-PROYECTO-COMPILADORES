@@ -43,7 +43,7 @@ int main(int argc, char const *argv[])
         } while (i < argc);
     }
     
-    printf("\nCompilacion terminada, me debe una mamada\n");        
+    printf("\nCompilacion terminada\n");        
         
     return 0;
 }
