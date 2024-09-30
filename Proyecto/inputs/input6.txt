@@ -1,7 +1,13 @@
 Program {
+
+    int aux;
+    int aux7;
+    bool gg;
+
     int inc(int x) {
         int z;
         x = 3;
+        gg = 10 == 10;
         z = 10 + 10;
         return 1;
     }
@@ -12,12 +18,13 @@ Program {
     void print_int(int i,int x, bool z) extern;
 
     int main() {
-        int s;
-        int x;
-        bool y;
-        print_int(1 , 2, get_bool());
+        int w;
+        bool z;
+        aux = 1;
+        gg = true || false;
+        print_int(aux, 2, get_bool());
         get_bool();
-        inc(s);
+        inc(1);
         return 1;
     }
 }

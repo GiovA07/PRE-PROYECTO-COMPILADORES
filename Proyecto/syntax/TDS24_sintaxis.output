@@ -1,0 +1,2100 @@
+Gramática
+
+    0 $accept: prog $end
+
+    1 prog: PROGRAM TLLAVE_OP list_decls list_func main TLLAVE_CL
+    2     | PROGRAM TLLAVE_OP main TLLAVE_CL
+    3     | PROGRAM TLLAVE_OP list_func main TLLAVE_CL
+    4     | PROGRAM TLLAVE_OP list_decls main TLLAVE_CL
+
+    5 main: TYPE_BOOL MAIN TPAR_OP TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+    6     | TYPE_INT MAIN TPAR_OP TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+    7     | TYPE_VOID MAIN TPAR_OP TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+
+    8 list_decls: declaracion
+    9           | list_decls declaracion
+
+   10 list_sents: ε
+   11           | list_sents sentencia
+
+   12 sentencia: asignacion
+   13          | retorno
+   14          | if_else
+   15          | while
+   16          | call_func ';'
+
+   17 asignacion: ID ASIGNACION expr ';'
+
+   18 call_func: ID TPAR_OP argumento TPAR_CL
+
+   19 declaracion: TYPE_INT ID ';'
+   20            | TYPE_BOOL ID ';'
+
+   21 argumento: ε
+   22          | expr
+   23          | argumento ',' expr
+
+   24 parametros: ε
+   25           | dec_parametro
+   26           | dec_parametro ',' parametros
+
+   27 dec_parametro: TYPE_INT ID
+   28              | TYPE_BOOL ID
+
+   29 list_func: declare_funcion
+   30          | list_func declare_funcion
+
+   31 declare_funcion: TYPE_INT ID TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   32                | TYPE_BOOL ID TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   33                | TYPE_VOID ID TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   34                | TYPE_INT ID TPAR_OP parametros TPAR_CL EXTERN ';'
+   35                | TYPE_BOOL ID TPAR_OP parametros TPAR_CL EXTERN ';'
+   36                | TYPE_VOID ID TPAR_OP parametros TPAR_CL EXTERN ';'
+
+   37 expr: valor
+   38     | call_func
+   39     | expr TMAS expr
+   40     | expr TMENOS expr
+   41     | expr TPOR expr
+   42     | expr TDIVISION expr
+   43     | expr TRESTO expr
+   44     | expr MAYORQUE expr
+   45     | expr MENORQUE expr
+   46     | expr EQ expr
+   47     | expr AND expr
+   48     | expr OR expr
+   49     | NOT expr
+   50     | TPAR_OP expr TPAR_CL
+
+   51 valor: INT
+   52      | ID
+   53      | TMENOS INT
+   54      | TTRUE
+   55      | TFALSE
+
+   56 retorno: RETURN expr ';'
+
+   57 if_else: IF TPAR_OP expr TPAR_CL THEN TLLAVE_OP list_sents TLLAVE_CL
+   58        | IF TPAR_OP expr TPAR_CL THEN TLLAVE_OP list_sents TLLAVE_CL ELSE TLLAVE_OP list_sents TLLAVE_CL
+
+   59 while: WHILE TPAR_OP expr TPAR_CL TLLAVE_OP list_sents TLLAVE_CL
+
+
+Terminales con las reglas donde aparecen
+
+    $end (0) 0
+    ',' (44) 23 26
+    ';' (59) 16 17 19 20 34 35 36 56
+    error (256)
+    ID <symbol> (258) 17 18 19 20 27 28 31 32 33 34 35 36 52
+    INT <symbol> (259) 51 53
+    TTRUE <symbol> (260) 54
+    TFALSE <symbol> (261) 55
+    TYPE_INT (262) 6 19 27 31 34
+    TYPE_BOOL (263) 5 20 28 32 35
+    TYPE_VOID (264) 7 33 36
+    TMAS (265) 39
+    TPOR (266) 41
+    TMENOS (267) 40 53
+    TDIVISION (268) 42
+    TRESTO (269) 43
+    ASIGNACION (270) 17
+    TPAR_OP (271) 5 6 7 18 31 32 33 34 35 36 50 57 58 59
+    TPAR_CL (272) 5 6 7 18 31 32 33 34 35 36 50 57 58 59
+    TLLAVE_OP (273) 1 2 3 4 5 6 7 31 32 33 57 58 59
+    TLLAVE_CL (274) 1 2 3 4 5 6 7 31 32 33 57 58 59
+    OR (275) 48
+    AND (276) 47
+    NOT (277) 49
+    MAYORQUE (278) 44
+    MENORQUE (279) 45
+    EQ (280) 46
+    PROGRAM (281) 1 2 3 4
+    EXTERN (282) 34 35 36
+    THEN (283) 57 58
+    IF (284) 57 58
+    ELSE (285) 58
+    WHILE (286) 59
+    RETURN (287) 56
+    MAIN (288) 5 6 7
+
+
+No terminales con las reglas donde aparecen
+
+    $accept (36)
+        on left: 0
+    prog <arbol> (37)
+        on left: 1 2 3 4
+        on right: 0
+    main <arbol> (38)
+        on left: 5 6 7
+        on right: 1 2 3 4
+    list_decls <arbol> (39)
+        on left: 8 9
+        on right: 1 4 5 6 7 9 31 32 33
+    list_sents <arbol> (40)
+        on left: 10 11
+        on right: 5 6 7 11 31 32 33 57 58 59
+    sentencia <arbol> (41)
+        on left: 12 13 14 15 16
+        on right: 11
+    asignacion <arbol> (42)
+        on left: 17
+        on right: 12
+    call_func <arbol> (43)
+        on left: 18
+        on right: 16 38
+    declaracion <arbol> (44)
+        on left: 19 20
+        on right: 8 9
+    argumento <arbol> (45)
+        on left: 21 22 23
+        on right: 18 23
+    parametros <arbol> (46)
+        on left: 24 25 26
+        on right: 26 31 32 33 34 35 36
+    dec_parametro <arbol> (47)
+        on left: 27 28
+        on right: 25 26
+    list_func <arbol> (48)
+        on left: 29 30
+        on right: 1 3 30
+    declare_funcion <arbol> (49)
+        on left: 31 32 33 34 35 36
+        on right: 29 30
+    expr <arbol> (50)
+        on left: 37 38 39 40 41 42 43 44 45 46 47 48 49 50
+        on right: 17 22 23 39 40 41 42 43 44 45 46 47 48 49 50 56 57 58 59
+    valor <arbol> (51)
+        on left: 51 52 53 54 55
+        on right: 37
+    retorno <arbol> (52)
+        on left: 56
+        on right: 13
+    if_else <arbol> (53)
+        on left: 57 58
+        on right: 14
+    while <arbol> (54)
+        on left: 59
+        on right: 15
+
+
+Estado 0
+
+    0 $accept: • prog $end
+
+    PROGRAM  desplazar e ir al estado 1
+
+    prog  ir al estado 2
+
+
+Estado 1
+
+    1 prog: PROGRAM • TLLAVE_OP list_decls list_func main TLLAVE_CL
+    2     | PROGRAM • TLLAVE_OP main TLLAVE_CL
+    3     | PROGRAM • TLLAVE_OP list_func main TLLAVE_CL
+    4     | PROGRAM • TLLAVE_OP list_decls main TLLAVE_CL
+
+    TLLAVE_OP  desplazar e ir al estado 3
+
+
+Estado 2
+
+    0 $accept: prog • $end
+
+    $end  desplazar e ir al estado 4
+
+
+Estado 3
+
+    1 prog: PROGRAM TLLAVE_OP • list_decls list_func main TLLAVE_CL
+    2     | PROGRAM TLLAVE_OP • main TLLAVE_CL
+    3     | PROGRAM TLLAVE_OP • list_func main TLLAVE_CL
+    4     | PROGRAM TLLAVE_OP • list_decls main TLLAVE_CL
+
+    TYPE_INT   desplazar e ir al estado 5
+    TYPE_BOOL  desplazar e ir al estado 6
+    TYPE_VOID  desplazar e ir al estado 7
+
+    main             ir al estado 8
+    list_decls       ir al estado 9
+    declaracion      ir al estado 10
+    list_func        ir al estado 11
+    declare_funcion  ir al estado 12
+
+
+Estado 4
+
+    0 $accept: prog $end •
+
+    $default  aceptar
+
+
+Estado 5
+
+    6 main: TYPE_INT • MAIN TPAR_OP TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   19 declaracion: TYPE_INT • ID ';'
+   31 declare_funcion: TYPE_INT • ID TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   34                | TYPE_INT • ID TPAR_OP parametros TPAR_CL EXTERN ';'
+
+    ID    desplazar e ir al estado 13
+    MAIN  desplazar e ir al estado 14
+
+
+Estado 6
+
+    5 main: TYPE_BOOL • MAIN TPAR_OP TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   20 declaracion: TYPE_BOOL • ID ';'
+   32 declare_funcion: TYPE_BOOL • ID TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   35                | TYPE_BOOL • ID TPAR_OP parametros TPAR_CL EXTERN ';'
+
+    ID    desplazar e ir al estado 15
+    MAIN  desplazar e ir al estado 16
+
+
+Estado 7
+
+    7 main: TYPE_VOID • MAIN TPAR_OP TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   33 declare_funcion: TYPE_VOID • ID TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   36                | TYPE_VOID • ID TPAR_OP parametros TPAR_CL EXTERN ';'
+
+    ID    desplazar e ir al estado 17
+    MAIN  desplazar e ir al estado 18
+
+
+Estado 8
+
+    2 prog: PROGRAM TLLAVE_OP main • TLLAVE_CL
+
+    TLLAVE_CL  desplazar e ir al estado 19
+
+
+Estado 9
+
+    1 prog: PROGRAM TLLAVE_OP list_decls • list_func main TLLAVE_CL
+    4     | PROGRAM TLLAVE_OP list_decls • main TLLAVE_CL
+    9 list_decls: list_decls • declaracion
+
+    TYPE_INT   desplazar e ir al estado 5
+    TYPE_BOOL  desplazar e ir al estado 6
+    TYPE_VOID  desplazar e ir al estado 7
+
+    main             ir al estado 20
+    declaracion      ir al estado 21
+    list_func        ir al estado 22
+    declare_funcion  ir al estado 12
+
+
+Estado 10
+
+    8 list_decls: declaracion •
+
+    $default  reduce usando la regla 8 (list_decls)
+
+
+Estado 11
+
+    3 prog: PROGRAM TLLAVE_OP list_func • main TLLAVE_CL
+   30 list_func: list_func • declare_funcion
+
+    TYPE_INT   desplazar e ir al estado 23
+    TYPE_BOOL  desplazar e ir al estado 24
+    TYPE_VOID  desplazar e ir al estado 7
+
+    main             ir al estado 25
+    declare_funcion  ir al estado 26
+
+
+Estado 12
+
+   29 list_func: declare_funcion •
+
+    $default  reduce usando la regla 29 (list_func)
+
+
+Estado 13
+
+   19 declaracion: TYPE_INT ID • ';'
+   31 declare_funcion: TYPE_INT ID • TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   34                | TYPE_INT ID • TPAR_OP parametros TPAR_CL EXTERN ';'
+
+    TPAR_OP  desplazar e ir al estado 27
+    ';'      desplazar e ir al estado 28
+
+
+Estado 14
+
+    6 main: TYPE_INT MAIN • TPAR_OP TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+
+    TPAR_OP  desplazar e ir al estado 29
+
+
+Estado 15
+
+   20 declaracion: TYPE_BOOL ID • ';'
+   32 declare_funcion: TYPE_BOOL ID • TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   35                | TYPE_BOOL ID • TPAR_OP parametros TPAR_CL EXTERN ';'
+
+    TPAR_OP  desplazar e ir al estado 30
+    ';'      desplazar e ir al estado 31
+
+
+Estado 16
+
+    5 main: TYPE_BOOL MAIN • TPAR_OP TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+
+    TPAR_OP  desplazar e ir al estado 32
+
+
+Estado 17
+
+   33 declare_funcion: TYPE_VOID ID • TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   36                | TYPE_VOID ID • TPAR_OP parametros TPAR_CL EXTERN ';'
+
+    TPAR_OP  desplazar e ir al estado 33
+
+
+Estado 18
+
+    7 main: TYPE_VOID MAIN • TPAR_OP TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+
+    TPAR_OP  desplazar e ir al estado 34
+
+
+Estado 19
+
+    2 prog: PROGRAM TLLAVE_OP main TLLAVE_CL •
+
+    $default  reduce usando la regla 2 (prog)
+
+
+Estado 20
+
+    4 prog: PROGRAM TLLAVE_OP list_decls main • TLLAVE_CL
+
+    TLLAVE_CL  desplazar e ir al estado 35
+
+
+Estado 21
+
+    9 list_decls: list_decls declaracion •
+
+    $default  reduce usando la regla 9 (list_decls)
+
+
+Estado 22
+
+    1 prog: PROGRAM TLLAVE_OP list_decls list_func • main TLLAVE_CL
+   30 list_func: list_func • declare_funcion
+
+    TYPE_INT   desplazar e ir al estado 23
+    TYPE_BOOL  desplazar e ir al estado 24
+    TYPE_VOID  desplazar e ir al estado 7
+
+    main             ir al estado 36
+    declare_funcion  ir al estado 26
+
+
+Estado 23
+
+    6 main: TYPE_INT • MAIN TPAR_OP TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   31 declare_funcion: TYPE_INT • ID TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   34                | TYPE_INT • ID TPAR_OP parametros TPAR_CL EXTERN ';'
+
+    ID    desplazar e ir al estado 37
+    MAIN  desplazar e ir al estado 14
+
+
+Estado 24
+
+    5 main: TYPE_BOOL • MAIN TPAR_OP TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   32 declare_funcion: TYPE_BOOL • ID TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   35                | TYPE_BOOL • ID TPAR_OP parametros TPAR_CL EXTERN ';'
+
+    ID    desplazar e ir al estado 38
+    MAIN  desplazar e ir al estado 16
+
+
+Estado 25
+
+    3 prog: PROGRAM TLLAVE_OP list_func main • TLLAVE_CL
+
+    TLLAVE_CL  desplazar e ir al estado 39
+
+
+Estado 26
+
+   30 list_func: list_func declare_funcion •
+
+    $default  reduce usando la regla 30 (list_func)
+
+
+Estado 27
+
+   31 declare_funcion: TYPE_INT ID TPAR_OP • parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   34                | TYPE_INT ID TPAR_OP • parametros TPAR_CL EXTERN ';'
+
+    TYPE_INT   desplazar e ir al estado 40
+    TYPE_BOOL  desplazar e ir al estado 41
+
+    $default  reduce usando la regla 24 (parametros)
+
+    parametros     ir al estado 42
+    dec_parametro  ir al estado 43
+
+
+Estado 28
+
+   19 declaracion: TYPE_INT ID ';' •
+
+    $default  reduce usando la regla 19 (declaracion)
+
+
+Estado 29
+
+    6 main: TYPE_INT MAIN TPAR_OP • TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+
+    TPAR_CL  desplazar e ir al estado 44
+
+
+Estado 30
+
+   32 declare_funcion: TYPE_BOOL ID TPAR_OP • parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   35                | TYPE_BOOL ID TPAR_OP • parametros TPAR_CL EXTERN ';'
+
+    TYPE_INT   desplazar e ir al estado 40
+    TYPE_BOOL  desplazar e ir al estado 41
+
+    $default  reduce usando la regla 24 (parametros)
+
+    parametros     ir al estado 45
+    dec_parametro  ir al estado 43
+
+
+Estado 31
+
+   20 declaracion: TYPE_BOOL ID ';' •
+
+    $default  reduce usando la regla 20 (declaracion)
+
+
+Estado 32
+
+    5 main: TYPE_BOOL MAIN TPAR_OP • TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+
+    TPAR_CL  desplazar e ir al estado 46
+
+
+Estado 33
+
+   33 declare_funcion: TYPE_VOID ID TPAR_OP • parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   36                | TYPE_VOID ID TPAR_OP • parametros TPAR_CL EXTERN ';'
+
+    TYPE_INT   desplazar e ir al estado 40
+    TYPE_BOOL  desplazar e ir al estado 41
+
+    $default  reduce usando la regla 24 (parametros)
+
+    parametros     ir al estado 47
+    dec_parametro  ir al estado 43
+
+
+Estado 34
+
+    7 main: TYPE_VOID MAIN TPAR_OP • TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+
+    TPAR_CL  desplazar e ir al estado 48
+
+
+Estado 35
+
+    4 prog: PROGRAM TLLAVE_OP list_decls main TLLAVE_CL •
+
+    $default  reduce usando la regla 4 (prog)
+
+
+Estado 36
+
+    1 prog: PROGRAM TLLAVE_OP list_decls list_func main • TLLAVE_CL
+
+    TLLAVE_CL  desplazar e ir al estado 49
+
+
+Estado 37
+
+   31 declare_funcion: TYPE_INT ID • TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   34                | TYPE_INT ID • TPAR_OP parametros TPAR_CL EXTERN ';'
+
+    TPAR_OP  desplazar e ir al estado 27
+
+
+Estado 38
+
+   32 declare_funcion: TYPE_BOOL ID • TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   35                | TYPE_BOOL ID • TPAR_OP parametros TPAR_CL EXTERN ';'
+
+    TPAR_OP  desplazar e ir al estado 30
+
+
+Estado 39
+
+    3 prog: PROGRAM TLLAVE_OP list_func main TLLAVE_CL •
+
+    $default  reduce usando la regla 3 (prog)
+
+
+Estado 40
+
+   27 dec_parametro: TYPE_INT • ID
+
+    ID  desplazar e ir al estado 50
+
+
+Estado 41
+
+   28 dec_parametro: TYPE_BOOL • ID
+
+    ID  desplazar e ir al estado 51
+
+
+Estado 42
+
+   31 declare_funcion: TYPE_INT ID TPAR_OP parametros • TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   34                | TYPE_INT ID TPAR_OP parametros • TPAR_CL EXTERN ';'
+
+    TPAR_CL  desplazar e ir al estado 52
+
+
+Estado 43
+
+   25 parametros: dec_parametro •
+   26           | dec_parametro • ',' parametros
+
+    ','  desplazar e ir al estado 53
+
+    $default  reduce usando la regla 25 (parametros)
+
+
+Estado 44
+
+    6 main: TYPE_INT MAIN TPAR_OP TPAR_CL • TLLAVE_OP list_decls list_sents TLLAVE_CL
+
+    TLLAVE_OP  desplazar e ir al estado 54
+
+
+Estado 45
+
+   32 declare_funcion: TYPE_BOOL ID TPAR_OP parametros • TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   35                | TYPE_BOOL ID TPAR_OP parametros • TPAR_CL EXTERN ';'
+
+    TPAR_CL  desplazar e ir al estado 55
+
+
+Estado 46
+
+    5 main: TYPE_BOOL MAIN TPAR_OP TPAR_CL • TLLAVE_OP list_decls list_sents TLLAVE_CL
+
+    TLLAVE_OP  desplazar e ir al estado 56
+
+
+Estado 47
+
+   33 declare_funcion: TYPE_VOID ID TPAR_OP parametros • TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL
+   36                | TYPE_VOID ID TPAR_OP parametros • TPAR_CL EXTERN ';'
+
+    TPAR_CL  desplazar e ir al estado 57
+
+
+Estado 48
+
+    7 main: TYPE_VOID MAIN TPAR_OP TPAR_CL • TLLAVE_OP list_decls list_sents TLLAVE_CL
+
+    TLLAVE_OP  desplazar e ir al estado 58
+
+
+Estado 49
+
+    1 prog: PROGRAM TLLAVE_OP list_decls list_func main TLLAVE_CL •
+
+    $default  reduce usando la regla 1 (prog)
+
+
+Estado 50
+
+   27 dec_parametro: TYPE_INT ID •
+
+    $default  reduce usando la regla 27 (dec_parametro)
+
+
+Estado 51
+
+   28 dec_parametro: TYPE_BOOL ID •
+
+    $default  reduce usando la regla 28 (dec_parametro)
+
+
+Estado 52
+
+   31 declare_funcion: TYPE_INT ID TPAR_OP parametros TPAR_CL • TLLAVE_OP list_decls list_sents TLLAVE_CL
+   34                | TYPE_INT ID TPAR_OP parametros TPAR_CL • EXTERN ';'
+
+    TLLAVE_OP  desplazar e ir al estado 59
+    EXTERN     desplazar e ir al estado 60
+
+
+Estado 53
+
+   26 parametros: dec_parametro ',' • parametros
+
+    TYPE_INT   desplazar e ir al estado 40
+    TYPE_BOOL  desplazar e ir al estado 41
+
+    $default  reduce usando la regla 24 (parametros)
+
+    parametros     ir al estado 61
+    dec_parametro  ir al estado 43
+
+
+Estado 54
+
+    6 main: TYPE_INT MAIN TPAR_OP TPAR_CL TLLAVE_OP • list_decls list_sents TLLAVE_CL
+
+    TYPE_INT   desplazar e ir al estado 62
+    TYPE_BOOL  desplazar e ir al estado 63
+
+    list_decls   ir al estado 64
+    declaracion  ir al estado 10
+
+
+Estado 55
+
+   32 declare_funcion: TYPE_BOOL ID TPAR_OP parametros TPAR_CL • TLLAVE_OP list_decls list_sents TLLAVE_CL
+   35                | TYPE_BOOL ID TPAR_OP parametros TPAR_CL • EXTERN ';'
+
+    TLLAVE_OP  desplazar e ir al estado 65
+    EXTERN     desplazar e ir al estado 66
+
+
+Estado 56
+
+    5 main: TYPE_BOOL MAIN TPAR_OP TPAR_CL TLLAVE_OP • list_decls list_sents TLLAVE_CL
+
+    TYPE_INT   desplazar e ir al estado 62
+    TYPE_BOOL  desplazar e ir al estado 63
+
+    list_decls   ir al estado 67
+    declaracion  ir al estado 10
+
+
+Estado 57
+
+   33 declare_funcion: TYPE_VOID ID TPAR_OP parametros TPAR_CL • TLLAVE_OP list_decls list_sents TLLAVE_CL
+   36                | TYPE_VOID ID TPAR_OP parametros TPAR_CL • EXTERN ';'
+
+    TLLAVE_OP  desplazar e ir al estado 68
+    EXTERN     desplazar e ir al estado 69
+
+
+Estado 58
+
+    7 main: TYPE_VOID MAIN TPAR_OP TPAR_CL TLLAVE_OP • list_decls list_sents TLLAVE_CL
+
+    TYPE_INT   desplazar e ir al estado 62
+    TYPE_BOOL  desplazar e ir al estado 63
+
+    list_decls   ir al estado 70
+    declaracion  ir al estado 10
+
+
+Estado 59
+
+   31 declare_funcion: TYPE_INT ID TPAR_OP parametros TPAR_CL TLLAVE_OP • list_decls list_sents TLLAVE_CL
+
+    TYPE_INT   desplazar e ir al estado 62
+    TYPE_BOOL  desplazar e ir al estado 63
+
+    list_decls   ir al estado 71
+    declaracion  ir al estado 10
+
+
+Estado 60
+
+   34 declare_funcion: TYPE_INT ID TPAR_OP parametros TPAR_CL EXTERN • ';'
+
+    ';'  desplazar e ir al estado 72
+
+
+Estado 61
+
+   26 parametros: dec_parametro ',' parametros •
+
+    $default  reduce usando la regla 26 (parametros)
+
+
+Estado 62
+
+   19 declaracion: TYPE_INT • ID ';'
+
+    ID  desplazar e ir al estado 73
+
+
+Estado 63
+
+   20 declaracion: TYPE_BOOL • ID ';'
+
+    ID  desplazar e ir al estado 74
+
+
+Estado 64
+
+    6 main: TYPE_INT MAIN TPAR_OP TPAR_CL TLLAVE_OP list_decls • list_sents TLLAVE_CL
+    9 list_decls: list_decls • declaracion
+
+    TYPE_INT   desplazar e ir al estado 62
+    TYPE_BOOL  desplazar e ir al estado 63
+
+    $default  reduce usando la regla 10 (list_sents)
+
+    list_sents   ir al estado 75
+    declaracion  ir al estado 21
+
+
+Estado 65
+
+   32 declare_funcion: TYPE_BOOL ID TPAR_OP parametros TPAR_CL TLLAVE_OP • list_decls list_sents TLLAVE_CL
+
+    TYPE_INT   desplazar e ir al estado 62
+    TYPE_BOOL  desplazar e ir al estado 63
+
+    list_decls   ir al estado 76
+    declaracion  ir al estado 10
+
+
+Estado 66
+
+   35 declare_funcion: TYPE_BOOL ID TPAR_OP parametros TPAR_CL EXTERN • ';'
+
+    ';'  desplazar e ir al estado 77
+
+
+Estado 67
+
+    5 main: TYPE_BOOL MAIN TPAR_OP TPAR_CL TLLAVE_OP list_decls • list_sents TLLAVE_CL
+    9 list_decls: list_decls • declaracion
+
+    TYPE_INT   desplazar e ir al estado 62
+    TYPE_BOOL  desplazar e ir al estado 63
+
+    $default  reduce usando la regla 10 (list_sents)
+
+    list_sents   ir al estado 78
+    declaracion  ir al estado 21
+
+
+Estado 68
+
+   33 declare_funcion: TYPE_VOID ID TPAR_OP parametros TPAR_CL TLLAVE_OP • list_decls list_sents TLLAVE_CL
+
+    TYPE_INT   desplazar e ir al estado 62
+    TYPE_BOOL  desplazar e ir al estado 63
+
+    list_decls   ir al estado 79
+    declaracion  ir al estado 10
+
+
+Estado 69
+
+   36 declare_funcion: TYPE_VOID ID TPAR_OP parametros TPAR_CL EXTERN • ';'
+
+    ';'  desplazar e ir al estado 80
+
+
+Estado 70
+
+    7 main: TYPE_VOID MAIN TPAR_OP TPAR_CL TLLAVE_OP list_decls • list_sents TLLAVE_CL
+    9 list_decls: list_decls • declaracion
+
+    TYPE_INT   desplazar e ir al estado 62
+    TYPE_BOOL  desplazar e ir al estado 63
+
+    $default  reduce usando la regla 10 (list_sents)
+
+    list_sents   ir al estado 81
+    declaracion  ir al estado 21
+
+
+Estado 71
+
+    9 list_decls: list_decls • declaracion
+   31 declare_funcion: TYPE_INT ID TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls • list_sents TLLAVE_CL
+
+    TYPE_INT   desplazar e ir al estado 62
+    TYPE_BOOL  desplazar e ir al estado 63
+
+    $default  reduce usando la regla 10 (list_sents)
+
+    list_sents   ir al estado 82
+    declaracion  ir al estado 21
+
+
+Estado 72
+
+   34 declare_funcion: TYPE_INT ID TPAR_OP parametros TPAR_CL EXTERN ';' •
+
+    $default  reduce usando la regla 34 (declare_funcion)
+
+
+Estado 73
+
+   19 declaracion: TYPE_INT ID • ';'
+
+    ';'  desplazar e ir al estado 28
+
+
+Estado 74
+
+   20 declaracion: TYPE_BOOL ID • ';'
+
+    ';'  desplazar e ir al estado 31
+
+
+Estado 75
+
+    6 main: TYPE_INT MAIN TPAR_OP TPAR_CL TLLAVE_OP list_decls list_sents • TLLAVE_CL
+   11 list_sents: list_sents • sentencia
+
+    ID         desplazar e ir al estado 83
+    TLLAVE_CL  desplazar e ir al estado 84
+    IF         desplazar e ir al estado 85
+    WHILE      desplazar e ir al estado 86
+    RETURN     desplazar e ir al estado 87
+
+    sentencia   ir al estado 88
+    asignacion  ir al estado 89
+    call_func   ir al estado 90
+    retorno     ir al estado 91
+    if_else     ir al estado 92
+    while       ir al estado 93
+
+
+Estado 76
+
+    9 list_decls: list_decls • declaracion
+   32 declare_funcion: TYPE_BOOL ID TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls • list_sents TLLAVE_CL
+
+    TYPE_INT   desplazar e ir al estado 62
+    TYPE_BOOL  desplazar e ir al estado 63
+
+    $default  reduce usando la regla 10 (list_sents)
+
+    list_sents   ir al estado 94
+    declaracion  ir al estado 21
+
+
+Estado 77
+
+   35 declare_funcion: TYPE_BOOL ID TPAR_OP parametros TPAR_CL EXTERN ';' •
+
+    $default  reduce usando la regla 35 (declare_funcion)
+
+
+Estado 78
+
+    5 main: TYPE_BOOL MAIN TPAR_OP TPAR_CL TLLAVE_OP list_decls list_sents • TLLAVE_CL
+   11 list_sents: list_sents • sentencia
+
+    ID         desplazar e ir al estado 83
+    TLLAVE_CL  desplazar e ir al estado 95
+    IF         desplazar e ir al estado 85
+    WHILE      desplazar e ir al estado 86
+    RETURN     desplazar e ir al estado 87
+
+    sentencia   ir al estado 88
+    asignacion  ir al estado 89
+    call_func   ir al estado 90
+    retorno     ir al estado 91
+    if_else     ir al estado 92
+    while       ir al estado 93
+
+
+Estado 79
+
+    9 list_decls: list_decls • declaracion
+   33 declare_funcion: TYPE_VOID ID TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls • list_sents TLLAVE_CL
+
+    TYPE_INT   desplazar e ir al estado 62
+    TYPE_BOOL  desplazar e ir al estado 63
+
+    $default  reduce usando la regla 10 (list_sents)
+
+    list_sents   ir al estado 96
+    declaracion  ir al estado 21
+
+
+Estado 80
+
+   36 declare_funcion: TYPE_VOID ID TPAR_OP parametros TPAR_CL EXTERN ';' •
+
+    $default  reduce usando la regla 36 (declare_funcion)
+
+
+Estado 81
+
+    7 main: TYPE_VOID MAIN TPAR_OP TPAR_CL TLLAVE_OP list_decls list_sents • TLLAVE_CL
+   11 list_sents: list_sents • sentencia
+
+    ID         desplazar e ir al estado 83
+    TLLAVE_CL  desplazar e ir al estado 97
+    IF         desplazar e ir al estado 85
+    WHILE      desplazar e ir al estado 86
+    RETURN     desplazar e ir al estado 87
+
+    sentencia   ir al estado 88
+    asignacion  ir al estado 89
+    call_func   ir al estado 90
+    retorno     ir al estado 91
+    if_else     ir al estado 92
+    while       ir al estado 93
+
+
+Estado 82
+
+   11 list_sents: list_sents • sentencia
+   31 declare_funcion: TYPE_INT ID TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents • TLLAVE_CL
+
+    ID         desplazar e ir al estado 83
+    TLLAVE_CL  desplazar e ir al estado 98
+    IF         desplazar e ir al estado 85
+    WHILE      desplazar e ir al estado 86
+    RETURN     desplazar e ir al estado 87
+
+    sentencia   ir al estado 88
+    asignacion  ir al estado 89
+    call_func   ir al estado 90
+    retorno     ir al estado 91
+    if_else     ir al estado 92
+    while       ir al estado 93
+
+
+Estado 83
+
+   17 asignacion: ID • ASIGNACION expr ';'
+   18 call_func: ID • TPAR_OP argumento TPAR_CL
+
+    ASIGNACION  desplazar e ir al estado 99
+    TPAR_OP     desplazar e ir al estado 100
+
+
+Estado 84
+
+    6 main: TYPE_INT MAIN TPAR_OP TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL •
+
+    $default  reduce usando la regla 6 (main)
+
+
+Estado 85
+
+   57 if_else: IF • TPAR_OP expr TPAR_CL THEN TLLAVE_OP list_sents TLLAVE_CL
+   58        | IF • TPAR_OP expr TPAR_CL THEN TLLAVE_OP list_sents TLLAVE_CL ELSE TLLAVE_OP list_sents TLLAVE_CL
+
+    TPAR_OP  desplazar e ir al estado 101
+
+
+Estado 86
+
+   59 while: WHILE • TPAR_OP expr TPAR_CL TLLAVE_OP list_sents TLLAVE_CL
+
+    TPAR_OP  desplazar e ir al estado 102
+
+
+Estado 87
+
+   56 retorno: RETURN • expr ';'
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    call_func  ir al estado 110
+    expr       ir al estado 111
+    valor      ir al estado 112
+
+
+Estado 88
+
+   11 list_sents: list_sents sentencia •
+
+    $default  reduce usando la regla 11 (list_sents)
+
+
+Estado 89
+
+   12 sentencia: asignacion •
+
+    $default  reduce usando la regla 12 (sentencia)
+
+
+Estado 90
+
+   16 sentencia: call_func • ';'
+
+    ';'  desplazar e ir al estado 113
+
+
+Estado 91
+
+   13 sentencia: retorno •
+
+    $default  reduce usando la regla 13 (sentencia)
+
+
+Estado 92
+
+   14 sentencia: if_else •
+
+    $default  reduce usando la regla 14 (sentencia)
+
+
+Estado 93
+
+   15 sentencia: while •
+
+    $default  reduce usando la regla 15 (sentencia)
+
+
+Estado 94
+
+   11 list_sents: list_sents • sentencia
+   32 declare_funcion: TYPE_BOOL ID TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents • TLLAVE_CL
+
+    ID         desplazar e ir al estado 83
+    TLLAVE_CL  desplazar e ir al estado 114
+    IF         desplazar e ir al estado 85
+    WHILE      desplazar e ir al estado 86
+    RETURN     desplazar e ir al estado 87
+
+    sentencia   ir al estado 88
+    asignacion  ir al estado 89
+    call_func   ir al estado 90
+    retorno     ir al estado 91
+    if_else     ir al estado 92
+    while       ir al estado 93
+
+
+Estado 95
+
+    5 main: TYPE_BOOL MAIN TPAR_OP TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL •
+
+    $default  reduce usando la regla 5 (main)
+
+
+Estado 96
+
+   11 list_sents: list_sents • sentencia
+   33 declare_funcion: TYPE_VOID ID TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents • TLLAVE_CL
+
+    ID         desplazar e ir al estado 83
+    TLLAVE_CL  desplazar e ir al estado 115
+    IF         desplazar e ir al estado 85
+    WHILE      desplazar e ir al estado 86
+    RETURN     desplazar e ir al estado 87
+
+    sentencia   ir al estado 88
+    asignacion  ir al estado 89
+    call_func   ir al estado 90
+    retorno     ir al estado 91
+    if_else     ir al estado 92
+    while       ir al estado 93
+
+
+Estado 97
+
+    7 main: TYPE_VOID MAIN TPAR_OP TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL •
+
+    $default  reduce usando la regla 7 (main)
+
+
+Estado 98
+
+   31 declare_funcion: TYPE_INT ID TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL •
+
+    $default  reduce usando la regla 31 (declare_funcion)
+
+
+Estado 99
+
+   17 asignacion: ID ASIGNACION • expr ';'
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    call_func  ir al estado 110
+    expr       ir al estado 116
+    valor      ir al estado 112
+
+
+Estado 100
+
+   18 call_func: ID TPAR_OP • argumento TPAR_CL
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    $default  reduce usando la regla 21 (argumento)
+
+    call_func  ir al estado 110
+    argumento  ir al estado 117
+    expr       ir al estado 118
+    valor      ir al estado 112
+
+
+Estado 101
+
+   57 if_else: IF TPAR_OP • expr TPAR_CL THEN TLLAVE_OP list_sents TLLAVE_CL
+   58        | IF TPAR_OP • expr TPAR_CL THEN TLLAVE_OP list_sents TLLAVE_CL ELSE TLLAVE_OP list_sents TLLAVE_CL
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    call_func  ir al estado 110
+    expr       ir al estado 119
+    valor      ir al estado 112
+
+
+Estado 102
+
+   59 while: WHILE TPAR_OP • expr TPAR_CL TLLAVE_OP list_sents TLLAVE_CL
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    call_func  ir al estado 110
+    expr       ir al estado 120
+    valor      ir al estado 112
+
+
+Estado 103
+
+   18 call_func: ID • TPAR_OP argumento TPAR_CL
+   52 valor: ID •
+
+    TPAR_OP  desplazar e ir al estado 100
+
+    $default  reduce usando la regla 52 (valor)
+
+
+Estado 104
+
+   51 valor: INT •
+
+    $default  reduce usando la regla 51 (valor)
+
+
+Estado 105
+
+   54 valor: TTRUE •
+
+    $default  reduce usando la regla 54 (valor)
+
+
+Estado 106
+
+   55 valor: TFALSE •
+
+    $default  reduce usando la regla 55 (valor)
+
+
+Estado 107
+
+   53 valor: TMENOS • INT
+
+    INT  desplazar e ir al estado 121
+
+
+Estado 108
+
+   50 expr: TPAR_OP • expr TPAR_CL
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    call_func  ir al estado 110
+    expr       ir al estado 122
+    valor      ir al estado 112
+
+
+Estado 109
+
+   49 expr: NOT • expr
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    call_func  ir al estado 110
+    expr       ir al estado 123
+    valor      ir al estado 112
+
+
+Estado 110
+
+   38 expr: call_func •
+
+    $default  reduce usando la regla 38 (expr)
+
+
+Estado 111
+
+   39 expr: expr • TMAS expr
+   40     | expr • TMENOS expr
+   41     | expr • TPOR expr
+   42     | expr • TDIVISION expr
+   43     | expr • TRESTO expr
+   44     | expr • MAYORQUE expr
+   45     | expr • MENORQUE expr
+   46     | expr • EQ expr
+   47     | expr • AND expr
+   48     | expr • OR expr
+   56 retorno: RETURN expr • ';'
+
+    TMAS       desplazar e ir al estado 124
+    TPOR       desplazar e ir al estado 125
+    TMENOS     desplazar e ir al estado 126
+    TDIVISION  desplazar e ir al estado 127
+    TRESTO     desplazar e ir al estado 128
+    OR         desplazar e ir al estado 129
+    AND        desplazar e ir al estado 130
+    MAYORQUE   desplazar e ir al estado 131
+    MENORQUE   desplazar e ir al estado 132
+    EQ         desplazar e ir al estado 133
+    ';'        desplazar e ir al estado 134
+
+
+Estado 112
+
+   37 expr: valor •
+
+    $default  reduce usando la regla 37 (expr)
+
+
+Estado 113
+
+   16 sentencia: call_func ';' •
+
+    $default  reduce usando la regla 16 (sentencia)
+
+
+Estado 114
+
+   32 declare_funcion: TYPE_BOOL ID TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL •
+
+    $default  reduce usando la regla 32 (declare_funcion)
+
+
+Estado 115
+
+   33 declare_funcion: TYPE_VOID ID TPAR_OP parametros TPAR_CL TLLAVE_OP list_decls list_sents TLLAVE_CL •
+
+    $default  reduce usando la regla 33 (declare_funcion)
+
+
+Estado 116
+
+   17 asignacion: ID ASIGNACION expr • ';'
+   39 expr: expr • TMAS expr
+   40     | expr • TMENOS expr
+   41     | expr • TPOR expr
+   42     | expr • TDIVISION expr
+   43     | expr • TRESTO expr
+   44     | expr • MAYORQUE expr
+   45     | expr • MENORQUE expr
+   46     | expr • EQ expr
+   47     | expr • AND expr
+   48     | expr • OR expr
+
+    TMAS       desplazar e ir al estado 124
+    TPOR       desplazar e ir al estado 125
+    TMENOS     desplazar e ir al estado 126
+    TDIVISION  desplazar e ir al estado 127
+    TRESTO     desplazar e ir al estado 128
+    OR         desplazar e ir al estado 129
+    AND        desplazar e ir al estado 130
+    MAYORQUE   desplazar e ir al estado 131
+    MENORQUE   desplazar e ir al estado 132
+    EQ         desplazar e ir al estado 133
+    ';'        desplazar e ir al estado 135
+
+
+Estado 117
+
+   18 call_func: ID TPAR_OP argumento • TPAR_CL
+   23 argumento: argumento • ',' expr
+
+    TPAR_CL  desplazar e ir al estado 136
+    ','      desplazar e ir al estado 137
+
+
+Estado 118
+
+   22 argumento: expr •
+   39 expr: expr • TMAS expr
+   40     | expr • TMENOS expr
+   41     | expr • TPOR expr
+   42     | expr • TDIVISION expr
+   43     | expr • TRESTO expr
+   44     | expr • MAYORQUE expr
+   45     | expr • MENORQUE expr
+   46     | expr • EQ expr
+   47     | expr • AND expr
+   48     | expr • OR expr
+
+    TMAS       desplazar e ir al estado 124
+    TPOR       desplazar e ir al estado 125
+    TMENOS     desplazar e ir al estado 126
+    TDIVISION  desplazar e ir al estado 127
+    TRESTO     desplazar e ir al estado 128
+    OR         desplazar e ir al estado 129
+    AND        desplazar e ir al estado 130
+    MAYORQUE   desplazar e ir al estado 131
+    MENORQUE   desplazar e ir al estado 132
+    EQ         desplazar e ir al estado 133
+
+    $default  reduce usando la regla 22 (argumento)
+
+
+Estado 119
+
+   39 expr: expr • TMAS expr
+   40     | expr • TMENOS expr
+   41     | expr • TPOR expr
+   42     | expr • TDIVISION expr
+   43     | expr • TRESTO expr
+   44     | expr • MAYORQUE expr
+   45     | expr • MENORQUE expr
+   46     | expr • EQ expr
+   47     | expr • AND expr
+   48     | expr • OR expr
+   57 if_else: IF TPAR_OP expr • TPAR_CL THEN TLLAVE_OP list_sents TLLAVE_CL
+   58        | IF TPAR_OP expr • TPAR_CL THEN TLLAVE_OP list_sents TLLAVE_CL ELSE TLLAVE_OP list_sents TLLAVE_CL
+
+    TMAS       desplazar e ir al estado 124
+    TPOR       desplazar e ir al estado 125
+    TMENOS     desplazar e ir al estado 126
+    TDIVISION  desplazar e ir al estado 127
+    TRESTO     desplazar e ir al estado 128
+    TPAR_CL    desplazar e ir al estado 138
+    OR         desplazar e ir al estado 129
+    AND        desplazar e ir al estado 130
+    MAYORQUE   desplazar e ir al estado 131
+    MENORQUE   desplazar e ir al estado 132
+    EQ         desplazar e ir al estado 133
+
+
+Estado 120
+
+   39 expr: expr • TMAS expr
+   40     | expr • TMENOS expr
+   41     | expr • TPOR expr
+   42     | expr • TDIVISION expr
+   43     | expr • TRESTO expr
+   44     | expr • MAYORQUE expr
+   45     | expr • MENORQUE expr
+   46     | expr • EQ expr
+   47     | expr • AND expr
+   48     | expr • OR expr
+   59 while: WHILE TPAR_OP expr • TPAR_CL TLLAVE_OP list_sents TLLAVE_CL
+
+    TMAS       desplazar e ir al estado 124
+    TPOR       desplazar e ir al estado 125
+    TMENOS     desplazar e ir al estado 126
+    TDIVISION  desplazar e ir al estado 127
+    TRESTO     desplazar e ir al estado 128
+    TPAR_CL    desplazar e ir al estado 139
+    OR         desplazar e ir al estado 129
+    AND        desplazar e ir al estado 130
+    MAYORQUE   desplazar e ir al estado 131
+    MENORQUE   desplazar e ir al estado 132
+    EQ         desplazar e ir al estado 133
+
+
+Estado 121
+
+   53 valor: TMENOS INT •
+
+    $default  reduce usando la regla 53 (valor)
+
+
+Estado 122
+
+   39 expr: expr • TMAS expr
+   40     | expr • TMENOS expr
+   41     | expr • TPOR expr
+   42     | expr • TDIVISION expr
+   43     | expr • TRESTO expr
+   44     | expr • MAYORQUE expr
+   45     | expr • MENORQUE expr
+   46     | expr • EQ expr
+   47     | expr • AND expr
+   48     | expr • OR expr
+   50     | TPAR_OP expr • TPAR_CL
+
+    TMAS       desplazar e ir al estado 124
+    TPOR       desplazar e ir al estado 125
+    TMENOS     desplazar e ir al estado 126
+    TDIVISION  desplazar e ir al estado 127
+    TRESTO     desplazar e ir al estado 128
+    TPAR_CL    desplazar e ir al estado 140
+    OR         desplazar e ir al estado 129
+    AND        desplazar e ir al estado 130
+    MAYORQUE   desplazar e ir al estado 131
+    MENORQUE   desplazar e ir al estado 132
+    EQ         desplazar e ir al estado 133
+
+
+Estado 123
+
+   39 expr: expr • TMAS expr
+   40     | expr • TMENOS expr
+   41     | expr • TPOR expr
+   42     | expr • TDIVISION expr
+   43     | expr • TRESTO expr
+   44     | expr • MAYORQUE expr
+   45     | expr • MENORQUE expr
+   46     | expr • EQ expr
+   47     | expr • AND expr
+   48     | expr • OR expr
+   49     | NOT expr •
+
+    $default  reduce usando la regla 49 (expr)
+
+
+Estado 124
+
+   39 expr: expr TMAS • expr
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    call_func  ir al estado 110
+    expr       ir al estado 141
+    valor      ir al estado 112
+
+
+Estado 125
+
+   41 expr: expr TPOR • expr
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    call_func  ir al estado 110
+    expr       ir al estado 142
+    valor      ir al estado 112
+
+
+Estado 126
+
+   40 expr: expr TMENOS • expr
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    call_func  ir al estado 110
+    expr       ir al estado 143
+    valor      ir al estado 112
+
+
+Estado 127
+
+   42 expr: expr TDIVISION • expr
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    call_func  ir al estado 110
+    expr       ir al estado 144
+    valor      ir al estado 112
+
+
+Estado 128
+
+   43 expr: expr TRESTO • expr
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    call_func  ir al estado 110
+    expr       ir al estado 145
+    valor      ir al estado 112
+
+
+Estado 129
+
+   48 expr: expr OR • expr
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    call_func  ir al estado 110
+    expr       ir al estado 146
+    valor      ir al estado 112
+
+
+Estado 130
+
+   47 expr: expr AND • expr
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    call_func  ir al estado 110
+    expr       ir al estado 147
+    valor      ir al estado 112
+
+
+Estado 131
+
+   44 expr: expr MAYORQUE • expr
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    call_func  ir al estado 110
+    expr       ir al estado 148
+    valor      ir al estado 112
+
+
+Estado 132
+
+   45 expr: expr MENORQUE • expr
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    call_func  ir al estado 110
+    expr       ir al estado 149
+    valor      ir al estado 112
+
+
+Estado 133
+
+   46 expr: expr EQ • expr
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    call_func  ir al estado 110
+    expr       ir al estado 150
+    valor      ir al estado 112
+
+
+Estado 134
+
+   56 retorno: RETURN expr ';' •
+
+    $default  reduce usando la regla 56 (retorno)
+
+
+Estado 135
+
+   17 asignacion: ID ASIGNACION expr ';' •
+
+    $default  reduce usando la regla 17 (asignacion)
+
+
+Estado 136
+
+   18 call_func: ID TPAR_OP argumento TPAR_CL •
+
+    $default  reduce usando la regla 18 (call_func)
+
+
+Estado 137
+
+   23 argumento: argumento ',' • expr
+
+    ID       desplazar e ir al estado 103
+    INT      desplazar e ir al estado 104
+    TTRUE    desplazar e ir al estado 105
+    TFALSE   desplazar e ir al estado 106
+    TMENOS   desplazar e ir al estado 107
+    TPAR_OP  desplazar e ir al estado 108
+    NOT      desplazar e ir al estado 109
+
+    call_func  ir al estado 110
+    expr       ir al estado 151
+    valor      ir al estado 112
+
+
+Estado 138
+
+   57 if_else: IF TPAR_OP expr TPAR_CL • THEN TLLAVE_OP list_sents TLLAVE_CL
+   58        | IF TPAR_OP expr TPAR_CL • THEN TLLAVE_OP list_sents TLLAVE_CL ELSE TLLAVE_OP list_sents TLLAVE_CL
+
+    THEN  desplazar e ir al estado 152
+
+
+Estado 139
+
+   59 while: WHILE TPAR_OP expr TPAR_CL • TLLAVE_OP list_sents TLLAVE_CL
+
+    TLLAVE_OP  desplazar e ir al estado 153
+
+
+Estado 140
+
+   50 expr: TPAR_OP expr TPAR_CL •
+
+    $default  reduce usando la regla 50 (expr)
+
+
+Estado 141
+
+   39 expr: expr • TMAS expr
+   39     | expr TMAS expr •
+   40     | expr • TMENOS expr
+   41     | expr • TPOR expr
+   42     | expr • TDIVISION expr
+   43     | expr • TRESTO expr
+   44     | expr • MAYORQUE expr
+   45     | expr • MENORQUE expr
+   46     | expr • EQ expr
+   47     | expr • AND expr
+   48     | expr • OR expr
+
+    TPOR       desplazar e ir al estado 125
+    TDIVISION  desplazar e ir al estado 127
+    TRESTO     desplazar e ir al estado 128
+
+    $default  reduce usando la regla 39 (expr)
+
+
+Estado 142
+
+   39 expr: expr • TMAS expr
+   40     | expr • TMENOS expr
+   41     | expr • TPOR expr
+   41     | expr TPOR expr •
+   42     | expr • TDIVISION expr
+   43     | expr • TRESTO expr
+   44     | expr • MAYORQUE expr
+   45     | expr • MENORQUE expr
+   46     | expr • EQ expr
+   47     | expr • AND expr
+   48     | expr • OR expr
+
+    $default  reduce usando la regla 41 (expr)
+
+
+Estado 143
+
+   39 expr: expr • TMAS expr
+   40     | expr • TMENOS expr
+   40     | expr TMENOS expr •
+   41     | expr • TPOR expr
+   42     | expr • TDIVISION expr
+   43     | expr • TRESTO expr
+   44     | expr • MAYORQUE expr
+   45     | expr • MENORQUE expr
+   46     | expr • EQ expr
+   47     | expr • AND expr
+   48     | expr • OR expr
+
+    TPOR       desplazar e ir al estado 125
+    TDIVISION  desplazar e ir al estado 127
+    TRESTO     desplazar e ir al estado 128
+
+    $default  reduce usando la regla 40 (expr)
+
+
+Estado 144
+
+   39 expr: expr • TMAS expr
+   40     | expr • TMENOS expr
+   41     | expr • TPOR expr
+   42     | expr • TDIVISION expr
+   42     | expr TDIVISION expr •
+   43     | expr • TRESTO expr
+   44     | expr • MAYORQUE expr
+   45     | expr • MENORQUE expr
+   46     | expr • EQ expr
+   47     | expr • AND expr
+   48     | expr • OR expr
+
+    $default  reduce usando la regla 42 (expr)
+
+
+Estado 145
+
+   39 expr: expr • TMAS expr
+   40     | expr • TMENOS expr
+   41     | expr • TPOR expr
+   42     | expr • TDIVISION expr
+   43     | expr • TRESTO expr
+   43     | expr TRESTO expr •
+   44     | expr • MAYORQUE expr
+   45     | expr • MENORQUE expr
+   46     | expr • EQ expr
+   47     | expr • AND expr
+   48     | expr • OR expr
+
+    $default  reduce usando la regla 43 (expr)
+
+
+Estado 146
+
+   39 expr: expr • TMAS expr
+   40     | expr • TMENOS expr
+   41     | expr • TPOR expr
+   42     | expr • TDIVISION expr
+   43     | expr • TRESTO expr
+   44     | expr • MAYORQUE expr
+   45     | expr • MENORQUE expr
+   46     | expr • EQ expr
+   47     | expr • AND expr
+   48     | expr • OR expr
+   48     | expr OR expr •
+
+    TMAS       desplazar e ir al estado 124
+    TPOR       desplazar e ir al estado 125
+    TMENOS     desplazar e ir al estado 126
+    TDIVISION  desplazar e ir al estado 127
+    TRESTO     desplazar e ir al estado 128
+    MAYORQUE   desplazar e ir al estado 131
+    MENORQUE   desplazar e ir al estado 132
+    EQ         desplazar e ir al estado 133
+
+    $default  reduce usando la regla 48 (expr)
+
+
+Estado 147
+
+   39 expr: expr • TMAS expr
+   40     | expr • TMENOS expr
+   41     | expr • TPOR expr
+   42     | expr • TDIVISION expr
+   43     | expr • TRESTO expr
+   44     | expr • MAYORQUE expr
+   45     | expr • MENORQUE expr
+   46     | expr • EQ expr
+   47     | expr • AND expr
+   47     | expr AND expr •
+   48     | expr • OR expr
+
+    TMAS       desplazar e ir al estado 124
+    TPOR       desplazar e ir al estado 125
+    TMENOS     desplazar e ir al estado 126
+    TDIVISION  desplazar e ir al estado 127
+    TRESTO     desplazar e ir al estado 128
+    MAYORQUE   desplazar e ir al estado 131
+    MENORQUE   desplazar e ir al estado 132
+    EQ         desplazar e ir al estado 133
+
+    $default  reduce usando la regla 47 (expr)
+
+
+Estado 148
+
+   39 expr: expr • TMAS expr
+   40     | expr • TMENOS expr
+   41     | expr • TPOR expr
+   42     | expr • TDIVISION expr
+   43     | expr • TRESTO expr
+   44     | expr • MAYORQUE expr
+   44     | expr MAYORQUE expr •
+   45     | expr • MENORQUE expr
+   46     | expr • EQ expr
+   47     | expr • AND expr
+   48     | expr • OR expr
+
+    TMAS       desplazar e ir al estado 124
+    TPOR       desplazar e ir al estado 125
+    TMENOS     desplazar e ir al estado 126
+    TDIVISION  desplazar e ir al estado 127
+    TRESTO     desplazar e ir al estado 128
+
+    $default  reduce usando la regla 44 (expr)
+
+
+Estado 149
+
+   39 expr: expr • TMAS expr
+   40     | expr • TMENOS expr
+   41     | expr • TPOR expr
+   42     | expr • TDIVISION expr
+   43     | expr • TRESTO expr
+   44     | expr • MAYORQUE expr
+   45     | expr • MENORQUE expr
+   45     | expr MENORQUE expr •
+   46     | expr • EQ expr
+   47     | expr • AND expr
+   48     | expr • OR expr
+
+    TMAS       desplazar e ir al estado 124
+    TPOR       desplazar e ir al estado 125
+    TMENOS     desplazar e ir al estado 126
+    TDIVISION  desplazar e ir al estado 127
+    TRESTO     desplazar e ir al estado 128
+
+    $default  reduce usando la regla 45 (expr)
+
+
+Estado 150
+
+   39 expr: expr • TMAS expr
+   40     | expr • TMENOS expr
+   41     | expr • TPOR expr
+   42     | expr • TDIVISION expr
+   43     | expr • TRESTO expr
+   44     | expr • MAYORQUE expr
+   45     | expr • MENORQUE expr
+   46     | expr • EQ expr
+   46     | expr EQ expr •
+   47     | expr • AND expr
+   48     | expr • OR expr
+
+    TMAS       desplazar e ir al estado 124
+    TPOR       desplazar e ir al estado 125
+    TMENOS     desplazar e ir al estado 126
+    TDIVISION  desplazar e ir al estado 127
+    TRESTO     desplazar e ir al estado 128
+    MAYORQUE   desplazar e ir al estado 131
+    MENORQUE   desplazar e ir al estado 132
+
+    $default  reduce usando la regla 46 (expr)
+
+
+Estado 151
+
+   23 argumento: argumento ',' expr •
+   39 expr: expr • TMAS expr
+   40     | expr • TMENOS expr
+   41     | expr • TPOR expr
+   42     | expr • TDIVISION expr
+   43     | expr • TRESTO expr
+   44     | expr • MAYORQUE expr
+   45     | expr • MENORQUE expr
+   46     | expr • EQ expr
+   47     | expr • AND expr
+   48     | expr • OR expr
+
+    TMAS       desplazar e ir al estado 124
+    TPOR       desplazar e ir al estado 125
+    TMENOS     desplazar e ir al estado 126
+    TDIVISION  desplazar e ir al estado 127
+    TRESTO     desplazar e ir al estado 128
+    OR         desplazar e ir al estado 129
+    AND        desplazar e ir al estado 130
+    MAYORQUE   desplazar e ir al estado 131
+    MENORQUE   desplazar e ir al estado 132
+    EQ         desplazar e ir al estado 133
+
+    $default  reduce usando la regla 23 (argumento)
+
+
+Estado 152
+
+   57 if_else: IF TPAR_OP expr TPAR_CL THEN • TLLAVE_OP list_sents TLLAVE_CL
+   58        | IF TPAR_OP expr TPAR_CL THEN • TLLAVE_OP list_sents TLLAVE_CL ELSE TLLAVE_OP list_sents TLLAVE_CL
+
+    TLLAVE_OP  desplazar e ir al estado 154
+
+
+Estado 153
+
+   59 while: WHILE TPAR_OP expr TPAR_CL TLLAVE_OP • list_sents TLLAVE_CL
+
+    $default  reduce usando la regla 10 (list_sents)
+
+    list_sents  ir al estado 155
+
+
+Estado 154
+
+   57 if_else: IF TPAR_OP expr TPAR_CL THEN TLLAVE_OP • list_sents TLLAVE_CL
+   58        | IF TPAR_OP expr TPAR_CL THEN TLLAVE_OP • list_sents TLLAVE_CL ELSE TLLAVE_OP list_sents TLLAVE_CL
+
+    $default  reduce usando la regla 10 (list_sents)
+
+    list_sents  ir al estado 156
+
+
+Estado 155
+
+   11 list_sents: list_sents • sentencia
+   59 while: WHILE TPAR_OP expr TPAR_CL TLLAVE_OP list_sents • TLLAVE_CL
+
+    ID         desplazar e ir al estado 83
+    TLLAVE_CL  desplazar e ir al estado 157
+    IF         desplazar e ir al estado 85
+    WHILE      desplazar e ir al estado 86
+    RETURN     desplazar e ir al estado 87
+
+    sentencia   ir al estado 88
+    asignacion  ir al estado 89
+    call_func   ir al estado 90
+    retorno     ir al estado 91
+    if_else     ir al estado 92
+    while       ir al estado 93
+
+
+Estado 156
+
+   11 list_sents: list_sents • sentencia
+   57 if_else: IF TPAR_OP expr TPAR_CL THEN TLLAVE_OP list_sents • TLLAVE_CL
+   58        | IF TPAR_OP expr TPAR_CL THEN TLLAVE_OP list_sents • TLLAVE_CL ELSE TLLAVE_OP list_sents TLLAVE_CL
+
+    ID         desplazar e ir al estado 83
+    TLLAVE_CL  desplazar e ir al estado 158
+    IF         desplazar e ir al estado 85
+    WHILE      desplazar e ir al estado 86
+    RETURN     desplazar e ir al estado 87
+
+    sentencia   ir al estado 88
+    asignacion  ir al estado 89
+    call_func   ir al estado 90
+    retorno     ir al estado 91
+    if_else     ir al estado 92
+    while       ir al estado 93
+
+
+Estado 157
+
+   59 while: WHILE TPAR_OP expr TPAR_CL TLLAVE_OP list_sents TLLAVE_CL •
+
+    $default  reduce usando la regla 59 (while)
+
+
+Estado 158
+
+   57 if_else: IF TPAR_OP expr TPAR_CL THEN TLLAVE_OP list_sents TLLAVE_CL •
+   58        | IF TPAR_OP expr TPAR_CL THEN TLLAVE_OP list_sents TLLAVE_CL • ELSE TLLAVE_OP list_sents TLLAVE_CL
+
+    ELSE  desplazar e ir al estado 159
+
+    $default  reduce usando la regla 57 (if_else)
+
+
+Estado 159
+
+   58 if_else: IF TPAR_OP expr TPAR_CL THEN TLLAVE_OP list_sents TLLAVE_CL ELSE • TLLAVE_OP list_sents TLLAVE_CL
+
+    TLLAVE_OP  desplazar e ir al estado 160
+
+
+Estado 160
+
+   58 if_else: IF TPAR_OP expr TPAR_CL THEN TLLAVE_OP list_sents TLLAVE_CL ELSE TLLAVE_OP • list_sents TLLAVE_CL
+
+    $default  reduce usando la regla 10 (list_sents)
+
+    list_sents  ir al estado 161
+
+
+Estado 161
+
+   11 list_sents: list_sents • sentencia
+   58 if_else: IF TPAR_OP expr TPAR_CL THEN TLLAVE_OP list_sents TLLAVE_CL ELSE TLLAVE_OP list_sents • TLLAVE_CL
+
+    ID         desplazar e ir al estado 83
+    TLLAVE_CL  desplazar e ir al estado 162
+    IF         desplazar e ir al estado 85
+    WHILE      desplazar e ir al estado 86
+    RETURN     desplazar e ir al estado 87
+
+    sentencia   ir al estado 88
+    asignacion  ir al estado 89
+    call_func   ir al estado 90
+    retorno     ir al estado 91
+    if_else     ir al estado 92
+    while       ir al estado 93
+
+
+Estado 162
+
+   58 if_else: IF TPAR_OP expr TPAR_CL THEN TLLAVE_OP list_sents TLLAVE_CL ELSE TLLAVE_OP list_sents TLLAVE_CL •
+
+    $default  reduce usando la regla 58 (if_else)

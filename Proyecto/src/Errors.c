@@ -15,8 +15,18 @@ bool esComparador(enum TYPES tipo) {
 
 void errorCond(AST *ar, bool* err) {
     int size = (ar->symbol)->size;
+
     Tsymbol* tableAuxIzq = LookupTable(size);
+    // busco en la funcion
     Tsymbol* auxIzq = LookupInTable(((ar->left)->symbol)->varname,tableAuxIzq);
+    // busco global
+    Tsymbol* auxIzqGlob = Lookup(((ar->left)->symbol)->varname);
+    
+
+    if(!auxIzq && auxIzqGlob){
+        auxIzq = auxIzqGlob;
+    }
+
     enum TYPES tipoIzq = ((ar->left)->symbol)->type;
     if(!auxIzq){
         if(tipoIzq == CALL_F){
@@ -41,6 +51,10 @@ void errorNot(AST* ar, bool* err) {
     // Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
     Tsymbol* tableAuxIzq = LookupTable(((ar->left)->symbol)->size);
     Tsymbol* auxIzq = LookupInTable(((ar->left)->symbol)->varname,tableAuxIzq);
+    Tsymbol* auxIzqGlob = Lookup(((ar->left)->symbol)->varname);
+    if(!auxIzq && auxIzqGlob){
+        auxIzq = auxIzqGlob;
+    }
 
     enum TYPES tipoIzq = ((ar->left)->symbol)->type;
     if(!auxIzq && !isTypeBool(tipoIzq) && !esComparador(tipoIzq)){
@@ -54,7 +68,11 @@ void errorNot(AST* ar, bool* err) {
 
 void errorRet(AST* ar,enum TYPES type, bool* err){
     Tsymbol* tableAuxIzq = LookupTable(((ar->left)->symbol)->size);
-    Tsymbol* auxIzq = LookupInTable(((ar->left)->symbol)->varname,tableAuxIzq);
+    Tsymbol* auxIzq = LookupInTable(((ar->left)->symbol)->varname,tableAuxIzq);    
+    Tsymbol* auxIzqGlob = Lookup(((ar->left)->symbol)->varname);
+    if(!auxIzq && auxIzqGlob){
+        auxIzq = auxIzqGlob;
+    }
 
     //Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
     enum TYPES tipoActualIzq = ((ar->left)->symbol)->type;
@@ -83,10 +101,19 @@ void errorRet(AST* ar,enum TYPES type, bool* err){
 
 void errorAsig(AST *ar, bool *err){
     Tsymbol* tableAuxDer = LookupTable(((ar->right)->symbol)->size);
-    Tsymbol* auxDer = LookupInTable(((ar->right)->symbol)->varname,tableAuxDer);
+    Tsymbol* auxDer = LookupInTable(((ar->right)->symbol)->varname,tableAuxDer);    
+    
+    Tsymbol* auxDerGlob = Lookup(((ar->left)->symbol)->varname);
+    if(!auxDer && auxDerGlob){
+        auxDer = auxDerGlob;
+    }
 
     Tsymbol* tableAuxIzq = LookupTable(((ar->left)->symbol)->size);
     Tsymbol* auxIzq = LookupInTable(((ar->left)->symbol)->varname,tableAuxIzq);
+    Tsymbol* auxIzqGlob = Lookup(((ar->left)->symbol)->varname);
+    if(!auxIzq && auxIzqGlob){
+        auxIzq = auxIzqGlob;
+    }
 
     enum TYPES tipoDer = ((ar->right)->symbol)->type;
     enum TYPES tipoIzq = ((ar->left)->symbol)->type;
@@ -123,10 +150,18 @@ void errorOpera(AST *ar, enum TYPES type, bool* err){
     int size = (ar->symbol)->size;
     Tsymbol* tableAuxDer = LookupTable(size);
     Tsymbol* auxDer = LookupInTable(((ar->right)->symbol)->varname,tableAuxDer);
+    Tsymbol* auxDerGlob = Lookup(((ar->left)->symbol)->varname);
+    if(!auxDer && auxDerGlob){
+        auxDer = auxDerGlob;
+    }
+
 
     Tsymbol* tableAuxIzq = LookupTable(size);
     Tsymbol* auxIzq = LookupInTable(((ar->left)->symbol)->varname,tableAuxIzq);
-
+    Tsymbol* auxIzqGlob = Lookup(((ar->left)->symbol)->varname);
+    if(!auxIzq && auxIzqGlob){
+        auxIzq = auxIzqGlob;
+    }
     enum TYPES tipoDer = ((ar->right)->symbol)->type;
     enum TYPES tipoIzq = ((ar->left)->symbol)->type;
 
@@ -380,8 +415,11 @@ void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size, bool *err)
         //guardar el tipo
         if(*index < maxArg) {
             Tsymbol* func1 = LookupTable(size);
-            Tsymbol* arg = LookupInTable(ar->symbol->varname,func1);
-
+            Tsymbol* arg = LookupInTable(ar->symbol->varname,func1);        
+            Tsymbol* argGlob = Lookup(ar->symbol->varname);
+            if(!arg && argGlob){
+                arg = argGlob;
+            }
             if (arg == NULL) {
                 if(ar->symbol->type == CALL_F) {
                     Tsymbol *typeFunc = Lookup(ar->left->symbol->varname);

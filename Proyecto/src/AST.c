@@ -82,7 +82,11 @@ void createTable(AST* ar) {
     if (tipoActual == VARBOOL || tipoActual == VARINT || tipoActual == PARAMINT || tipoActual == PARAMBOOL)  {
         Tsymbol* aux = LookupTable(ar->symbol->size);
         if(aux) {
-            InstallTable(ar->symbol,aux);
+            if(aux->type == RETINT || aux->type == RETBOL || aux->type == RETVOID) {
+                InstallTable(ar->symbol,aux);
+            }else {
+                Install(ar->symbol);
+            }
         }else {
             Install(ar->symbol);
         }
