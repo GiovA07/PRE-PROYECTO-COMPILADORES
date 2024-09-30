@@ -103,7 +103,7 @@ void errorAsig(AST *ar, bool *err){
     Tsymbol* tableAuxDer = LookupTable(((ar->right)->symbol)->size);
     Tsymbol* auxDer = LookupInTable(((ar->right)->symbol)->varname,tableAuxDer);    
     
-    Tsymbol* auxDerGlob = Lookup(((ar->left)->symbol)->varname);
+    Tsymbol* auxDerGlob = Lookup(((ar->right)->symbol)->varname);
     if(!auxDer && auxDerGlob){
         auxDer = auxDerGlob;
     }
@@ -150,7 +150,7 @@ void errorOpera(AST *ar, enum TYPES type, bool* err){
     int size = (ar->symbol)->size;
     Tsymbol* tableAuxDer = LookupTable(size);
     Tsymbol* auxDer = LookupInTable(((ar->right)->symbol)->varname,tableAuxDer);
-    Tsymbol* auxDerGlob = Lookup(((ar->left)->symbol)->varname);
+    Tsymbol* auxDerGlob = Lookup(((ar->right)->symbol)->varname);
     if(!auxDer && auxDerGlob){
         auxDer = auxDerGlob;
     }
@@ -386,20 +386,21 @@ void errorCall(AST *ar,  bool *err) {
         recorrer(ar->right,typesArg, &index, len, ar->symbol->size, err);
         int i = 0;
         int *typesParam = typeParam(func);
+        if  ( len != (sizeof(typesParam) / sizeof(typesParam[0])) ) {
+                printf("\033[31mError en la funcion llamada, cantidad de parametros invalida \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
+                *err = true;
+        }
 
         for (int j = 0; j < len; j++) {
             // printf("Tipo de parametro: %s \n", string[typesParam[j]]);
             // printf("Tipo de argumento: %s \n", string[typesArg[j]]);
-
             bool bolCond1 = (typesParam[j] == PARAMBOOL) && (typesArg[j] == VARINT || typesArg[j] == CONSINT|| typesArg[j] == RETINT);
             bool bolCond2 = (typesParam[j] == PARAMINT ) && (typesArg[j] == VARBOOL || typesArg[j] == CONSBOOL || typesArg[j] == RETBOL);
-
             if  ( bolCond1 || bolCond2 ) {
                 printf("\033[31mError de tipo en la funcion llamada \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
                 *err = true;
             }
         }
-
     }
 
 }
