@@ -375,22 +375,41 @@ void evaluate_op_aritmeticos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* er
         }
 }
 
+
+int cantt(int* a, int l) {
+    int c = 0;
+    for (size_t i = 0; i < l; i++) {
+        if (a[i] != NULL)
+            c++;
+    }
+    return c;
+}
+
 void errorCall(AST *ar,  bool *err) {
 
     Tsymbol* func1 = Lookup(ar->left->symbol->varname);
     Tsymbol* func = LookupTable(func1->size);
     int len = cantArguments(func);
     int index = 0;
+    if ( len == 0 ) {
+        int typesArg[10];
+        recorrer(ar->right,typesArg, &index, 10, ar->symbol->size, err);
+        if (index != len) {
+            printf("\033[31mError en la funcion llamada, cantidad de parametros invalida \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
+            *err = true;
+        }
+        index = 0;
+    }
     if (len != 0) {
         int typesArg[len];
         recorrer(ar->right,typesArg, &index, len, ar->symbol->size, err);
         int i = 0;
         int *typesParam = typeParam(func);
-        if  ( len != (sizeof(typesParam) / sizeof(typesParam[0])) ) {
-                printf("\033[31mError en la funcion llamada, cantidad de parametros invalida \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
-                *err = true;
-        }
 
+        if ( len != cantt(typesArg,len) ) {
+            printf("\033[31mError en la funcion llamada, cantidad de parametros invalida \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
+            *err = true;
+        }
         for (int j = 0; j < len; j++) {
             // printf("Tipo de parametro: %s \n", string[typesParam[j]]);
             // printf("Tipo de argumento: %s \n", string[typesArg[j]]);
