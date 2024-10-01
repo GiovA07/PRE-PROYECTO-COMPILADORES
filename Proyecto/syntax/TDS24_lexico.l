@@ -70,7 +70,7 @@ digito [0-9]
 
 [;,]                        { return *yytext; }
 
-.|\n$#                      ; /** ignore all the rest **/
+.|\n|$|#                      ; /** ignore all the rest **/
 
 %%
 
