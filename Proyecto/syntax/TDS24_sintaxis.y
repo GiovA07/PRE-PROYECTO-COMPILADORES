@@ -203,7 +203,7 @@ void interprete(struct AST* ar){
     printDot(ar,"output/Arbol.dot");
     createTable(ar);
     /* prinTable(); */
-    
+
     typeError(ar);
     retError();
     if(getError()) {
@@ -212,7 +212,7 @@ void interprete(struct AST* ar){
     }
 
     //evaluate(ar);
-    /* prinTable(); */
+    prinTable();
     elimArbol(ar);
 }
 

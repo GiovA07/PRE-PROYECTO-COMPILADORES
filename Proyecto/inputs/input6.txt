@@ -1,5 +1,5 @@
 Program {
-    
+
     int s;
     int inc(int x) {
         int z;
@@ -14,20 +14,8 @@ Program {
         int w;
         bool z;
         get_bool();
-        print_int();
-        print_int(1);
-        
-        inc(100);
-
-        inc();
-        inc(1,2,3);
-
-        print_int(12,33,true,false);
-
-        print_int(false,33,true);
-
         print_int(1,2,get_bool());
-
+        #
         return 1;
     }
 }

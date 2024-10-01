@@ -7,7 +7,7 @@
 #include "../default/syntax_tab.h"
 
 int yyparse();
-
+void yyerror();
 void current_token(enum TYPES type_sym);
 
 %}
@@ -70,7 +70,9 @@ digito [0-9]
 
 [;,]                        { return *yytext; }
 
-.|\n|$|#                      ; /** ignore all the rest **/
+[#\$]                       { return -1; }
+
+.|\n                      ; /** ignore all the rest **/
 
 %%
 
