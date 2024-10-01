@@ -202,7 +202,7 @@ while: WHILE TPAR_OP expr TPAR_CL TLLAVE_OP list_sents TLLAVE_CL {char * name = 
 void interprete(struct AST* ar){
     printDot(ar,"output/Arbol.dot");
     createTable(ar);
-    prinTable();
+    /* prinTable(); */
     
     typeError(ar);
     retError();
@@ -212,7 +212,7 @@ void interprete(struct AST* ar){
     }
 
     //evaluate(ar);
-    prinTable();
+    /* prinTable(); */
     elimArbol(ar);
 }
 
