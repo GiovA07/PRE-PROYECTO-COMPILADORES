@@ -202,6 +202,8 @@ while: WHILE TPAR_OP expr TPAR_CL TLLAVE_OP list_sents TLLAVE_CL {char * name = 
 void interprete(struct AST* ar){
     printDot(ar,"output/Arbol.dot");
     createTable(ar);
+    prinTable();
+    
     typeError(ar);
     retError();
     if(getError()) {

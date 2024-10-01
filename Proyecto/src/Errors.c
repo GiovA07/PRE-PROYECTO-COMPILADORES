@@ -376,14 +376,14 @@ void evaluate_op_aritmeticos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* er
 }
 
 
-int cantt(int* a, int l) {
-    int c = 0;
-    for (size_t i = 0; i < l; i++) {
-        if (a[i] != NULL)
-            c++;
-    }
-    return c;
-}
+// int cantt(int* a, int l) {
+//     int c = 0;
+//     for (size_t i = 0; i < l; i++) {
+//         if (a[i] != NULL)
+//             c++;
+//     }
+//     return c;
+// }
 
 void errorCall(AST *ar,  bool *err) {
 
@@ -391,40 +391,46 @@ void errorCall(AST *ar,  bool *err) {
     Tsymbol* func = LookupTable(func1->size);
     int len = cantArguments(func);
     int index = 0;
-    if ( len == 0 ) {
-        int typesArg[10];
-        recorrer(ar->right,typesArg, &index, 10, ar->symbol->size, err);
-        if (index != len) {
-            printf("\033[31mError en la funcion llamada, cantidad de parametros invalida \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
-            *err = true;
-        }
-        index = 0;
-    }
+    // if ( len == 0 ) {
+    //     int typesArg[10];
+    //     recorrer(ar->right,typesArg, &index, 10, ar->symbol->size, err);
+    //     if (index != len) {
+    //         printf("\033[31mError en la funcion llamada, cantidad de parametros invalida \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
+    //         *err = true;
+    //     }
+    //     index = 0;
+    // }
     if (len != 0) {
         int typesArg[len];
         recorrer(ar->right,typesArg, &index, len, ar->symbol->size, err);
         int i = 0;
         int *typesParam = typeParam(func);
 
-        if ( len != cantt(typesArg,len) ) {
-            printf("\033[31mError en la funcion llamada, cantidad de parametros invalida \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
-            *err = true;
-        }
-        for (int j = 0; j < len; j++) {
-            // printf("Tipo de parametro: %s \n", string[typesParam[j]]);
-            // printf("Tipo de argumento: %s \n", string[typesArg[j]]);
-            bool bolCond1 = (typesParam[j] == PARAMBOOL) && (typesArg[j] == VARINT || typesArg[j] == CONSINT|| typesArg[j] == RETINT);
-            bool bolCond2 = (typesParam[j] == PARAMINT ) && (typesArg[j] == VARBOOL || typesArg[j] == CONSBOOL || typesArg[j] == RETBOL);
-            if  ( bolCond1 || bolCond2 ) {
+        // if ( len != cantt(typesArg,len) ) {
+        //     printf("\033[31mError en la funcion llamada, cantidad de parametros invalida \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
+        //     *err = true;
+        // }
+        if(len == index) {        
+             for (int j = 0; j < len; j++) {
+                // printf("Tipo de parametro: %s \n", string[typesParam[j]]);
+                // printf("Tipo de argumento: %s \n", string[typesArg[j]]);
+                bool bolCond1 = (typesParam[j] == PARAMBOOL) && (typesArg[j] == VARINT || typesArg[j] == CONSINT|| typesArg[j] == RETINT);
+                bool bolCond2 = (typesParam[j] == PARAMINT ) && (typesArg[j] == VARBOOL || typesArg[j] == CONSBOOL || typesArg[j] == RETBOL);
+                if  ( bolCond1 || bolCond2 ) {
+                    printf("\033[31mError de tipo en la funcion llamada \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
+                    *err = true;
+                }
+            }
+        }else {
                 printf("\033[31mError de tipo en la funcion llamada \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
                 *err = true;
-            }
         }
     }
 
 }
 
 void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size, bool *err){
+    if(ar == NULL) return;
     if(ar->left != NULL){
         recorrer(ar->left, tipos, index, maxArg, size, err);
     }
@@ -458,6 +464,7 @@ void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size, bool *err)
             }
         } else {
             *err = true;
+            (*index)++;
         }
     }
 }

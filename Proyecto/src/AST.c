@@ -122,7 +122,14 @@ void typeError(AST* ar) {
         errRet = true;
     }
     if(ar->symbol->type == CALL_F) {
-        errorCall(ar, &err);
+        Tsymbol* exist = Lookup(ar->left->symbol->varname);
+        if(exist){
+            errorCall(ar, &err);
+        }else {
+           printf("\033[31mLa funcion no existe11, error en linea: %d \033[0m\n",ar->left->symbol->line);
+           err= true; 
+        } 
+
     }
     if (ar->left != NULL) {
         if(ar->symbol->type == ERETURN){
