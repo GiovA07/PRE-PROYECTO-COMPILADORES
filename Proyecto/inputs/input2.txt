@@ -1,0 +1,13 @@
+PROGRAM {
+    void main() {
+        int x;
+        x = 10;
+        if (x > 5) {
+            while (x > 0) {
+                x = x - 1;
+            }
+        } else {
+            x = 20;
+        }
+    }
+}

@@ -127,8 +127,8 @@ void typeError(AST* ar) {
             errorCall(ar, &err);
         }else {
            printf("\033[31mLa funcion no existe11, error en linea: %d \033[0m\n",ar->left->symbol->line);
-           err= true; 
-        } 
+           err= true;
+        }
 
     }
     if (ar->left != NULL) {

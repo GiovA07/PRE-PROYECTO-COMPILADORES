@@ -1,0 +1,12 @@
+PROGRAM {
+    bool flag;
+    int main() {
+        flag = true;
+        if (flag && (5 > 3)) {
+            flag = false;
+        } else {
+            flag = true;
+        }
+        return 0;
+    }
+}

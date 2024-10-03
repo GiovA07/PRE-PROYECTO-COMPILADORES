@@ -1,0 +1,11 @@
+PROGRAM {
+    int foo(int y) {
+        return y * 2;
+    }
+
+    int main() {
+        int x;
+        x = foo(10);
+        return x;
+    }
+}

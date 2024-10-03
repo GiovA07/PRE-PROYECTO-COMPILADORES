@@ -8,19 +8,18 @@ Program {
         return 1;
     }
     bool get_bool() extern;
+
     void print_int(int i,int x, bool z) extern;
 
     int main() {
         int w;
-        bool z;
+        if (get_bool()) then {
+            int xx;
+        }
+        xx = 10; 
         get_bool();
         print_int(1,2,get_bool());
-        #
         return 1;
     }
 }
 
-// padre if => ar->rigth->rigth->left || ar->rigth->left->left
-// padre if_then = ar->rigth->left->rigth->left
-// padre if_else = ar->rigth->rigth->left->rigth->left
-// padre main => ar->rhi

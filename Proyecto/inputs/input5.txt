@@ -1,0 +1,11 @@
+PROGRAM {
+    int foo(int y) extern;
+
+    int main() {
+        int x;
+        x = foo(10);
+        return x;
+    }
+
+
+}
