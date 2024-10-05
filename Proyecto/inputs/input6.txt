@@ -1,24 +1,36 @@
 Program {
-
     int s;
-    int inc(int x) {
+    int w;
+    bool l;
+    
+
+    bool get_bool(int x, int s) extern;  
+
+    int inc(bool x){
+        bool s;
         int z;
-        x = 3;
-        z = 10 + 10;
-        return 1;
-    }
-    bool get_bool() extern;
+        s = get_bool();
+        s = !true;
 
-    void print_int(int i,int x, bool z) extern;
-
-    int main() {
-        int w;
-        if (get_bool()) then {
-            int xx;
+        if(5 > 5)then{
+            int s;
+            s = 10;
+            z = z + z; 
         }
-        xx = 10; 
-        get_bool();
-        print_int(1,2,get_bool());
+        return 4 + 4;
+    }
+
+    bool errr (){
+        bool m;
+        return l;
+    }
+
+    int main(){
+        int s;
+        bool x;
+        w = 5 + 5; 
+        l = !(w>w);
+        inc(true);
         return 1;
     }
 }

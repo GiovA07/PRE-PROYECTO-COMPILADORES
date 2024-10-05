@@ -29,6 +29,7 @@ struct Tsymbol *Lookup(char * name){
   return NULL;
 }
 
+// para tabla global
 void Install(Tsymbol *symbol){
   if(Lookup(symbol->varname) == NULL){
     symbol->next =  table;
@@ -38,6 +39,94 @@ void Install(Tsymbol *symbol){
     exit(1);
   }
 }
+//instalo en la tabla el scope
+void InstallScope(){
+  char *aux = "scope";
+  Tsymbol *scope = CreateSymbol(aux,OTHERS, 0, 0);
+  scope->next =  table;
+  table = scope;
+
+}
+
+void InstallInScope(Tsymbol *symbol){
+  Tsymbol *head = table;
+  Tsymbol *scope = symbol->table;
+    // guardo la tabla de la ultima funcion
+    // printf("Type :%s\n",string[head->type]);
+  if(LookupInTable(symbol->varname) == NULL) {
+    scope->next =  head->table;
+    head->table = scope;
+  } else {
+    printf("Simbolo existente, linea de error: %d", symbol->line);
+    exit(1);
+  }
+
+}
+
+struct Tsymbol *LookupInTable(char * name){
+  Tsymbol *head = table->table;
+  if(name == NULL) {
+    return NULL;
+  }
+  while(head != NULL) {
+    if(strcmp(name, head->varname)==0){
+      return head;
+    }
+    head = head->next;
+  }
+  return NULL;
+}
+
+
+void InstallInTableActual (Tsymbol *symbol){
+  Tsymbol *head = table;
+  // guardo la tabla de la ultima funcion
+ // printf("Type :%s\n",string[head->type]);
+  if(LookupInTable(symbol->varname) == NULL) {
+    symbol->next =  head->table;
+    head->table = symbol;
+  } else {
+    printf("Simbolo existente, linea de error: %d", symbol->line);
+    exit(1);
+  }
+}
+
+struct Tsymbol *LookupExternVar(char * name) {
+  Tsymbol *head = table; 
+  if(LookupInTableAux(name,head) == NULL){
+    while(head != NULL){
+      Tsymbol *aux = LookupInTableAux(name, head);
+      if(aux){
+        return aux;
+      }
+      head = head->next;
+    }
+  }
+}
+struct Tsymbol *LookupInTableAux(char * name, Tsymbol *symTable){
+  Tsymbol *head = symTable->table;
+  if(name == NULL) {
+    return NULL;
+  }
+  while(head != NULL) {
+    if(strcmp(name, head->varname)==0){
+      return head;
+    }
+    head = head->next;
+  }
+  return NULL;
+}
+
+void DeleteListFunc(){
+  //Tsymbol * head = table;
+  printf("BORRE: %s\n",table->varname);
+  table = table -> next;
+  // printf("SIGUIENTE: %s\n",table->varname);
+  
+  // desapilar borrando memoria
+  //free(head);
+}
+
 void DeleteList(){
   Tsymbol *aux;
   while(table != NULL) {
@@ -79,41 +168,6 @@ void setValue(Tsymbol* symbol, int valor){
     }
 }
 
-struct Tsymbol *LookupTable(int size){
-  Tsymbol *head = table;
-  while(head != NULL) {
-    if(size == head->size){
-      return head;
-    }
-    head = head->next;
-  }
-  return NULL;
-}
-
-struct Tsymbol *LookupInTable(char * name,Tsymbol* symTabla){
-  Tsymbol *head = symTabla->table;
-  if(name == NULL) {
-    return NULL;
-  }
-  while(head != NULL) {
-    if(strcmp(name, head->varname)==0){
-      return head;
-    }
-    head = head->next;
-  }
-  return NULL;
-}
-
-void InstallTable(Tsymbol *symbol,Tsymbol *symTabla){
-  if(LookupInTable(symbol->varname,symTabla) == NULL) {
-    symbol->next =  symTabla->table;
-    symTabla->table = symbol;
-  } else {
-    printf("Simbolo existente, linea de error: %d", symbol->line);
-    exit(1);
-  }
-}
-
 int cantArguments(Tsymbol* symTabla){
   int cant = 0;
   Tsymbol *aux = symTabla->table;
@@ -140,13 +194,5 @@ int* typeParam(Tsymbol* symTabla){
   }
   return types;
 }
-// ver
-// void DeleteListTable(Tsymbol* symbol){
-//   Tsymbol *aux;
-//   while(symbol->table != NULL) {
-//     aux  = symbol->table;
-//     symbol->table = symbol->next;
-//     free(aux);
-//   }
-// }
+
 

@@ -45,10 +45,11 @@ enum TYPES {
     PARAMINT,
     PARAMBOOL,
     OTHERS,
-    BLOCK
+    BLOCK,
+    BLOCK_FIN
 };
 
-char static string[39][40] = {"VAR","EMAIN","VARINT","VARBOOL","CONSINT","CONSBOOL","SUMA","RESTA","PROD","EDIV","ERESTO","EOR","EAND","ENOT","ASIG","DECLA","SENTEN","EID","ERETURN","RETINT","RETBOL","RETVOID","EIF","ETHEN","EELSE","EWHILE","EMAYORQUE","EMENORQUE","EEQ","EFUNC","EFUNCEXTERN","EPROGRAM","EBLOQ","CALL_F","ARGS", "PARAMINT", "PARAMBOOL","OTHERS","BLOCK"};
+char static string[40][41] = {"VAR","EMAIN","VARINT","VARBOOL","CONSINT","CONSBOOL","SUMA","RESTA","PROD","EDIV","ERESTO","EOR","EAND","ENOT","ASIG","DECLA","SENTEN","EID","ERETURN","RETINT","RETBOL","RETVOID","EIF","ETHEN","EELSE","EWHILE","EMAYORQUE","EMENORQUE","EEQ","EFUNC","EFUNCEXTERN","EPROGRAM","EBLOQ","CALL_F","ARGS", "PARAMINT", "PARAMBOOL","OTHERS","BLOCK","BLOCK_FIN"};
 
 
 typedef struct Tsymbol {
@@ -69,9 +70,20 @@ void prinTable();
 struct Tsymbol * CreateSymbol(char *name, enum TYPES type, int size, int line);
 void setValue(Tsymbol* symbol, int value);
 // Nuevas funciones para el alcance de las variables
-void InstallTable(Tsymbol *symbol,Tsymbol *symTabla);
-struct Tsymbol *LookupTable(int size);
-struct Tsymbol *LookupInTable(char * name,Tsymbol* symTabla);
+
+void InstallInTableActual (Tsymbol *symbol);
+
+void DeleteListFunc();
+
+void InstallInScope(Tsymbol *symbol);
+void InstallScope();
+struct Tsymbol *LookupInTable(char * name);
+struct Tsymbol *LookupInTableAux(char * name, Tsymbol *symTable);
+struct Tsymbol *LookupExternVar(char * name); 
+
+
+//void InstallTable(Tsymbol *symbol,Tsymbol *symTabla);
+//struct Tsymbol *LookupTable(int size);
 int cantArguments(Tsymbol* symTabla);
 int* typeParam(Tsymbol* symTabla);
 

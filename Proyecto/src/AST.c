@@ -21,6 +21,10 @@ struct AST* createTree(Tsymbol* symbol, struct AST *l, struct AST *r) {
     return arbol;
 }
 
+void updateNodeTree(AST* tree, Tsymbol* symbol){
+    tree->symbol = symbol;
+}
+
 void elimArbol(AST* tree) {
     if (tree != NULL) {
         if (tree->symbol != NULL) {
@@ -73,33 +77,43 @@ void printDot(AST* tree, const char* filename) {
     fclose(file);
 }
 
-
+// Tsymbol *auxFunc = NULL;
+// bool correct = false;
 void createTable(AST* ar) {
     enum TYPES tipoActual = (ar->symbol)->type;
-    if(tipoActual == RETINT || tipoActual == RETBOL || tipoActual == RETVOID) {
-        Install(ar->symbol);
+    if(tipoActual == EPROGRAM){
+       
+       InstallScope(); 
+       InstallInTableActual(ar->symbol);
     }
+    if(tipoActual == RETINT || tipoActual == RETBOL || tipoActual == RETVOID ) {
+        printf("APILO -> %s\n",ar->symbol->varname);
+        InstallScope(); 
+        InstallInTableActual(ar->symbol);
+    }
+    //si no se permite crear funciones dentro de funciones anda
+    if( tipoActual == EIF || tipoActual == EWHILE){
+        printf("APILO -> %s\n",ar->symbol->varname);
+        InstallScope(); 
+        InstallInTableActual(ar->symbol);
+    }
+    
     if (tipoActual == VARBOOL || tipoActual == VARINT || tipoActual == PARAMINT || tipoActual == PARAMBOOL)  {
-        Tsymbol* aux = LookupTable(ar->symbol->size);
-        if(aux) {
-            if(aux->type == RETINT || aux->type == RETBOL || aux->type == RETVOID) {
-                InstallTable(ar->symbol,aux);
-            }else {
-                Install(ar->symbol);
-            }
-        }else {
-            Install(ar->symbol);
-        }
+        InstallInTableActual(ar->symbol);
+
     }
-    if (ar->left != NULL) {
-        createTable(ar->left);
+
+    if(tipoActual == BLOCK_FIN) {
+        prinTable();
+        printf("\nTermino\n");
+        DeleteListFunc();
+        // if(LookupInTable(auxFunc->varname)==NULL){
+        //     printf("FUNCION -> %s\n",auxFunc->varname);
+        //     InstallInTableActual(auxFunc);
+        // }
+
     }
-    if (ar->right != NULL) {
-        createTable(ar->right);
-    }
-}
-//AST* axuRet = NULL;
-void typeError(AST* ar) {
+    // type
     if (ar->right != NULL && ar->left != NULL) {
         enum TYPES tipoActual = (ar->symbol)->type;
         bool operArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
@@ -107,11 +121,10 @@ void typeError(AST* ar) {
         bool operCondi = (tipoActual == EMAYORQUE || tipoActual == EMENORQUE || tipoActual == EEQ);
         if (tipoActual == ASIG) {
             errorAsig(ar, &err);
-        }
-        else if(operArit || operBool || operCondi) {
-            errorOpera(ar, tipoActual, &err);
+        } else if(operArit || operBool || operCondi) {
+             errorOpera(ar, tipoActual, &err);
         }else if(tipoActual == EIF || tipoActual == EWHILE) {
-           errorCond(ar, &err);
+            errorCond(ar, &err);
         }
     }
     if((ar->symbol->type == RETVOID)){
@@ -121,31 +134,37 @@ void typeError(AST* ar) {
         aux = ar->symbol->type;
         errRet = true;
     }
-    if(ar->symbol->type == CALL_F) {
-        Tsymbol* exist = Lookup(ar->left->symbol->varname);
-        if(exist){
-            errorCall(ar, &err);
-        }else {
-           printf("\033[31mLa funcion no existe11, error en linea: %d \033[0m\n",ar->left->symbol->line);
-           err= true;
-        }
 
-    }
+    // if(ar->symbol->type == CALL_F) {
+    //     Tsymbol* exist = Lookup(ar->left->symbol->varname);
+    //     if(exist){
+    //         errorCall(ar, &err);
+    //     }else {
+    //        printf("\033[31mLa funcion no existe11, error en linea: %d \033[0m\n",ar->left->symbol->line);
+    //        err= true;
+    //     }
+
+    // }
+
     if (ar->left != NULL) {
+        // type
         if(ar->symbol->type == ERETURN){
             errRet = false;
             errorRet(ar, aux, &err);
         }
         if(ar->symbol->type == ENOT){
-            errorNot(ar, &err);
+             errorNot(ar, &err);
         }
-        typeError(ar->left);
+        createTable(ar->left);
     }
+    
     if (ar->right != NULL) {
-        typeError(ar->right);
+        createTable(ar->right);
     }
-}
 
+    
+
+}
 
 void evaluate(AST* ar) {
     if((ar->symbol)->type == ERETURN){
@@ -390,24 +409,3 @@ void retError(){
 bool getError() {
     return err;
 }
-
-        // posible violacion retorno
-        // if(strcmp(ar->symbol->varname, "if_then") == 0){
-        //     if(ar->right->left->left){
-        //         if( ar->right->left->left->symbol->type == ERETURN){
-        //             printf("existe");
-        //         }
-        //     }else if(ar->right->right->left){
-        //         printf("exixte44");
-        //     }
-        //    }else if(strcmp(ar->symbol->varname, "if_else") == 0){
-        //     if(ar->right->left->right->left->symbol->type == ERETURN){
-        //         printf("existe2");
-        //     }
-        //     if(ar->right->right->left->right->left){
-        //         printf("existe3");
-        //     }
-        //    }
-        //
-        // }else if(tipoActual == CALL_F){
-        //     errorCallF(ar,&err);
