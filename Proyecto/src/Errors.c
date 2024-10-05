@@ -76,10 +76,7 @@ void errorRet(AST* ar,enum TYPES type, bool* err){
         if(!auxIzq){
             if(tipoActualIzq == CALL_F){
                 Tsymbol *typeFunc = LookupExternVar((ar->left)->left->symbol->varname);
-                // if(!typeFunc){
-                //     printf("\033[31mError de tipo de retorno, tipo de funcion invalido \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
-                //     *err = true;
-                // }
+
                 if((type == RETINT && typeFunc->type != RETINT) || (type == RETBOL && typeFunc->type != RETBOL)){
                     printf("\033[31mError de tipo de retorno, tipo de funcion invalido \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
                     *err = true;
@@ -369,8 +366,6 @@ void evaluate_op_aritmeticos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* er
 
 
 void errorCall(AST *ar,  bool *err) {
-    //Tsymbol* func1 = Lookup(ar->left->symbol->varname);
-    //Tsymbol* func = LookupTable(func1->size);
     Tsymbol* func = LookupExternVar(ar->left->symbol->varname);
     int len = cantArguments(func);
     int index = 0;
@@ -394,6 +389,7 @@ void errorCall(AST *ar,  bool *err) {
         }
     }
 }
+
 void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size, bool *err){
     if(ar == NULL) return;
     if(ar->left != NULL){
@@ -405,9 +401,6 @@ void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size, bool *err)
     if(ar->symbol->type != ARGS && ar->symbol->type != EFUNC ){
         //guardar el tipo
         if(*index < maxArg) {
-            //Tsymbol* func1 = LookupTable(size);
-            // Tsymbol* arg = LookupInTable(ar->symbol->varname,func1);        
-            // Tsymbol* argGlob = LookupExternVar(ar->symbol->varname);
 
             Tsymbol* arg = LookupInTable(ar->symbol->varname);
             Tsymbol* argGlob = LookupExternVar(ar->symbol->varname);    

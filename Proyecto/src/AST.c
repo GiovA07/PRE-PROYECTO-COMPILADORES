@@ -107,8 +107,6 @@ void createTable(AST* ar) {
     }
 
     if(tipoActual == BLOCK_FIN) {
-        // prinTable();
-        // printf("\nTermino\n");
         DeleteListFunc();
     }
     // type

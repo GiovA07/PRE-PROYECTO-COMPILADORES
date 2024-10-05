@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "../include/AST.h"
 
-void interprete(struct AST *arbol);
+void compilador(struct AST *arbol);
 struct AST* createTreeWhitSymbol(char * name,enum TYPES type,int size, int line, struct AST *l, struct AST *r);
 extern int yylineno;
 int blockNum = 0;
@@ -77,20 +77,15 @@ int blockNum = 0;
 %%
 
 prog: PROGRAM TLLAVE_OP list_decls list_func main TLLAVE_CL  { char * name = "PROGRAM_BLOCK"; struct AST* aux= createTreeWhitSymbol(name,OTHERS,blockNum,yylineno,$4, $5);
-                                                              char * name1 = "PROGRAM"; interprete(createTreeWhitSymbol(name1,EPROGRAM,blockNum,yylineno,$3, aux));}
-    | PROGRAM TLLAVE_OP  main TLLAVE_CL  {char * name = "PROGRAM"; interprete(createTreeWhitSymbol(name,EPROGRAM,blockNum,yylineno,NULL, $3));}
-    | PROGRAM TLLAVE_OP  list_func main TLLAVE_CL  {char * name = "PROGRAM"; interprete(createTreeWhitSymbol(name,EPROGRAM,blockNum,yylineno,$3, $4));}
-    | PROGRAM TLLAVE_OP list_decls  main TLLAVE_CL  {char * name = "PROGRAM"; interprete(createTreeWhitSymbol(name,EPROGRAM,blockNum,yylineno,$3, $4));}
-    
+                                                              char * name1 = "PROGRAM"; compilador(createTreeWhitSymbol(name1,EPROGRAM,blockNum,yylineno,$3, aux));}
+    | PROGRAM TLLAVE_OP  main TLLAVE_CL  {char * name = "PROGRAM"; compilador(createTreeWhitSymbol(name,EPROGRAM,blockNum,yylineno,NULL, $3));}
+    | PROGRAM TLLAVE_OP  list_func main TLLAVE_CL  {char * name = "PROGRAM"; compilador(createTreeWhitSymbol(name,EPROGRAM,blockNum,yylineno,$3, $4));}
+    | PROGRAM TLLAVE_OP list_decls  main TLLAVE_CL  {char * name = "PROGRAM"; compilador(createTreeWhitSymbol(name,EPROGRAM,blockNum,yylineno,$3, $4));}
     ;
 
 main: TYPE_BOOL MAIN TPAR_OP TPAR_CL block  { char * name = "MAIN";$$ = createTreeWhitSymbol(name,RETBOL,blockNum,yylineno,$5, NULL);}
-    /* | TYPE_BOOL MAIN TPAR_OP TPAR_CL TLLAVE_OP list_sents TLLAVE_CL  { char * name = "MAIN";$$ = createTreeWhitSymbol(name,RETBOL,blockNum-1,yylineno,NULL, $6);} */
-    | TYPE_INT MAIN TPAR_OP TPAR_CL block  { char * name = "MAIN";$$ = createTreeWhitSymbol(name,RETINT,blockNum,yylineno,$5, NULL);}
-    /* | TYPE_INT MAIN TPAR_OP TPAR_CL TLLAVE_OP list_sents TLLAVE_CL  { char * name = "MAIN";$$ = createTreeWhitSymbol(name,RETINT,blockNum-1,yylineno,NULL, $6);} */
-    | TYPE_VOID MAIN TPAR_OP TPAR_CL block { char * name = "MAIN";$$ = createTreeWhitSymbol(name,RETVOID,blockNum,yylineno,$5, NULL);}
-    /* | TYPE_VOID MAIN TPAR_OP TPAR_CL TLLAVE_OP list_sents TLLAVE_CL  { char * name = "MAIN";$$ = createTreeWhitSymbol(name,RETVOID,blockNum-1,yylineno,NULL, $6);} */
-
+    | TYPE_INT MAIN TPAR_OP TPAR_CL block   { char * name = "MAIN";$$ = createTreeWhitSymbol(name,RETINT,blockNum,yylineno,$5, NULL);}
+    | TYPE_VOID MAIN TPAR_OP TPAR_CL block  { char * name = "MAIN";$$ = createTreeWhitSymbol(name,RETVOID,blockNum,yylineno,$5, NULL);}
     ;
 
 list_decls: declaracion              {char * name = "DECLARACION"; $$ = createTreeWhitSymbol(name,DECLA,blockNum,yylineno,$1, NULL);}
@@ -98,16 +93,15 @@ list_decls: declaracion              {char * name = "DECLARACION"; $$ = createTr
           ;
 
 list_sents:                                     {$$ = NULL;}
-            |list_sents sentencia               {char * name = "SENTENCIA"; $$ = createTreeWhitSymbol(name,SENTEN,blockNum,yylineno,$1, $2);}
-            ;
+          |list_sents sentencia                 {char * name = "SENTENCIA"; $$ = createTreeWhitSymbol(name,SENTEN,blockNum,yylineno,$1, $2);}
+          ;
 
 block: TLLAVE_OP list_decls list_sents TLLAVE_CL  { char *name1 = "BLOCK_FIN"; struct AST*aux = createTreeWhitSymbol(name1,BLOCK_FIN,blockNum,yylineno,NULL, NULL);
                                                     char *name2 = "BLOCK_INTERNO"; struct AST*aux2 = createTreeWhitSymbol(name2,OTHERS,blockNum,yylineno,$2, $3); 
-                                                    char *name = "BLOCK"; $$ = createTreeWhitSymbol(name,BLOCK,blockNum,yylineno,aux2, aux);
-                                                    
-                                                    }
-     | TLLAVE_OP list_sents TLLAVE_CL  {char *name1 = "BLOCK_FIN"; struct AST*aux = createTreeWhitSymbol(name1,BLOCK_FIN,blockNum,yylineno,NULL, NULL);
-                                        char *name = "BLOCK"; $$ = createTreeWhitSymbol(name,BLOCK,blockNum,yylineno,$2, aux); }
+                                                    char *name = "BLOCK"; $$ = createTreeWhitSymbol(name,BLOCK,blockNum,yylineno,aux2, aux); }
+     | TLLAVE_OP list_sents TLLAVE_CL             { char *name1 = "BLOCK_FIN"; struct AST*aux = createTreeWhitSymbol(name1,BLOCK_FIN,blockNum,yylineno,NULL, NULL);
+                                                    char *name = "BLOCK"; $$ = createTreeWhitSymbol(name,BLOCK,blockNum,yylineno,$2, aux); }
+     ;
 
 sentencia: asignacion                               {$$ = $1;}
          | retorno                                  {$$ = $1;}
@@ -146,25 +140,16 @@ dec_parametro : TYPE_INT ID  {char * name = $2->varname; $$ = createTreeWhitSymb
 
 
 
-list_func:  declare_funcion                {char * name = "LIS_FUNCION";$$ = createTreeWhitSymbol(name,OTHERS,blockNum,yylineno,$1, NULL);}                //modificar esto
+list_func: declare_funcion                  {char * name = "LIS_FUNCION";$$ = createTreeWhitSymbol(name,OTHERS,blockNum,yylineno,$1, NULL);}                //modificar esto
          | list_func declare_funcion        {char * name = "LIS_FUNCION";$$ = createTreeWhitSymbol(name,OTHERS,blockNum,yylineno,$1, $2);}                //modificar esto
          ;
 
-declare_funcion: TYPE_INT ID TPAR_OP parametros TPAR_CL block   {char * nameAux = $2->varname; $$ = createTreeWhitSymbol(nameAux, RETINT, blockNum, yylineno, $4, $6);}
-                                                                                                    //    char * name = $2->varname;$$ = createTreeWhitSymbol(name,RETINT,blockNum-1,yylineno,$4, aux);}
-               /* |TYPE_INT ID TPAR_OP parametros TPAR_CL TLLAVE_OP  list_sents TLLAVE_CL   {char * nameAux = "BLOQUE_FUNC"; struct AST* aux = createTreeWhitSymbol(nameAux, EBLOQ, 1, yylineno, NULL, $7);
-                                                                                                       char * name = $2->varname;$$ = createTreeWhitSymbol(name,RETINT,blockNum-1,yylineno,$4, aux);} */
-               | TYPE_BOOL ID TPAR_OP parametros TPAR_CL block  {char * nameAux = $2->varname; $$ = createTreeWhitSymbol(nameAux, RETBOL, blockNum, yylineno, $4, $6);}
-                                                                                                     //  char * name = $2->varname;$$ = createTreeWhitSymbol(name,RETBOL,blockNum-1,yylineno,$4, aux);}
-               /* | TYPE_BOOL ID TPAR_OP parametros TPAR_CL TLLAVE_OP  list_sents TLLAVE_CL  {char * nameAux = "BLOQUE_FUNC"; struct AST* aux = createTreeWhitSymbol(nameAux, EBLOQ, 1, yylineno, NULL, $7);
-                                                                                                       char * name = $2->varname;$$ = createTreeWhitSymbol(name,RETBOL,blockNum-1,yylineno,$4, aux);} */
-               | TYPE_VOID ID TPAR_OP parametros TPAR_CL block  {char * nameAux = $2->varname; $$ = createTreeWhitSymbol(nameAux, RETVOID, blockNum, yylineno, $4, $6);}
-                                                                                                     //  char * name = $2->varname;$$ = createTreeWhitSymbol(name,RETVOID,blockNum-1,yylineno,$4, aux);}
-               /* | TYPE_VOID ID TPAR_OP parametros TPAR_CL TLLAVE_OP  list_sents TLLAVE_CL  {char * nameAux = "BLOQUE_FUNC"; struct AST* aux = createTreeWhitSymbol(nameAux, EBLOQ, 1, yylineno, NULL, $7);
-                                                                                                       char * name = $2->varname;$$ = createTreeWhitSymbol(name,RETVOID,blockNum-1,yylineno,$4, aux);} */
-               | TYPE_INT ID TPAR_OP parametros TPAR_CL EXTERN ';'                                  {  char * name = $2->varname;$$ = createTreeWhitSymbol(name,RETINT,blockNum-1,yylineno,$4, NULL);}
-               | TYPE_BOOL ID TPAR_OP parametros TPAR_CL EXTERN ';'                                 {  char * name = $2->varname;$$ = createTreeWhitSymbol(name,RETBOL,blockNum-1,yylineno,$4, NULL);}
-               | TYPE_VOID ID TPAR_OP parametros TPAR_CL EXTERN ';'                                 {  char * name = $2->varname;$$ = createTreeWhitSymbol(name,RETVOID,blockNum-1,yylineno,$4, NULL);}
+declare_funcion: TYPE_INT ID TPAR_OP parametros TPAR_CL block           { char * nameAux = $2->varname; $$ = createTreeWhitSymbol(nameAux, RETINT, blockNum, yylineno, $4, $6);}
+               | TYPE_BOOL ID TPAR_OP parametros TPAR_CL block          { char * nameAux = $2->varname; $$ = createTreeWhitSymbol(nameAux, RETBOL, blockNum, yylineno, $4, $6);}
+               | TYPE_VOID ID TPAR_OP parametros TPAR_CL block          { char * nameAux = $2->varname; $$ = createTreeWhitSymbol(nameAux, RETVOID, blockNum, yylineno, $4, $6);}
+               | TYPE_INT ID TPAR_OP parametros TPAR_CL EXTERN ';'      { char * name = $2->varname;$$ = createTreeWhitSymbol(name,RETINT,blockNum-1,yylineno,$4, NULL);}
+               | TYPE_BOOL ID TPAR_OP parametros TPAR_CL EXTERN ';'     { char * name = $2->varname;$$ = createTreeWhitSymbol(name,RETBOL,blockNum-1,yylineno,$4, NULL);}
+               | TYPE_VOID ID TPAR_OP parametros TPAR_CL EXTERN ';'     { char * name = $2->varname;$$ = createTreeWhitSymbol(name,RETVOID,blockNum-1,yylineno,$4, NULL);}
                ;
 
 
@@ -195,12 +180,11 @@ valor: INT                      {$$ = createTree($1, NULL, NULL);}
 retorno: RETURN expr ';' {char * name = "return";$$ = createTreeWhitSymbol(name,ERETURN,blockNum,yylineno,$2, NULL);}
        ;
 
-/// chequear errores y evaluarlo
 if_else: IF TPAR_OP expr TPAR_CL THEN block {char * name = "if_then"; $$ = createTreeWhitSymbol(name,EIF,blockNum,yylineno,$3, $6);}
        | IF TPAR_OP expr TPAR_CL THEN block ELSE block { char * name = "then"; char * name2 = "else";
-                                                                                                           struct AST* aux_else = createTreeWhitSymbol(name2,EELSE,blockNum,yylineno,$8, NULL);
-                                                                                                           struct AST* aux_then = createTreeWhitSymbol(name,ETHEN,blockNum,yylineno,$6, aux_else);
-                                                                                                           char * name3 = "if_else"; $$ = createTreeWhitSymbol(name3,EIF,blockNum,yylineno,$3, aux_then);}
+                                                         struct AST* aux_else = createTreeWhitSymbol(name2,EELSE,blockNum,yylineno,$8, NULL);
+                                                         struct AST* aux_then = createTreeWhitSymbol(name,ETHEN,blockNum,yylineno,$6, aux_else);
+                                                         char * name3 = "if_else"; $$ = createTreeWhitSymbol(name3,EIF,blockNum,yylineno,$3, aux_then);}
        ;
 
 while: WHILE TPAR_OP expr TPAR_CL block {char * name = "while"; $$ = createTreeWhitSymbol(name,EWHILE,blockNum,yylineno,$3, $5);}
@@ -208,7 +192,7 @@ while: WHILE TPAR_OP expr TPAR_CL block {char * name = "while"; $$ = createTreeW
 
 %%
 
-void interprete(struct AST* ar){
+void compilador(struct AST* ar){
     printDot(ar,"output/Arbol.dot");
     createTable(ar);
     retError();
@@ -216,9 +200,6 @@ void interprete(struct AST* ar){
        elimArbol(ar);
        exit(1);
     }
-
-    //evaluate(ar);
-    //prinTable();
     elimArbol(ar);
 }
 
