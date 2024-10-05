@@ -75,7 +75,7 @@ void InstallInTableActual (Tsymbol *symbol);
 
 void DeleteListFunc();
 
-void InstallInScope(Tsymbol *symbol);
+void InstallParam (Tsymbol *symbol,Tsymbol *tablaSym);
 void InstallScope();
 struct Tsymbol *LookupInTable(char * name);
 struct Tsymbol *LookupInTableAux(char * name, Tsymbol *symTable);

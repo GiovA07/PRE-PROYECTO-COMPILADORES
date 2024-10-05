@@ -28,6 +28,7 @@ Program {
     int main(){
         int s;
         bool x;
+        x = get_bool(true,1);
         w = 5 + 5; 
         l = !(w>w);
         inc(true);

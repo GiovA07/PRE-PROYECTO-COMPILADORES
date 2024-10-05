@@ -48,21 +48,6 @@ void InstallScope(){
 
 }
 
-void InstallInScope(Tsymbol *symbol){
-  Tsymbol *head = table;
-  Tsymbol *scope = symbol->table;
-    // guardo la tabla de la ultima funcion
-    // printf("Type :%s\n",string[head->type]);
-  if(LookupInTable(symbol->varname) == NULL) {
-    scope->next =  head->table;
-    head->table = scope;
-  } else {
-    printf("Simbolo existente, linea de error: %d", symbol->line);
-    exit(1);
-  }
-
-}
-
 struct Tsymbol *LookupInTable(char * name){
   Tsymbol *head = table->table;
   if(name == NULL) {
@@ -76,12 +61,19 @@ struct Tsymbol *LookupInTable(char * name){
   }
   return NULL;
 }
-
+void InstallParam (Tsymbol *symbol,Tsymbol *tablaSym){
+  Tsymbol *head = tablaSym;
+  if(LookupInTableAux(symbol->varname,head) == NULL) {
+    symbol->next =  head->table;
+    head->table = symbol;
+  } else {
+    printf("Simbolo existente, linea de error: %d", symbol->line);
+    exit(1);
+  }
+}
 
 void InstallInTableActual (Tsymbol *symbol){
   Tsymbol *head = table;
-  // guardo la tabla de la ultima funcion
- // printf("Type :%s\n",string[head->type]);
   if(LookupInTable(symbol->varname) == NULL) {
     symbol->next =  head->table;
     head->table = symbol;
@@ -119,7 +111,7 @@ struct Tsymbol *LookupInTableAux(char * name, Tsymbol *symTable){
 
 void DeleteListFunc(){
   //Tsymbol * head = table;
-  printf("BORRE: %s\n",table->varname);
+  //printf("BORRE: %s\n",table->varname);
   table = table -> next;
   // printf("SIGUIENTE: %s\n",table->varname);
   

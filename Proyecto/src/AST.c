@@ -77,41 +77,39 @@ void printDot(AST* tree, const char* filename) {
     fclose(file);
 }
 
-// Tsymbol *auxFunc = NULL;
+Tsymbol *auxFunc = NULL;
 // bool correct = false;
 void createTable(AST* ar) {
     enum TYPES tipoActual = (ar->symbol)->type;
     if(tipoActual == EPROGRAM){
-       
        InstallScope(); 
        InstallInTableActual(ar->symbol);
     }
     if(tipoActual == RETINT || tipoActual == RETBOL || tipoActual == RETVOID ) {
-        printf("APILO -> %s\n",ar->symbol->varname);
-        InstallScope(); 
+        //printf("APILO -> %s\n",ar->symbol->varname);
+        auxFunc = ar->symbol;
         InstallInTableActual(ar->symbol);
+        InstallScope(); 
     }
     //si no se permite crear funciones dentro de funciones anda
     if( tipoActual == EIF || tipoActual == EWHILE){
-        printf("APILO -> %s\n",ar->symbol->varname);
+       // printf("PROBLEMA -> %s\n",ar->symbol->varname);
         InstallScope(); 
         InstallInTableActual(ar->symbol);
     }
     
-    if (tipoActual == VARBOOL || tipoActual == VARINT || tipoActual == PARAMINT || tipoActual == PARAMBOOL)  {
+    if (tipoActual == VARBOOL || tipoActual == VARINT){
         InstallInTableActual(ar->symbol);
-
+    } 
+    if(tipoActual == PARAMINT || tipoActual == PARAMBOOL)  {
+        InstallInTableActual(ar->symbol);
+        InstallParam(ar->symbol, auxFunc);
     }
 
     if(tipoActual == BLOCK_FIN) {
-        prinTable();
-        printf("\nTermino\n");
+        // prinTable();
+        // printf("\nTermino\n");
         DeleteListFunc();
-        // if(LookupInTable(auxFunc->varname)==NULL){
-        //     printf("FUNCION -> %s\n",auxFunc->varname);
-        //     InstallInTableActual(auxFunc);
-        // }
-
     }
     // type
     if (ar->right != NULL && ar->left != NULL) {
@@ -135,16 +133,16 @@ void createTable(AST* ar) {
         errRet = true;
     }
 
-    // if(ar->symbol->type == CALL_F) {
-    //     Tsymbol* exist = Lookup(ar->left->symbol->varname);
-    //     if(exist){
-    //         errorCall(ar, &err);
-    //     }else {
-    //        printf("\033[31mLa funcion no existe11, error en linea: %d \033[0m\n",ar->left->symbol->line);
-    //        err= true;
-    //     }
+    if(ar->symbol->type == CALL_F) {
+        Tsymbol* exist = LookupExternVar(ar->left->symbol->varname);
+        if(exist){
+            errorCall(ar, &err);
+        }else {
+           printf("\033[31mLa funcion no existe, error en linea: %d \033[0m\n",ar->left->symbol->line);
+           err= true;
+        }
 
-    // }
+    }
 
     if (ar->left != NULL) {
         // type

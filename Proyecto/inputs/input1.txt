@@ -1,14 +1,19 @@
 Program {
     bool x;
-    int func1(){
+    int z ;
+
+    int func1(int w){
         int x;
         if(true) then {
             bool x;
             x = true;
             x = true || x;
+            if(false)then{
+                z = 10;
+            }
         }
         if(true) then{
-            x = true;
+            x = 1;
             x = 1;
             x = 10 * x;
         }
@@ -18,8 +23,8 @@ Program {
     int main(){
         int y;
         int c;
-        int x;
-        //x = func1(); 
-        return 1;
+        bool x; 
+        c = func1(z,4) + func1(3);
+        return 0;
     }
 }
