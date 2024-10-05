@@ -1,4 +1,4 @@
-PROGRAM {
+Program {
     int foo(int y) extern;
 
     int main() {
