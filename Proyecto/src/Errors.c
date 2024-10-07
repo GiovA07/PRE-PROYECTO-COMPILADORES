@@ -15,12 +15,12 @@ bool esComparador(enum TYPES tipo) {
 
 void errorCond(AST *ar, bool* err) {
 
-    Tsymbol* auxIzq = LookupInTable(((ar->left)->symbol)->varname);
-    Tsymbol* auxIzqGlob = LookupExternVar(((ar->left)->symbol)->varname);    
+    Tsymbol* auxIzq = LookupInCurrentLevel(((ar->left)->symbol)->varname);
+    Tsymbol* auxIzqGlob = LookupExternVar(((ar->left)->symbol)->varname);
     if(!auxIzq && auxIzqGlob){
          auxIzq = auxIzqGlob;
     }
-    
+
 
     enum TYPES tipoIzq = ((ar->left)->symbol)->type;
     if(!auxIzq){
@@ -43,8 +43,8 @@ void errorCond(AST *ar, bool* err) {
 }
 
 void errorNot(AST* ar, bool* err) {
-    Tsymbol* auxIzq = LookupInTable(((ar->left)->symbol)->varname);
-    Tsymbol* auxIzqGlob = LookupExternVar(((ar->left)->symbol)->varname);    
+    Tsymbol* auxIzq = LookupInCurrentLevel(((ar->left)->symbol)->varname);
+    Tsymbol* auxIzqGlob = LookupExternVar(((ar->left)->symbol)->varname);
     if(!auxIzq && auxIzqGlob){
          auxIzq = auxIzqGlob;
     }
@@ -62,8 +62,8 @@ void errorNot(AST* ar, bool* err) {
 }
 
 void errorRet(AST* ar,enum TYPES type, bool* err){
-    Tsymbol* auxIzq = LookupInTable(((ar->left)->symbol)->varname);
-    Tsymbol* auxIzqGlob = LookupExternVar(((ar->left)->symbol)->varname);    
+    Tsymbol* auxIzq = LookupInCurrentLevel(((ar->left)->symbol)->varname);
+    Tsymbol* auxIzqGlob = LookupExternVar(((ar->left)->symbol)->varname);
     if(!auxIzq && auxIzqGlob){
          auxIzq = auxIzqGlob;
     }
@@ -94,14 +94,14 @@ void errorRet(AST* ar,enum TYPES type, bool* err){
 
 
 void errorAsig(AST *ar, bool *err){
-    Tsymbol* auxDer = LookupInTable(((ar->right)->symbol)->varname);    
-    Tsymbol* auxDerGlob = LookupExternVar(((ar->right)->symbol)->varname);    
+    Tsymbol* auxDer = LookupInCurrentLevel(((ar->right)->symbol)->varname);
+    Tsymbol* auxDerGlob = LookupExternVar(((ar->right)->symbol)->varname);
     if(!auxDer && auxDerGlob){
         auxDer = auxDerGlob;
     }
 
-    Tsymbol* auxIzq = LookupInTable(((ar->left)->symbol)->varname);
-    Tsymbol* auxIzqGlob = LookupExternVar(((ar->left)->symbol)->varname);    
+    Tsymbol* auxIzq = LookupInCurrentLevel(((ar->left)->symbol)->varname);
+    Tsymbol* auxIzqGlob = LookupExternVar(((ar->left)->symbol)->varname);
     if(!auxIzq && auxIzqGlob){
          auxIzq = auxIzqGlob;
     }
@@ -138,14 +138,14 @@ void errorAsig(AST *ar, bool *err){
 
 void errorOpera(AST *ar, enum TYPES type, bool* err){
 
-    Tsymbol* auxDer = LookupInTable(((ar->right)->symbol)->varname);    
-    Tsymbol* auxDerGlob = LookupExternVar(((ar->right)->symbol)->varname);    
+    Tsymbol* auxDer = LookupInCurrentLevel(((ar->right)->symbol)->varname);
+    Tsymbol* auxDerGlob = LookupExternVar(((ar->right)->symbol)->varname);
     if(!auxDer && auxDerGlob){
         auxDer = auxDerGlob;
     }
 
-    Tsymbol* auxIzq = LookupInTable(((ar->left)->symbol)->varname);
-    Tsymbol* auxIzqGlob = LookupExternVar(((ar->left)->symbol)->varname);    
+    Tsymbol* auxIzq = LookupInCurrentLevel(((ar->left)->symbol)->varname);
+    Tsymbol* auxIzqGlob = LookupExternVar(((ar->left)->symbol)->varname);
     if(!auxIzq && auxIzqGlob){
          auxIzq = auxIzqGlob;
     }
@@ -374,7 +374,7 @@ void errorCall(AST *ar,  bool *err) {
         recorrer(ar->right,typesArg, &index, len, ar->symbol->size, err);
         int i = 0;
         int *typesParam = typeParam(func);
-        if(len == index) {        
+        if(len == index) {
              for (int j = 0; j < len; j++) {
                 bool bolCond1 = (typesParam[j] == PARAMBOOL) && (typesArg[j] == VARINT || typesArg[j] == CONSINT|| typesArg[j] == RETINT);
                 bool bolCond2 = (typesParam[j] == PARAMINT ) && (typesArg[j] == VARBOOL || typesArg[j] == CONSBOOL || typesArg[j] == RETBOL);
@@ -402,14 +402,14 @@ void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size, bool *err)
         //guardar el tipo
         if(*index < maxArg) {
 
-            Tsymbol* arg = LookupInTable(ar->symbol->varname);
-            Tsymbol* argGlob = LookupExternVar(ar->symbol->varname);    
-            
+            Tsymbol* arg = LookupInCurrentLevel(ar->symbol->varname);
+            Tsymbol* argGlob = LookupExternVar(ar->symbol->varname);
+
             if(!arg && argGlob){
                 arg = argGlob;
             }
 
-            
+
             if (arg == NULL) {
                 if(ar->symbol->type == CALL_F) {
                     Tsymbol *typeFunc = LookupExternVar(ar->left->symbol->varname);

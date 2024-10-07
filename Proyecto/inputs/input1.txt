@@ -23,8 +23,8 @@ Program {
     int main(){
         int y;
         int c;
-        bool x; 
-        c = func1(z,4) + func1(3);
+        bool x;
+        c = func1(4) + func1(3);
         return 0;
     }
 }

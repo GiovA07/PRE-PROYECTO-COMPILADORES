@@ -71,15 +71,16 @@ struct Tsymbol * CreateSymbol(char *name, enum TYPES type, int size, int line);
 void setValue(Tsymbol* symbol, int value);
 // Nuevas funciones para el alcance de las variables
 
-void InstallInTableActual (Tsymbol *symbol);
+void InstallInCurrentScope (Tsymbol *symbol);
 
-void DeleteListFunc();
+void PopScope();
 
-void InstallParam (Tsymbol *symbol,Tsymbol *tablaSym);
+void InstallParam (Tsymbol *param,Tsymbol *tablaFunc);
 void InstallScope();
-struct Tsymbol *LookupInTable(char * name);
+
+struct Tsymbol *LookupInCurrentLevel(char * name);
 struct Tsymbol *LookupInTableAux(char * name, Tsymbol *symTable);
-struct Tsymbol *LookupExternVar(char * name); 
+struct Tsymbol *LookupExternVar(char * name);
 
 
 //void InstallTable(Tsymbol *symbol,Tsymbol *symTabla);

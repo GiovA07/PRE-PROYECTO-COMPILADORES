@@ -15,40 +15,16 @@ struct Tsymbol * CreateSymbol(char *name, enum TYPES type, int size, int line){
     return newSymbol;
 }
 
-struct Tsymbol *Lookup(char * name){
-  Tsymbol *head = table;
-  if(name == NULL) {
-    return NULL;
-  }
-  while(head != NULL) {
-    if(strcmp(name, head->varname)==0){
-      return head;
-    }
-    head = head->next;
-  }
-  return NULL;
-}
 
-// para tabla global
-void Install(Tsymbol *symbol){
-  if(Lookup(symbol->varname) == NULL){
-    symbol->next =  table;
-    table = symbol;
-  } else {
-    printf("Simbolo existente, linea de error: %d", symbol->line);
-    exit(1);
-  }
-}
-//instalo en la tabla el scope
+//push - instalo en la tabla el scope
 void InstallScope(){
   char *aux = "scope";
   Tsymbol *scope = CreateSymbol(aux,OTHERS, 0, 0);
   scope->next =  table;
   table = scope;
-
 }
 
-struct Tsymbol *LookupInTable(char * name){
+struct Tsymbol *LookupInCurrentLevel(char * name){
   Tsymbol *head = table->table;
   if(name == NULL) {
     return NULL;
@@ -61,40 +37,7 @@ struct Tsymbol *LookupInTable(char * name){
   }
   return NULL;
 }
-void InstallParam (Tsymbol *symbol,Tsymbol *tablaSym){
-  Tsymbol *head = tablaSym;
-  if(LookupInTableAux(symbol->varname,head) == NULL) {
-    symbol->next =  head->table;
-    head->table = symbol;
-  } else {
-    printf("Simbolo existente, linea de error: %d", symbol->line);
-    exit(1);
-  }
-}
 
-void InstallInTableActual (Tsymbol *symbol){
-  Tsymbol *head = table;
-  if(LookupInTable(symbol->varname) == NULL) {
-    symbol->next =  head->table;
-    head->table = symbol;
-  } else {
-    printf("Simbolo existente, linea de error: %d", symbol->line);
-    exit(1);
-  }
-}
-
-struct Tsymbol *LookupExternVar(char * name) {
-  Tsymbol *head = table; 
-  if(LookupInTableAux(name,head) == NULL){
-    while(head != NULL){
-      Tsymbol *aux = LookupInTableAux(name, head);
-      if(aux){
-        return aux;
-      }
-      head = head->next;
-    }
-  }
-}
 struct Tsymbol *LookupInTableAux(char * name, Tsymbol *symTable){
   Tsymbol *head = symTable->table;
   if(name == NULL) {
@@ -109,23 +52,84 @@ struct Tsymbol *LookupInTableAux(char * name, Tsymbol *symTable){
   return NULL;
 }
 
-void DeleteListFunc(){
-  //Tsymbol * head = table;
-  //printf("BORRE: %s\n",table->varname);
-  table = table -> next;
-  // printf("SIGUIENTE: %s\n",table->varname);
-  
-  // desapilar borrando memoria
-  //free(head);
+void InstallInCurrentScope (Tsymbol *symbol){
+  Tsymbol *head = table;
+  if(LookupInCurrentLevel(symbol->varname) == NULL) {
+    symbol->next =  head->table;
+    head->table = symbol;
+  } else {
+    printf("Simbolo existente, linea de error: %d", symbol->line);
+    exit(1);
+  }
 }
 
-void DeleteList(){
-  Tsymbol *aux;
-  while(table != NULL) {
-    aux  = table;
-    table = table->next;
-    free(aux);
+void PopScope(){
+  Tsymbol* elim = table;
+  table = table -> next;
+  free(elim);
+}
+
+
+
+void InstallParam (Tsymbol *param,Tsymbol *tablaFunc){
+  Tsymbol *head = tablaFunc;
+  if(LookupInTableAux(param->varname,head) == NULL) {
+    param->next =  head->table;
+    head->table = param;
+  } else {
+    printf("Simbolo existente, linea de error: %d", param->line);
+    exit(1);
   }
+}
+
+
+struct Tsymbol *LookupExternVar(char * name) {
+  Tsymbol *head = table;
+  if(LookupInTableAux(name,head) == NULL){
+    while(head != NULL) {
+      Tsymbol *aux = LookupInTableAux(name, head);
+      if(aux){
+        return aux;
+      }
+      head = head->next;
+    }
+  }
+}
+
+
+void setValue(Tsymbol* symbol, int valor){
+    if(symbol != NULL) {
+      symbol->value = valor;
+    } else {
+        printf("Error: simbolo es NULL\n");
+    }
+}
+
+int* typeParam(Tsymbol* symTabla){
+  int index = cantArguments(symTabla);
+  int* types = (int*) malloc(index * sizeof(int));
+  index -= 1;
+  Tsymbol *aux = symTabla->table;
+  while(aux != NULL) {
+    if (aux->type == PARAMINT || aux->type == PARAMBOOL) {
+      types[index] = aux->type;
+      index -= 1;
+    }
+    aux = aux->next;
+  }
+  return types;
+}
+
+int cantArguments(Tsymbol* symTabla){
+  int cant = 0;
+  Tsymbol *aux = symTabla->table;
+  while(aux != NULL) {
+    if (aux->type == PARAMBOOL || aux->type == PARAMINT) {
+      cant += 1;
+    }
+    aux = aux->next;
+  }
+  return cant;
 }
 
 void prinTable(){
@@ -152,39 +156,37 @@ void prinTable(){
     }
 }
 
-void setValue(Tsymbol* symbol, int valor){
-    if(symbol != NULL) {
-      symbol->value = valor;
-    } else {
-        printf("Error: simbolo es NULL\n");
-    }
-}
 
-int cantArguments(Tsymbol* symTabla){
-  int cant = 0;
-  Tsymbol *aux = symTabla->table;
-  while(aux != NULL) {
-    if (aux->type == PARAMBOOL || aux->type == PARAMINT) {
-      cant += 1;
-    }
-    aux = aux->next;
-  }
-  return cant;
-}
+// struct Tsymbol *Lookup(char * name){
+//   Tsymbol *head = table;
+//   if(name == NULL) {
+//     return NULL;
+//   }
+//   while(head != NULL) {
+//     if(strcmp(name, head->varname)==0){
+//       return head;
+//     }
+//     head = head->next;
+//   }
+//   return NULL;
+// }
 
-int* typeParam(Tsymbol* symTabla){
-  int index = cantArguments(symTabla);
-  int* types = (int*) malloc(index * sizeof(int));
-  index -= 1;
-  Tsymbol *aux = symTabla->table;
-  while(aux != NULL) {
-    if (aux->type == PARAMINT || aux->type == PARAMBOOL) {
-      types[index] = aux->type;
-      index -= 1;
-    }
-    aux = aux->next;
-  }
-  return types;
-}
+// para tabla global
+// void Install(Tsymbol *symbol){
+//   if(Lookup(symbol->varname) == NULL){
+//     symbol->next =  table;
+//     table = symbol;
+//   } else {
+//     printf("Simbolo existente, linea de error: %d", symbol->line);
+//     exit(1);
+//   }
+// }
 
-
+// void DeleteList(){
+//   Tsymbol *aux;
+//   while(table != NULL) {
+//     aux  = table;
+//     table = table->next;
+//     free(aux);
+//   }
+// }

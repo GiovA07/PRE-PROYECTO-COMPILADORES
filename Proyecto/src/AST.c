@@ -82,32 +82,32 @@ Tsymbol *auxFunc = NULL;
 void createTable(AST* ar) {
     enum TYPES tipoActual = (ar->symbol)->type;
     if(tipoActual == EPROGRAM){
-       InstallScope(); 
-       InstallInTableActual(ar->symbol);
+       InstallScope();
+       InstallInCurrentScope(ar->symbol);
     }
     if(tipoActual == RETINT || tipoActual == RETBOL || tipoActual == RETVOID ) {
         //printf("APILO -> %s\n",ar->symbol->varname);
         auxFunc = ar->symbol;
-        InstallInTableActual(ar->symbol);
-        InstallScope(); 
+        InstallInCurrentScope(ar->symbol);
+        InstallScope();
     }
     //si no se permite crear funciones dentro de funciones anda
     if( tipoActual == EIF || tipoActual == EWHILE){
        // printf("PROBLEMA -> %s\n",ar->symbol->varname);
-        InstallScope(); 
-        InstallInTableActual(ar->symbol);
+        InstallScope();
+        InstallInCurrentScope(ar->symbol);
     }
-    
+
     if (tipoActual == VARBOOL || tipoActual == VARINT){
-        InstallInTableActual(ar->symbol);
-    } 
+        InstallInCurrentScope(ar->symbol);
+    }
     if(tipoActual == PARAMINT || tipoActual == PARAMBOOL)  {
-        InstallInTableActual(ar->symbol);
+        InstallInCurrentScope(ar->symbol);
         InstallParam(ar->symbol, auxFunc);
     }
 
     if(tipoActual == BLOCK_FIN) {
-        DeleteListFunc();
+        PopScope();
     }
     // type
     if (ar->right != NULL && ar->left != NULL) {
@@ -153,246 +153,246 @@ void createTable(AST* ar) {
         }
         createTable(ar->left);
     }
-    
+
     if (ar->right != NULL) {
         createTable(ar->right);
     }
 
-    
+
 
 }
 
-void evaluate(AST* ar) {
-    if((ar->symbol)->type == ERETURN){
-        struct Tsymbol* auxIzqRet = Lookup(((ar->left)->symbol)->varname);
-        evaluate(ar->left);
-        if(auxIzqRet){
-            printf("\033[32mValor retornado : \033[0m%d \n", auxIzqRet->value);
-            exit(1);
-        }else {
-             printf("\033[32mValor retornado : \033[0m%d \n", ((ar->left)->symbol)->value);
-             exit(1);
-        }
-    }
-    if ((ar->symbol)->type  == ENOT) {
-            struct Tsymbol* auxIzqRet = Lookup(((ar->left)->symbol)->varname);
-            evaluate(ar->left);
-            if (auxIzqRet != NULL) {
-                (ar->symbol)->value =  (!auxIzqRet->value);
-            } else {
-                (ar->symbol)->value = (!(ar->left)->symbol->value);
-            }
-    }
-    // me rompe el retorno ver cual es el error
-    if((ar->symbol)->type  == EIF){
-        evaluate(ar->left);
-        struct Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
-        if((strcmp((ar->symbol)->varname,"if_then") == 0)){
-            if(auxIzq){
-                if(auxIzq->value){
-                    evaluate(ar->right);
-                }
-            }else{
-                if(((ar->left)->symbol)->value){
-                    evaluate(ar->right);
-                }
-            }
-        }else if((strcmp((ar->symbol)->varname,"if_else") == 0)){
-            if(auxIzq){
-                if(auxIzq->value){
-                    evaluate((ar->right)->left);
-                }else{
-                    evaluate((ar->right)->right->left);
-                }
-            }else{
-                if(((ar->left)->symbol)->value){
-                    evaluate((ar->right)->left);
-                }else {
-                    evaluate((ar->right)->right->left);
-                }
-            }
-        }
-    }else if ((ar->right != NULL && ar->left != NULL)) {
-        struct Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
-        struct Tsymbol* auxDer = Lookup(((ar->right)->symbol)->varname);
-        enum TYPES tipoActual = (ar->symbol)->type;
+// void evaluate(AST* ar) {
+//     if((ar->symbol)->type == ERETURN){
+//         struct Tsymbol* auxIzqRet = Lookup(((ar->left)->symbol)->varname);
+//         evaluate(ar->left);
+//         if(auxIzqRet){
+//             printf("\033[32mValor retornado : \033[0m%d \n", auxIzqRet->value);
+//             exit(1);
+//         }else {
+//              printf("\033[32mValor retornado : \033[0m%d \n", ((ar->left)->symbol)->value);
+//              exit(1);
+//         }
+//     }
+//     if ((ar->symbol)->type  == ENOT) {
+//             struct Tsymbol* auxIzqRet = Lookup(((ar->left)->symbol)->varname);
+//             evaluate(ar->left);
+//             if (auxIzqRet != NULL) {
+//                 (ar->symbol)->value =  (!auxIzqRet->value);
+//             } else {
+//                 (ar->symbol)->value = (!(ar->left)->symbol->value);
+//             }
+//     }
+//     // me rompe el retorno ver cual es el error
+//     if((ar->symbol)->type  == EIF){
+//         evaluate(ar->left);
+//         struct Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
+//         if((strcmp((ar->symbol)->varname,"if_then") == 0)){
+//             if(auxIzq){
+//                 if(auxIzq->value){
+//                     evaluate(ar->right);
+//                 }
+//             }else{
+//                 if(((ar->left)->symbol)->value){
+//                     evaluate(ar->right);
+//                 }
+//             }
+//         }else if((strcmp((ar->symbol)->varname,"if_else") == 0)){
+//             if(auxIzq){
+//                 if(auxIzq->value){
+//                     evaluate((ar->right)->left);
+//                 }else{
+//                     evaluate((ar->right)->right->left);
+//                 }
+//             }else{
+//                 if(((ar->left)->symbol)->value){
+//                     evaluate((ar->right)->left);
+//                 }else {
+//                     evaluate((ar->right)->right->left);
+//                 }
+//             }
+//         }
+//     }else if ((ar->right != NULL && ar->left != NULL)) {
+//         struct Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
+//         struct Tsymbol* auxDer = Lookup(((ar->right)->symbol)->varname);
+//         enum TYPES tipoActual = (ar->symbol)->type;
 
-        if (ar->left != NULL) {
-            evaluate(ar->left);
-        }
-        if (ar->right != NULL) {
-            evaluate(ar->right);
-        }
-        if (tipoActual == ASIG) {
-            setValue(auxIzq, (ar->right)->symbol->value);
-        }
+//         if (ar->left != NULL) {
+//             evaluate(ar->left);
+//         }
+//         if (ar->right != NULL) {
+//             evaluate(ar->right);
+//         }
+//         if (tipoActual == ASIG) {
+//             setValue(auxIzq, (ar->right)->symbol->value);
+//         }
 
-        if (tipoActual == SUMA) {
-            if (auxDer != NULL && auxIzq != NULL) {
-                (ar->symbol)->value = auxDer->value + auxIzq->value;
-            } else if (auxDer == NULL && auxIzq != NULL) {
-                (ar->symbol)->value = (ar->right)->symbol->value + auxIzq->value;
-            } else if(auxDer != NULL && auxIzq == NULL){
-                (ar->symbol)->value = auxDer->value + (ar->left)->symbol->value;
-            } else {
-                (ar->symbol)->value = (ar->right)->symbol->value + (ar->left)->symbol->value;
-            }
+//         if (tipoActual == SUMA) {
+//             if (auxDer != NULL && auxIzq != NULL) {
+//                 (ar->symbol)->value = auxDer->value + auxIzq->value;
+//             } else if (auxDer == NULL && auxIzq != NULL) {
+//                 (ar->symbol)->value = (ar->right)->symbol->value + auxIzq->value;
+//             } else if(auxDer != NULL && auxIzq == NULL){
+//                 (ar->symbol)->value = auxDer->value + (ar->left)->symbol->value;
+//             } else {
+//                 (ar->symbol)->value = (ar->right)->symbol->value + (ar->left)->symbol->value;
+//             }
 
-        }
-        if (tipoActual == RESTA) {
-            if (auxDer != NULL && auxIzq != NULL) {
-                (ar->symbol)->value =  auxIzq->value - auxDer->value;
-            } else if (auxDer == NULL && auxIzq != NULL) {
-                (ar->symbol)->value =  auxIzq->value - (ar->right)->symbol->value;
-            } else if(auxDer != NULL && auxIzq == NULL){
-                (ar->symbol)->value = (ar->left)->symbol->value - auxDer->value;
-            } else {
-                (ar->symbol)->value = (ar->left)->symbol->value - (ar->right)->symbol->value;
-            }
+//         }
+//         if (tipoActual == RESTA) {
+//             if (auxDer != NULL && auxIzq != NULL) {
+//                 (ar->symbol)->value =  auxIzq->value - auxDer->value;
+//             } else if (auxDer == NULL && auxIzq != NULL) {
+//                 (ar->symbol)->value =  auxIzq->value - (ar->right)->symbol->value;
+//             } else if(auxDer != NULL && auxIzq == NULL){
+//                 (ar->symbol)->value = (ar->left)->symbol->value - auxDer->value;
+//             } else {
+//                 (ar->symbol)->value = (ar->left)->symbol->value - (ar->right)->symbol->value;
+//             }
 
-        }
+//         }
 
-        if (tipoActual == PROD) {
-            if (auxDer != NULL && auxIzq != NULL) {
-                (ar->symbol)->value =  auxIzq->value * auxDer->value;
-            } else if (auxDer == NULL && auxIzq != NULL) {
-                (ar->symbol)->value =  auxIzq->value * (ar->right)->symbol->value;
-            } else if(auxDer != NULL && auxIzq == NULL){
-                (ar->symbol)->value = (ar->left)->symbol->value * auxDer->value;
-            } else {
-                (ar->symbol)->value = (ar->left)->symbol->value * (ar->right)->symbol->value;
-            }
+//         if (tipoActual == PROD) {
+//             if (auxDer != NULL && auxIzq != NULL) {
+//                 (ar->symbol)->value =  auxIzq->value * auxDer->value;
+//             } else if (auxDer == NULL && auxIzq != NULL) {
+//                 (ar->symbol)->value =  auxIzq->value * (ar->right)->symbol->value;
+//             } else if(auxDer != NULL && auxIzq == NULL){
+//                 (ar->symbol)->value = (ar->left)->symbol->value * auxDer->value;
+//             } else {
+//                 (ar->symbol)->value = (ar->left)->symbol->value * (ar->right)->symbol->value;
+//             }
 
-        }
+//         }
 
-        if (tipoActual == ERESTO) {
-            if (auxDer != NULL && auxIzq != NULL) {
-                if(auxDer->value == 0) {
-                    printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", auxIzq->line);
-                    exit(1);
-                }else {
-                    (ar->symbol)->value =  auxIzq->value % auxDer->value;
-                }
-            } else if (auxDer == NULL && auxIzq != NULL) {
-                if((ar->right)->symbol->value == 0) {
-                    printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", auxIzq->line);
-                    exit(1);
-                }else {
-                    (ar->symbol)->value =  auxIzq->value % (ar->right)->symbol->value;
-                }
-            } else if(auxDer != NULL && auxIzq == NULL){
-                if(auxDer->value == 0) {
-                    printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-                    exit(1);
-                }else {
-                    (ar->symbol)->value = (ar->left)->symbol->value % auxDer->value ;
-                }
-            } else {
-                if((ar->right)->symbol->value == 0) {
-                    printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-                    exit(1);
-                }else {
-                    (ar->symbol)->value = (ar->left)->symbol->value % (ar->right)->symbol->value;
-                }
-            }
+//         if (tipoActual == ERESTO) {
+//             if (auxDer != NULL && auxIzq != NULL) {
+//                 if(auxDer->value == 0) {
+//                     printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", auxIzq->line);
+//                     exit(1);
+//                 }else {
+//                     (ar->symbol)->value =  auxIzq->value % auxDer->value;
+//                 }
+//             } else if (auxDer == NULL && auxIzq != NULL) {
+//                 if((ar->right)->symbol->value == 0) {
+//                     printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", auxIzq->line);
+//                     exit(1);
+//                 }else {
+//                     (ar->symbol)->value =  auxIzq->value % (ar->right)->symbol->value;
+//                 }
+//             } else if(auxDer != NULL && auxIzq == NULL){
+//                 if(auxDer->value == 0) {
+//                     printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+//                     exit(1);
+//                 }else {
+//                     (ar->symbol)->value = (ar->left)->symbol->value % auxDer->value ;
+//                 }
+//             } else {
+//                 if((ar->right)->symbol->value == 0) {
+//                     printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+//                     exit(1);
+//                 }else {
+//                     (ar->symbol)->value = (ar->left)->symbol->value % (ar->right)->symbol->value;
+//                 }
+//             }
 
-        }
+//         }
 
-        if (tipoActual == EDIV) {
-            if (auxDer != NULL && auxIzq != NULL) {
-                if(auxDer->value == 0) {
-                    printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", auxIzq->line);
-                    exit(1);
-                }else {
-                    (ar->symbol)->value =  auxIzq->value / auxDer->value;
-                }
-            } else if (auxDer == NULL && auxIzq != NULL) {
-                if((ar->right)->symbol->value == 0) {
-                    printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", auxIzq->line);
-                    exit(1);
-                }else {
-                    (ar->symbol)->value =  auxIzq->value / (ar->right)->symbol->value;
-                }
-            } else if(auxDer != NULL && auxIzq == NULL){
-                if(auxDer->value == 0) {
-                    printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-                    exit(1);
-                }else {
-                    (ar->symbol)->value = (ar->left)->symbol->value / auxDer->value ;
-                }
-            } else {
-                if((ar->right)->symbol->value == 0) {
-                    printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
-                    exit(1);
-                }else {
-                    (ar->symbol)->value = (ar->left)->symbol->value / (ar->right)->symbol->value;
-                }
-            }
+//         if (tipoActual == EDIV) {
+//             if (auxDer != NULL && auxIzq != NULL) {
+//                 if(auxDer->value == 0) {
+//                     printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", auxIzq->line);
+//                     exit(1);
+//                 }else {
+//                     (ar->symbol)->value =  auxIzq->value / auxDer->value;
+//                 }
+//             } else if (auxDer == NULL && auxIzq != NULL) {
+//                 if((ar->right)->symbol->value == 0) {
+//                     printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", auxIzq->line);
+//                     exit(1);
+//                 }else {
+//                     (ar->symbol)->value =  auxIzq->value / (ar->right)->symbol->value;
+//                 }
+//             } else if(auxDer != NULL && auxIzq == NULL){
+//                 if(auxDer->value == 0) {
+//                     printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+//                     exit(1);
+//                 }else {
+//                     (ar->symbol)->value = (ar->left)->symbol->value / auxDer->value ;
+//                 }
+//             } else {
+//                 if((ar->right)->symbol->value == 0) {
+//                     printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", ((ar->left)->symbol)->line);
+//                     exit(1);
+//                 }else {
+//                     (ar->symbol)->value = (ar->left)->symbol->value / (ar->right)->symbol->value;
+//                 }
+//             }
 
-        }
+//         }
 
-        if (tipoActual == EAND) {
-            if (auxDer != NULL && auxIzq != NULL) {
-                (ar->symbol)->value = (auxIzq->value && auxDer->value);
-            } else if (auxDer == NULL && auxIzq != NULL) {
-                (ar->symbol)->value =  (auxIzq->value && (ar->right)->symbol->value);
-            } else if(auxDer != NULL && auxIzq == NULL){
-                (ar->symbol)->value = (ar->left)->symbol->value && auxDer->value;
-            } else {
-                (ar->symbol)->value = ((ar->left)->symbol->value && (ar->right)->symbol->value);
-            }
+//         if (tipoActual == EAND) {
+//             if (auxDer != NULL && auxIzq != NULL) {
+//                 (ar->symbol)->value = (auxIzq->value && auxDer->value);
+//             } else if (auxDer == NULL && auxIzq != NULL) {
+//                 (ar->symbol)->value =  (auxIzq->value && (ar->right)->symbol->value);
+//             } else if(auxDer != NULL && auxIzq == NULL){
+//                 (ar->symbol)->value = (ar->left)->symbol->value && auxDer->value;
+//             } else {
+//                 (ar->symbol)->value = ((ar->left)->symbol->value && (ar->right)->symbol->value);
+//             }
 
-        }
+//         }
 
-        if (tipoActual == EOR) {
-            if (auxDer != NULL && auxIzq != NULL) {
-                (ar->symbol)->value =  (auxIzq->value || auxDer->value);
-            } else if (auxDer == NULL && auxIzq != NULL) {
-                (ar->symbol)->value =  (auxIzq->value || (ar->right)->symbol->value);
-            } else if(auxDer != NULL && auxIzq == NULL){
-                (ar->symbol)->value = (ar->left)->symbol->value || auxDer->value;
-            } else {
-                (ar->symbol)->value = ((ar->left)->symbol->value || (ar->right)->symbol->value);
-            }
-        }
+//         if (tipoActual == EOR) {
+//             if (auxDer != NULL && auxIzq != NULL) {
+//                 (ar->symbol)->value =  (auxIzq->value || auxDer->value);
+//             } else if (auxDer == NULL && auxIzq != NULL) {
+//                 (ar->symbol)->value =  (auxIzq->value || (ar->right)->symbol->value);
+//             } else if(auxDer != NULL && auxIzq == NULL){
+//                 (ar->symbol)->value = (ar->left)->symbol->value || auxDer->value;
+//             } else {
+//                 (ar->symbol)->value = ((ar->left)->symbol->value || (ar->right)->symbol->value);
+//             }
+//         }
 
-        if (tipoActual == EEQ) {
-            if (auxDer != NULL && auxIzq != NULL) {
-                (ar->symbol)->value =  (auxIzq->value == auxDer->value);
-            } else if (auxDer == NULL && auxIzq != NULL) {
-                (ar->symbol)->value =  (auxIzq->value == (ar->right)->symbol->value);
-            } else if(auxDer != NULL && auxIzq == NULL){
-                (ar->symbol)->value = (ar->left)->symbol->value == auxDer->value;
-            } else {
-                (ar->symbol)->value = ((ar->left)->symbol->value == (ar->right)->symbol->value);
-            }
-        }
+//         if (tipoActual == EEQ) {
+//             if (auxDer != NULL && auxIzq != NULL) {
+//                 (ar->symbol)->value =  (auxIzq->value == auxDer->value);
+//             } else if (auxDer == NULL && auxIzq != NULL) {
+//                 (ar->symbol)->value =  (auxIzq->value == (ar->right)->symbol->value);
+//             } else if(auxDer != NULL && auxIzq == NULL){
+//                 (ar->symbol)->value = (ar->left)->symbol->value == auxDer->value;
+//             } else {
+//                 (ar->symbol)->value = ((ar->left)->symbol->value == (ar->right)->symbol->value);
+//             }
+//         }
 
-        if (tipoActual == EMAYORQUE) {
-            if (auxDer != NULL && auxIzq != NULL) {
-                (ar->symbol)->value =  (auxIzq->value > auxDer->value);
-            } else if (auxDer == NULL && auxIzq != NULL) {
-                (ar->symbol)->value =  (auxIzq->value > (ar->right)->symbol->value);
-            } else if(auxDer != NULL && auxIzq == NULL){
-                (ar->symbol)->value = (ar->left)->symbol->value > auxDer->value;
-            } else {
-                (ar->symbol)->value = ((ar->left)->symbol->value > (ar->right)->symbol->value);
-            }
-        }
+//         if (tipoActual == EMAYORQUE) {
+//             if (auxDer != NULL && auxIzq != NULL) {
+//                 (ar->symbol)->value =  (auxIzq->value > auxDer->value);
+//             } else if (auxDer == NULL && auxIzq != NULL) {
+//                 (ar->symbol)->value =  (auxIzq->value > (ar->right)->symbol->value);
+//             } else if(auxDer != NULL && auxIzq == NULL){
+//                 (ar->symbol)->value = (ar->left)->symbol->value > auxDer->value;
+//             } else {
+//                 (ar->symbol)->value = ((ar->left)->symbol->value > (ar->right)->symbol->value);
+//             }
+//         }
 
-        if (tipoActual == EMENORQUE) {
-            if (auxDer != NULL && auxIzq != NULL) {
-                (ar->symbol)->value =  (auxIzq->value < auxDer->value);
-            } else if (auxDer == NULL && auxIzq != NULL) {
-                (ar->symbol)->value =  (auxIzq->value < (ar->right)->symbol->value);
-            } else if(auxDer != NULL && auxIzq == NULL){
-                (ar->symbol)->value = (ar->left)->symbol->value < auxDer->value;
-            } else {
-                (ar->symbol)->value = ((ar->left)->symbol->value < (ar->right)->symbol->value);
-            }
-        }
-    }
-}
+//         if (tipoActual == EMENORQUE) {
+//             if (auxDer != NULL && auxIzq != NULL) {
+//                 (ar->symbol)->value =  (auxIzq->value < auxDer->value);
+//             } else if (auxDer == NULL && auxIzq != NULL) {
+//                 (ar->symbol)->value =  (auxIzq->value < (ar->right)->symbol->value);
+//             } else if(auxDer != NULL && auxIzq == NULL){
+//                 (ar->symbol)->value = (ar->left)->symbol->value < auxDer->value;
+//             } else {
+//                 (ar->symbol)->value = ((ar->left)->symbol->value < (ar->right)->symbol->value);
+//             }
+//         }
+//     }
+// }
 
 
 void retError(){
