@@ -13,6 +13,14 @@ enum ASM_TAG {
     T_SUM, T_RES, T_MOD, T_PROD, T_DIV
 };
 
+char static tagName[15][15] = {
+    "ASIGN",
+    "IF", "WHILE",
+    "OR", "NOT", "AND",
+    "IGUAL", "MAYOR", "MENOR",
+    "SUM", "RES", "MOD", "PROD", "DIV"
+};
+
 typedef struct PseudoASM {
     enum ASM_TAG tag;
     Tsymbol* op1;
@@ -22,9 +30,7 @@ typedef struct PseudoASM {
 } PseudoASM;
 
 
-PseudoASM* instructions = NULL;
-
-
+void printAsembler();
 void deleteInstructions();
 void generateCode(AST* ar);
 PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res);

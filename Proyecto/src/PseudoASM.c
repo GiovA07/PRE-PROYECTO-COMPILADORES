@@ -1,6 +1,9 @@
 #include "../include/PseudoASM.h"
 
 
+PseudoASM* instructions = NULL;
+
+
 PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res) {
 
     PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
@@ -96,4 +99,14 @@ void deleteInstructions() {
         free(current);
         current = next;
     }
+}
+
+void printAsembler() {
+    PseudoASM* current = instructions;
+
+    printf("\nInstructions\n");
+    while (current != NULL) {
+        printf("%s %s %s %s\n", tagName[current->tag], current->op1->id, current->op2->id, current->result->id);
+        current = current->next;
+    }   
 }
