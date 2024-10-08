@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "../include/AST.h"
-
+#include "../include/PseudoASM.h"
 void compilador(struct AST *arbol);
 struct AST* createTreeWhitSymbol(char * name,enum TYPES type,int size, int line, struct AST *l, struct AST *r);
 extern int yylineno;
@@ -200,6 +200,9 @@ void compilador(struct AST* ar){
        elimArbol(ar);
        exit(1);
     }
+    generateCode(ar); 
+    printAsembler();
+    deleteInstructions();
     elimArbol(ar);
 }
 

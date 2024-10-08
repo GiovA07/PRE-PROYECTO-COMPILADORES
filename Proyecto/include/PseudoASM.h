@@ -26,13 +26,14 @@ typedef struct PseudoASM {
     Tsymbol* op1;
     Tsymbol* op2;
     Tsymbol* result;
-    PseudoASM* next;
+    struct PseudoASM* next;
 } PseudoASM;
 
 
 void printAsembler();
 void deleteInstructions();
 void generateCode(AST* ar);
-PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res);
+struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res);
+struct Tsymbol *LookupVar(char * name);
 
 #endif
