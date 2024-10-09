@@ -1,7 +1,12 @@
 #include "../include/PseudoASM.h"
+#include <string.h>
 
 
 PseudoASM* instructions = NULL;
+PseudoASM* current2 = NULL;
+bool p = true;
+
+int labID = 1;
 
 
 struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res) {
@@ -9,16 +14,16 @@ struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res) {
     PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
 
     sequense->op1 = op1->symbol;
-    
+
     if(op2 != NULL) {
         sequense->op2 = op2->symbol;
     }else {
         sequense->op2 = NULL;
     }
-    sequense->result = res->symbol;    
-    
+    sequense->result = res->symbol;
+
     if(op2 == NULL){
-        // solo lo creo para que se ve en el printf sino tira error 
+        // solo lo creo para que se ve en el printf sino tira error
         char * name = "NULL";
         sequense->op2 = CreateSymbol(name,OTHERS,0,0);
         if (tag == ENOT) {
@@ -59,7 +64,7 @@ struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res) {
             sequense->result->value = op2->symbol->value  + op1->symbol->value;
         }
     } else if (tag == RESTA) {
-        
+
         sequense->tag = T_RES;
         if (auxRigth != NULL && auxLeft != NULL) {
             sequense->result->value =  auxLeft->value - auxRigth->value;
@@ -205,14 +210,7 @@ struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res) {
             sequense->result = op2->right->symbol;
         else
             sequense->result = NULL;
-    } else {
-        return instructions;
-    }
-}
-    return sequense;
-}
-/* No hace falta
- else if (tag == EIF) {
+    } else if (tag == EIF) {
         sequense->tag = T_IF;
         if(auxLeft){
             sequense->result->value = auxLeft->value;
@@ -220,9 +218,15 @@ struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res) {
             sequense->result->value = op1->symbol->value;
 
         }
+    } else{
+        return instructions;
+    }
+}
+    return sequense;
+}
 
-        
-    }*/
+
+
 
 struct Tsymbol *LookupVar(char * name){
   PseudoASM* head = instructions;
@@ -243,29 +247,43 @@ void generateCode(AST* ar) {
     //ver
     if((ar->symbol)->type  == EIF){
         generateCode(ar->left);
+        //CREATE IFFt
+        PseudoASM* IFF = createTagForFalse(T_IFF,  ar->left->symbol);
+        char* labelIFF = (char*) malloc(10 * sizeof(char));
+        strcpy(labelIFF, IFF->result->varname);
+
+        IFF->next = instructions;
+        instructions = IFF;
+
         enum TYPES tipoActual = (ar->symbol)->type;
         struct Tsymbol* auxLeft = LookupVar(ar->left->symbol->varname);
 
         if((strcmp((ar->symbol)->varname,"if_then") == 0)){
-                if((auxLeft && auxLeft->value) || ar->left->symbol->value){
-                    generateCode(ar->right);
-                }
-        }else if((strcmp((ar->symbol)->varname,"if_else") == 0)){
-            if(auxLeft){
-                if(auxLeft && auxLeft->value){
-                    generateCode((ar->right)->left);
-                }else{
-                    generateCode((ar->right)->right->left);   
-                }
-            }else{
-                if(ar->left->symbol->value){
-                    generateCode((ar->right)->left);
-                }else {
-                    generateCode((ar->right)->right->left);
-                }
-            }
+            generateCode(ar->right);
+            PseudoASM* lab = createTagLabel(labelIFF);
+            lab->next = instructions;
+            instructions = lab;
+        } else if((strcmp((ar->symbol)->varname,"if_else") == 0)){
+
+            generateCode((ar->right)->left);  //then
+            PseudoASM* jump = createJump();
+            char* labelJump = (char*) malloc(10 * sizeof(char));
+            strcpy(labelJump, jump->result->varname);
+
+            jump->next = instructions;
+            instructions = jump;
+
+            PseudoASM* labelElse = createTagLabel(labelIFF);
+            labelElse->next = instructions;
+            instructions = labelElse;
+
+            generateCode((ar->right)->right->left); //else
+            PseudoASM* endJump = createTagLabel(labelJump);
+            endJump->next = instructions;
+            instructions = endJump;
         }
-    }else if ((ar->right != NULL && ar->left != NULL)) {
+
+      }else if ((ar->right != NULL && ar->left != NULL)) {
         enum TYPES tipoActual = (ar->symbol)->type;
 
         if (ar->left != NULL) {
@@ -274,92 +292,33 @@ void generateCode(AST* ar) {
         if (ar->right != NULL) {
             generateCode(ar->right);
         }
-        
+
         // if (tipoActual == EIF) {
         //     PseudoASM* eif= traslate(tipoActual, ar->left, ar->right, ar);
         //     eif->next = instructions;
         //     instructions = eif;
         // }
 
-        if (tipoActual == ASIG) {
-            PseudoASM* asig = traslate(tipoActual, ar->left, ar->right, ar);
-            asig->next = instructions;
-            instructions = asig;
+        bool isAsignBool = tipoActual == ASIG || tipoActual == EAND || tipoActual == EOR || tipoActual == EEQ || tipoActual == EMAYORQUE || tipoActual == EMENORQUE;
+        bool isAritmet = tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == ERESTO || tipoActual == EDIV;
+
+        if (isAsignBool || isAritmet) {
+            PseudoASM* pseudoAsm = traslate(tipoActual, ar->left, ar->right, ar);
+            pseudoAsm->next = instructions;
+            instructions = pseudoAsm;
         }
 
-        if (tipoActual == SUMA) {
-            PseudoASM* sum = traslate(tipoActual, ar->left, ar->right, ar);
-            sum->next = instructions;
-            instructions = sum;
-
-        }
-        
-        if (tipoActual == RESTA) {
-            PseudoASM* rest = traslate(tipoActual, ar->left, ar->right, ar);
-            rest->next = instructions;
-            instructions = rest;
-
-        }
-        if (tipoActual == PROD) {
-            PseudoASM* prod = traslate(tipoActual, ar->left, ar->right, ar);
-            prod->next = instructions;
-            instructions = prod;
-        }
-
-        if (tipoActual == ERESTO) {
-            PseudoASM* resto = traslate(tipoActual, ar->left, ar->right, ar);
-            resto->next = instructions;
-            instructions = resto;
-        }
-
-        if (tipoActual == EDIV) {
-            PseudoASM* div = traslate(tipoActual, ar->left, ar->right, ar);
-            div->next = instructions;
-            instructions = div;
-        }
-
-        if (tipoActual == EAND) {
-            PseudoASM* and = traslate(tipoActual, ar->left, ar->right, ar);
-            and->next = instructions;
-            instructions = and;
-        }
-
-
-        if (tipoActual == EOR) {
-            PseudoASM* or = traslate(tipoActual, ar->left, ar->right, ar);
-            or->next = instructions;
-            instructions = or;
-        }
-
-        if (tipoActual == EEQ) {
-            PseudoASM* eq = traslate(tipoActual, ar->left, ar->right, ar);
-            eq->next = instructions;
-            instructions = eq;
-
-        }
-
-        if (tipoActual == EMAYORQUE) {            
-            PseudoASM* may = traslate(tipoActual, ar->left, ar->right, ar);
-            may->next = instructions;
-            instructions = may;
-        }
-
-        if (tipoActual == EMENORQUE) {
-            PseudoASM* men = traslate(tipoActual, ar->left, ar->right, ar);
-            men->next = instructions;
-            instructions = men;
-
-        }
     }else if (ar->left != NULL) {
             generateCode(ar->left);
             if ((ar->symbol)->type  == ENOT) {
                 PseudoASM* not = traslate((ar->symbol)->type, ar->left,NULL, ar);
                 not->next = instructions;
-                instructions = not; 
+                instructions = not;
             }
-    }else if (ar->right != NULL) { 
+    }else if (ar->right != NULL) {
             generateCode(ar->right);
     }
+    current2 = instructions;
 }
 
 void deleteInstructions() {
@@ -374,11 +333,79 @@ void deleteInstructions() {
 }
 
 void printAsembler() {
-    PseudoASM* current = instructions;
-    printf("\nInstructions\n");
-    while (current != NULL) {
-        printf("%s %s %s %s->%d\n", tagName[current->tag], current->op1->varname, current->op2->varname, current->result->varname,current->result->value);
-        current = current->next;
-    }   
+    if(p) {
+        printf("\nInstructions\n");
+        p = false;
+    }
+    if (current2 != NULL) {
+        PseudoASM* current = current2;
+        if (current->op1 && current->op2) {
+            current2 = current2->next;
+            printAsembler();
+            printf("%s %s %s %s\n", tagName[current->tag], current->op1->varname, current->op2->varname, current->result->varname);
+        }else if (!current->op1 && current->op2){
+            current2 = current2->next;
+            printAsembler();
+            printf("%s   %s %s\n", tagName[current->tag], current->op2->varname, current->result->varname);
+        }else if (current->op1 && !current->op2){
+            current2 = current2->next;
+            printAsembler();
+            printf("%s %s   %s\n", tagName[current->tag], current->op1->varname, current->result->varname);
+        }else{
+            current2 = current2->next;
+            printAsembler();
+            printf("%s     %s\n", tagName[current->tag], current->result->varname);
+        }
+    }
+}
+
+PseudoASM* createTagForFalse(enum ASM_TAG tag, Tsymbol* condition) {
+    PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
+
+    sequense->tag = tag;
+    sequense->op1 = condition;
+
+    char * name1 = "NULL";
+    sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
+
+    char* name = (char*) malloc(10 * sizeof(char));
+    sprintf(name, "L%d", labID);
+    labID++;
+
+    sequense->result = CreateSymbol(name,OTHERS,0,0);
+
+    return sequense;
+
+
+}
+
+
+PseudoASM* createTagLabel(char* nameLabel) {
+    PseudoASM* lab = (PseudoASM*)malloc(sizeof(PseudoASM));
+
+    char * name1 = "_";
+    lab->tag = T_LABEL;
+    lab->op1 =  CreateSymbol(name1,OTHERS,0,0);
+    lab->op2 =  CreateSymbol(name1,OTHERS,0,0);
+    lab->result = CreateSymbol(nameLabel,OTHERS,0,0);
+    // labID++;
+    return lab;
+}
+
+PseudoASM* createJump() {
+    PseudoASM* jump = (PseudoASM*)malloc(sizeof(PseudoASM));
+
+    jump->tag = T_JUMP;
+    char * name1 = "_";
+    jump->op1 = CreateSymbol(name1,OTHERS,0,0);
+    jump->op2 =  CreateSymbol(name1,OTHERS,0,0);
+
+    char* name = (char*) malloc(10 * sizeof(char));
+    sprintf(name, "L%d", labID);
+    labID++;
+
+    jump->result = CreateSymbol(name,OTHERS,0,0);
+
+    return jump;
 }
 

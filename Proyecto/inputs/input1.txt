@@ -5,13 +5,13 @@ Program {
         bool x;
         int c;
         x = true;
-        
+
         if(x && false)then{
             x = false;
             c = 4 +1;
             c =  5 + 5+ 5+ 5;
-        }else {
-            c = 0;
+        } else {
+            x = true;
         }
         return 0;
     }

@@ -32,6 +32,6 @@ node[shape=box];
 "52|  else" -> "51|  BLOCK" ;
 "51|  BLOCK" -> "49|  SENTENCIA", "50|  BLOCK_FIN";
 "49|  SENTENCIA" -> "48|  asignacion" ;
-"48|  asignacion" -> "47|  c", "46|  0";
+"48|  asignacion" -> "47|  x", "46|  true";
 "57|  return" -> "56|  0" ;
 }

@@ -10,15 +10,19 @@ enum ASM_TAG {
     T_IF, T_WHILE,
     T_OR, T_NOT, T_AND,
     T_IGUAL, T_MAYOR, T_MENOR,
-    T_SUM, T_RES, T_MOD, T_PROD, T_DIV
+    T_SUM, T_RES, T_MOD, T_PROD, T_DIV,
+    T_LABEL, T_JUMP,
+    T_IFF, T_RET
 };
 
-char static tagName[15][15] = {
+char static tagName[25][25] = {
     "ASIGN",
     "IF", "WHILE",
     "OR", "NOT", "AND",
     "IGUAL", "MAYOR", "MENOR",
-    "SUM", "RES", "MOD", "PROD", "DIV"
+    "SUM", "RES", "MOD", "PROD", "DIV",
+    "T_LABEL", "T_JUMP",
+    "T_IFF", "T_RET"
 };
 
 typedef struct PseudoASM {
@@ -33,6 +37,10 @@ typedef struct PseudoASM {
 void printAsembler();
 void deleteInstructions();
 void generateCode(AST* ar);
+PseudoASM* createTagForFalse(enum ASM_TAG tag, Tsymbol* condition);
+PseudoASM* createJump();
+PseudoASM* createTagLabel(char* nameLabel);
+
 struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res);
 struct Tsymbol *LookupVar(char * name);
 
