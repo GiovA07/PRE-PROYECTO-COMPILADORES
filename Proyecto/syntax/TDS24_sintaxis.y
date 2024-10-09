@@ -201,6 +201,7 @@ void compilador(struct AST* ar){
        exit(1);
     }
     generateCode(ar); 
+    invertASM();
     printAsembler();
     deleteInstructions();
     elimArbol(ar);

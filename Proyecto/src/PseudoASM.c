@@ -3,8 +3,8 @@
 
 
 PseudoASM* instructions = NULL;
-PseudoASM* current2 = NULL;
-bool p = true;
+// PseudoASM* current2 = NULL;
+// bool p = true;
 
 int labID = 1;
 
@@ -318,7 +318,21 @@ void generateCode(AST* ar) {
     }else if (ar->right != NULL) {
             generateCode(ar->right);
     }
-    current2 = instructions;
+}
+
+void invertASM() {
+    PseudoASM* prev = NULL;
+    PseudoASM* current = instructions;
+    PseudoASM* next = NULL;
+
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+
+    instructions = prev;
 }
 
 void deleteInstructions() {
@@ -333,29 +347,21 @@ void deleteInstructions() {
 }
 
 void printAsembler() {
-    if(p) {
-        printf("\nInstructions\n");
-        p = false;
-    }
-    if (current2 != NULL) {
-        PseudoASM* current = current2;
+    PseudoASM* current = instructions;
+
+    printf("\nInstructions\n");
+
+    while (current != NULL) {
         if (current->op1 && current->op2) {
-            current2 = current2->next;
-            printAsembler();
             printf("%s %s %s %s\n", tagName[current->tag], current->op1->varname, current->op2->varname, current->result->varname);
         }else if (!current->op1 && current->op2){
-            current2 = current2->next;
-            printAsembler();
             printf("%s   %s %s\n", tagName[current->tag], current->op2->varname, current->result->varname);
         }else if (current->op1 && !current->op2){
-            current2 = current2->next;
-            printAsembler();
             printf("%s %s   %s\n", tagName[current->tag], current->op1->varname, current->result->varname);
         }else{
-            current2 = current2->next;
-            printAsembler();
             printf("%s     %s\n", tagName[current->tag], current->result->varname);
         }
+        current = current->next;
     }
 }
 

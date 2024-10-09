@@ -33,7 +33,7 @@ typedef struct PseudoASM {
     struct PseudoASM* next;
 } PseudoASM;
 
-
+void invertASM();
 void printAsembler();
 void deleteInstructions();
 void generateCode(AST* ar);
