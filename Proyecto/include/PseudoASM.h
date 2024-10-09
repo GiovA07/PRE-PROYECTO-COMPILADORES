@@ -37,6 +37,7 @@ void invertASM();
 void printAsembler();
 void deleteInstructions();
 void generateCode(AST* ar);
+void generateThreeDir(AST* ar);
 PseudoASM* createTagForFalse(enum ASM_TAG tag, Tsymbol* condition);
 PseudoASM* createJump();
 PseudoASM* createTagLabel(char* nameLabel);

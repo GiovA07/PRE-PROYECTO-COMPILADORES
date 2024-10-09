@@ -242,6 +242,13 @@ struct Tsymbol *LookupVar(char * name){
   return NULL;
 }
 
+
+void generateThreeDir(AST* ar) {
+    generateCode(ar);
+    invertASM();
+}
+
+
 void generateCode(AST* ar) {
 
     //ver
@@ -341,6 +348,14 @@ void deleteInstructions() {
 
     while (current != NULL) {
         next = current->next;
+        if (current->tag == T_IFF) {
+            free(current->op2);
+            free(current->result);
+        } else if (current->tag == T_JUMP || current->tag == T_LABEL) {
+            free(current->op1);
+            free(current->op2);
+            free(current->result);
+        }
         free(current);
         current = next;
     }
@@ -371,7 +386,7 @@ PseudoASM* createTagForFalse(enum ASM_TAG tag, Tsymbol* condition) {
     sequense->tag = tag;
     sequense->op1 = condition;
 
-    char * name1 = "NULL";
+    char * name1 = "_";
     sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
 
     char* name = (char*) malloc(10 * sizeof(char));

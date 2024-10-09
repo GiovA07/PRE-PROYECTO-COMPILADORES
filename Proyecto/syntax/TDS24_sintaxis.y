@@ -200,8 +200,7 @@ void compilador(struct AST* ar){
        elimArbol(ar);
        exit(1);
     }
-    generateCode(ar); 
-    invertASM();
+    generateThreeDir(ar);
     printAsembler();
     deleteInstructions();
     elimArbol(ar);
