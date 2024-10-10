@@ -273,13 +273,13 @@ void generateCode(AST* ar) {
         } else if((strcmp((ar->symbol)->varname,"if_else") == 0)){
 
             generateCode((ar->right)->left);  //then
+            //create jump
             PseudoASM* jump = createJump();
-            char* labelJump = (char*) malloc(10 * sizeof(char));
-            strcpy(labelJump, jump->result->varname);
-
             jump->next = instructions;
             instructions = jump;
-
+            //Create label
+            char* labelJump = (char*) malloc(10 * sizeof(char));
+            strcpy(labelJump, jump->result->varname);
             PseudoASM* labelElse = createTagLabel(labelIFF);
             labelElse->next = instructions;
             instructions = labelElse;
@@ -289,6 +289,28 @@ void generateCode(AST* ar) {
             endJump->next = instructions;
             instructions = endJump;
         }
+      } else if ((ar->symbol)->type  == EWHILE) {
+        PseudoASM* jump = createJump();
+
+        PseudoASM* labelJump = createTagLabel(jump->result->varname);
+        labelJump->next = instructions;
+        instructions = labelJump;
+
+
+        PseudoASM* conditionFalse = createTagForFalse(T_IFF,  ar->left->symbol);
+        conditionFalse->next = instructions;
+        instructions = conditionFalse;
+
+        generateCode(ar->right);
+        jump->next = instructions;
+        instructions = jump;
+
+        PseudoASM* label_IFF = createTagLabel(conditionFalse->result->varname);
+
+        label_IFF->next = instructions;
+        instructions = label_IFF;
+
+
 
       }else if ((ar->right != NULL && ar->left != NULL)) {
         enum TYPES tipoActual = (ar->symbol)->type;
@@ -389,17 +411,34 @@ PseudoASM* createTagForFalse(enum ASM_TAG tag, Tsymbol* condition) {
     char * name1 = "_";
     sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
 
-    char* name = (char*) malloc(10 * sizeof(char));
-    sprintf(name, "L%d", labID);
-    labID++;
+    char* name = generateNameLabel();
 
     sequense->result = CreateSymbol(name,OTHERS,0,0);
 
     return sequense;
-
-
 }
 
+PseudoASM* createJump() {
+    PseudoASM* jump = (PseudoASM*)malloc(sizeof(PseudoASM));
+
+    jump->tag = T_JUMP;
+    char * name1 = "_";
+    jump->op1 = CreateSymbol(name1,OTHERS,0,0);
+    jump->op2 =  CreateSymbol(name1,OTHERS,0,0);
+
+    char* name = generateNameLabel();
+
+    jump->result = CreateSymbol(name,OTHERS,0,0);
+
+    return jump;
+}
+
+char* generateNameLabel() {
+    char* nameLabel = (char*) malloc(10 * sizeof(char));
+    sprintf(nameLabel, "L%d", labID);
+    labID++;
+    return nameLabel;
+}
 
 PseudoASM* createTagLabel(char* nameLabel) {
     PseudoASM* lab = (PseudoASM*)malloc(sizeof(PseudoASM));
@@ -412,21 +451,3 @@ PseudoASM* createTagLabel(char* nameLabel) {
     // labID++;
     return lab;
 }
-
-PseudoASM* createJump() {
-    PseudoASM* jump = (PseudoASM*)malloc(sizeof(PseudoASM));
-
-    jump->tag = T_JUMP;
-    char * name1 = "_";
-    jump->op1 = CreateSymbol(name1,OTHERS,0,0);
-    jump->op2 =  CreateSymbol(name1,OTHERS,0,0);
-
-    char* name = (char*) malloc(10 * sizeof(char));
-    sprintf(name, "L%d", labID);
-    labID++;
-
-    jump->result = CreateSymbol(name,OTHERS,0,0);
-
-    return jump;
-}
-

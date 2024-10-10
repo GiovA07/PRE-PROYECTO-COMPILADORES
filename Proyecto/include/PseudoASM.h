@@ -41,6 +41,7 @@ void generateThreeDir(AST* ar);
 PseudoASM* createTagForFalse(enum ASM_TAG tag, Tsymbol* condition);
 PseudoASM* createJump();
 PseudoASM* createTagLabel(char* nameLabel);
+char* generateNameLabel();
 
 struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res);
 struct Tsymbol *LookupVar(char * name);

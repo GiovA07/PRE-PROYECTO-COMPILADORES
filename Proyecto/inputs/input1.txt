@@ -6,6 +6,10 @@ Program {
         int c;
         x = true;
 
+        while(true) {
+            x = false;
+        }
+
         if(x && false)then{
             x = false;
             c = 4 +1;
