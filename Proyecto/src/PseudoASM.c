@@ -250,102 +250,93 @@ void generateThreeDir(AST* ar) {
 
 
 void generateCode(AST* ar) {
-
-    //ver
     if((ar->symbol)->type  == EIF){
-        generateCode(ar->left);
-        //CREATE IFFt
-        PseudoASM* IFF = createTagForFalse(T_IFF,  ar->left->symbol);
-        char* labelIFF = (char*) malloc(10 * sizeof(char));
-        strcpy(labelIFF, IFF->result->varname);
-
-        IFF->next = instructions;
-        instructions = IFF;
-
-        enum TYPES tipoActual = (ar->symbol)->type;
-        struct Tsymbol* auxLeft = LookupVar(ar->left->symbol->varname);
-
-        if((strcmp((ar->symbol)->varname,"if_then") == 0)){
-            generateCode(ar->right);
-            PseudoASM* lab = createTagLabel(labelIFF);
-            lab->next = instructions;
-            instructions = lab;
-        } else if((strcmp((ar->symbol)->varname,"if_else") == 0)){
-
-            generateCode((ar->right)->left);  //then
-            //create jump
-            PseudoASM* jump = createJump();
-            jump->next = instructions;
-            instructions = jump;
-            //Create label
-            char* labelJump = (char*) malloc(10 * sizeof(char));
-            strcpy(labelJump, jump->result->varname);
-            PseudoASM* labelElse = createTagLabel(labelIFF);
-            labelElse->next = instructions;
-            instructions = labelElse;
-
-            generateCode((ar->right)->right->left); //else
-            PseudoASM* endJump = createTagLabel(labelJump);
-            endJump->next = instructions;
-            instructions = endJump;
-        }
-      } else if ((ar->symbol)->type  == EWHILE) {
-        PseudoASM* jump = createJump();
-
-        PseudoASM* labelJump = createTagLabel(jump->result->varname);
-        labelJump->next = instructions;
-        instructions = labelJump;
-
-
-        PseudoASM* conditionFalse = createTagForFalse(T_IFF,  ar->left->symbol);
-        conditionFalse->next = instructions;
-        instructions = conditionFalse;
-
+        handleGenerateIF(ar);
+    } else if ((ar->symbol)->type  == EWHILE) {
+        handleGenerateWhile(ar);
+    }else if ((ar->right != NULL && ar->left != NULL)) {
+        handleGenerateBinaryOperation(ar);
+    }else if (ar->left != NULL) {
+        handleUnaryOp(ar);
+    }else if (ar->right != NULL) {
         generateCode(ar->right);
+    }
+}
+
+
+void handleGenerateIF(AST* ar) {
+    generateCode(ar->left);
+    //CREATE IFFt
+    PseudoASM* IFF = createTagForFalse(T_IFF,  ar->left->symbol);
+    char* labelIFF = (char*) malloc(10 * sizeof(char));
+    strcpy(labelIFF, IFF->result->varname);
+
+    IFF->next = instructions;
+    instructions = IFF;
+
+    enum TYPES tipoActual = (ar->symbol)->type;
+    struct Tsymbol* auxLeft = LookupVar(ar->left->symbol->varname);
+
+    if((strcmp((ar->symbol)->varname,"if_then") == 0)){
+        generateCode(ar->right);
+        createAndAppendTagLabel(labelIFF);
+
+    } else if((strcmp((ar->symbol)->varname,"if_else") == 0)){
+        generateCode((ar->right)->left);  //then
+        //create jump
+        PseudoASM* jump = createJump();
         jump->next = instructions;
         instructions = jump;
+        //label_else
+        createAndAppendTagLabel(labelIFF);
+        generateCode((ar->right)->right->left); //else
 
-        PseudoASM* label_IFF = createTagLabel(conditionFalse->result->varname);
+        //create labelend_jump
+        createAndAppendTagLabel(jump->result->varname);
+    }
+}
 
-        label_IFF->next = instructions;
-        instructions = label_IFF;
+void handleGenerateWhile(AST* ar) {
+    PseudoASM* jump = createJump();
+    //label jump para volver a ejecutar el WHILE
+    createAndAppendTagLabel(jump->result->varname);
+    //IFF en caso que no se cumpla la condicion saltar a...
+    PseudoASM* conditionFalse = createTagForFalse(T_IFF,  ar->left->symbol);
+    conditionFalse->next = instructions;
+    instructions = conditionFalse;
+    generateCode(ar->right);    //instrucciones dentro del while
+    jump->next = instructions;
+    instructions = jump;
+    // create label IFF en caso que no se cumpla la condicion del WHILE
+    createAndAppendTagLabel(conditionFalse->result->varname);
+}
+
+void handleGenerateBinaryOperation(AST* ar) {
+    enum TYPES tipoActual = (ar->symbol)->type;
+
+    if (ar->left != NULL) {
+        generateCode(ar->left);
+    }
+    if (ar->right != NULL) {
+        generateCode(ar->right);
+    }
 
 
+    bool isAsignBool = tipoActual == ASIG || tipoActual == EAND || tipoActual == EOR || tipoActual == EEQ || tipoActual == EMAYORQUE || tipoActual == EMENORQUE;
+    bool isAritmet = tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == ERESTO || tipoActual == EDIV;
+    if (isAsignBool || isAritmet) {
+        PseudoASM* pseudoAsm = traslate(tipoActual, ar->left, ar->right, ar);
+        pseudoAsm->next = instructions;
+        instructions = pseudoAsm;
+    }
+}
 
-      }else if ((ar->right != NULL && ar->left != NULL)) {
-        enum TYPES tipoActual = (ar->symbol)->type;
-
-        if (ar->left != NULL) {
-            generateCode(ar->left);
-        }
-        if (ar->right != NULL) {
-            generateCode(ar->right);
-        }
-
-        // if (tipoActual == EIF) {
-        //     PseudoASM* eif= traslate(tipoActual, ar->left, ar->right, ar);
-        //     eif->next = instructions;
-        //     instructions = eif;
-        // }
-
-        bool isAsignBool = tipoActual == ASIG || tipoActual == EAND || tipoActual == EOR || tipoActual == EEQ || tipoActual == EMAYORQUE || tipoActual == EMENORQUE;
-        bool isAritmet = tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == ERESTO || tipoActual == EDIV;
-
-        if (isAsignBool || isAritmet) {
-            PseudoASM* pseudoAsm = traslate(tipoActual, ar->left, ar->right, ar);
-            pseudoAsm->next = instructions;
-            instructions = pseudoAsm;
-        }
-
-    }else if (ar->left != NULL) {
-            generateCode(ar->left);
-            if ((ar->symbol)->type  == ENOT) {
-                PseudoASM* not = traslate((ar->symbol)->type, ar->left,NULL, ar);
-                not->next = instructions;
-                instructions = not;
-            }
-    }else if (ar->right != NULL) {
-            generateCode(ar->right);
+void handleUnaryOp(AST* ar) {
+    generateCode(ar->left);
+    if ((ar->symbol)->type  == ENOT) {
+        PseudoASM* not = traslate((ar->symbol)->type, ar->left,NULL, ar);
+        not->next = instructions;
+        instructions = not;
     }
 }
 
@@ -440,14 +431,14 @@ char* generateNameLabel() {
     return nameLabel;
 }
 
-PseudoASM* createTagLabel(char* nameLabel) {
-    PseudoASM* lab = (PseudoASM*)malloc(sizeof(PseudoASM));
+void createAndAppendTagLabel(char* nameLabel) {
+    PseudoASM* label = (PseudoASM*)malloc(sizeof(PseudoASM));
 
     char * name1 = "_";
-    lab->tag = T_LABEL;
-    lab->op1 =  CreateSymbol(name1,OTHERS,0,0);
-    lab->op2 =  CreateSymbol(name1,OTHERS,0,0);
-    lab->result = CreateSymbol(nameLabel,OTHERS,0,0);
-    // labID++;
-    return lab;
+    label->tag = T_LABEL;
+    label->op1 =  CreateSymbol(name1,OTHERS,0,0);
+    label->op2 =  CreateSymbol(name1,OTHERS,0,0);
+    label->result = CreateSymbol(nameLabel,OTHERS,0,0);
+    label->next = instructions;
+    instructions = label;
 }

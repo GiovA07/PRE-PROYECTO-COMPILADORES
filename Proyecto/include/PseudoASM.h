@@ -37,10 +37,14 @@ void invertASM();
 void printAsembler();
 void deleteInstructions();
 void generateCode(AST* ar);
+void handleGenerateIF(AST* ar);
+void handleGenerateWhile(AST* ar);
+void handleGenerateBinaryOperation(AST* ar);
+void handleUnaryOp(AST* ar);
 void generateThreeDir(AST* ar);
 PseudoASM* createTagForFalse(enum ASM_TAG tag, Tsymbol* condition);
 PseudoASM* createJump();
-PseudoASM* createTagLabel(char* nameLabel);
+void createAndAppendTagLabel(char* nameLabel);
 char* generateNameLabel();
 
 struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res);
