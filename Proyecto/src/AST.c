@@ -136,7 +136,7 @@ void createTable(AST* ar) {
         if(exist){
             errorCall(ar, &err);
         }else {
-           printf("\033[31mLa funcion no existe, error en linea: %d \033[0m\n",ar->left->symbol->line);
+           printf("\033[31mLa funcion no existe\033[0m, error en linea:%d\n",ar->left->symbol->line);
            err= true;
         }
 

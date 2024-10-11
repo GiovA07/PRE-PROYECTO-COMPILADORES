@@ -28,8 +28,8 @@ Program {
     int main(){
         int s;
         bool x;
-        x = get_bool(true,1);
-        w = 5 + 5; 
+        x = get_boolll(true,1);
+        w = 5 + get_boolll(true,1); 
         l = !(w>w);
         inc(true);
         return 1;
