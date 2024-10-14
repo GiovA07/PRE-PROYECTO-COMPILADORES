@@ -395,11 +395,13 @@ void errorCall(AST *ar,  bool *err) {
         recorrer(ar->right,typesArg, &index, len, ar->symbol->size, err);
         int i = 0;
         int *typesParam = typeParam(func);
+                printf("%d\n",len);
+                printf("%d\n",index);
         if(len == index) {
              for (int j = 0; j < len; j++) {
                 bool bolCond1 = (typesParam[j] == PARAMBOOL) && (typesArg[j] == VARINT || typesArg[j] == CONSINT|| typesArg[j] == RETINT);
-                bool bolCond2 = (typesParam[j] == PARAMINT ) && (typesArg[j] == VARBOOL || typesArg[j] == CONSBOOL || typesArg[j] == RETBOL);
-                if  ( bolCond1 || bolCond2 ) {
+                bool bolCond4 = (typesParam[j] == PARAMINT ) && (typesArg[j] == VARBOOL || typesArg[j] == CONSBOOL || typesArg[j] == RETBOL);
+                if  ( bolCond1 || bolCond4) {
                     printf("\033[31mError de tipo en el argumento pasado \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
                     *err = true;
                 }
@@ -413,11 +415,20 @@ void errorCall(AST *ar,  bool *err) {
 
 void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size, bool *err){
     if(ar == NULL) return;
-    if(ar->left != NULL){
-        recorrer(ar->left, tipos, index, maxArg, size, err);
-    }
-    if(ar->right != NULL){
-        recorrer(ar->right, tipos, index, maxArg, size, err);
+    
+    enum TYPES tipoActual = ar->symbol->type;
+    
+    bool operArit = (tipoActual != SUMA && tipoActual != RESTA && tipoActual != PROD && tipoActual != EDIV && tipoActual != ERESTO);
+    bool operBool = (tipoActual != EOR && tipoActual != EAND && tipoActual != ENOT );
+    bool operCondi = (tipoActual != EMAYORQUE && tipoActual != EMENORQUE && tipoActual != EEQ);
+    bool ifNotType = (tipoActual != CALL_F && (operArit && operBool && operCondi));
+    if(ifNotType) {
+        if(ar->left != NULL){
+            recorrer(ar->left, tipos, index, maxArg, size, err);
+        }
+        if(ar->right != NULL){
+            recorrer(ar->right, tipos, index, maxArg, size, err);
+        }
     }
     if(ar->symbol->type != ARGS && ar->symbol->type != EFUNC ){
         //guardar el tipo
@@ -432,14 +443,29 @@ void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size, bool *err)
 
 
             if (arg == NULL) {
+                
+                bool operArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
+                bool operBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
+                bool operCondi = (tipoActual == EMAYORQUE || tipoActual == EMENORQUE || tipoActual == EEQ);
+
                 if(ar->symbol->type == CALL_F) {
                     Tsymbol *typeFunc = LookupExternVar(ar->left->symbol->varname);
                     tipos[*index] = typeFunc->type;
                     (*index)++;
-                }else if (ar->symbol->type == CONSINT || ar->symbol->type == CONSBOOL ) {
+
+                    // errorCall(ar, err);
+
+                }else if (ar->symbol->type == CONSINT || ar->symbol->type == CONSBOOL) {
                     tipos[*index] = ar->symbol->type;
                     (*index)++;
-                }else {
+                    
+                }else if(operArit) {
+                    tipos[*index] = VARINT;
+                    (*index)++; 
+                }else if(operBool || operCondi){
+                    tipos[*index] = VARBOOL;
+                    (*index)++; 
+                }else{
                     printf("\033[31mArgumento no declarado \033[0m, error en la linea: %d\n", (ar->symbol)->line);
                     *err = true;
                 }

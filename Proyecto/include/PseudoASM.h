@@ -1,28 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "AST.h"
+// #include "AsmFunc.h"
 
 #ifndef PSEUDOASM_H
 #define PSEUDOASM_H
 
 enum ASM_TAG {
-    T_ASIGN,
+    T_ASIGN, T_RETURN,
     T_IF, T_WHILE,
     T_OR, T_NOT, T_AND,
     T_IGUAL, T_MAYOR, T_MENOR,
     T_SUM, T_RES, T_MOD, T_PROD, T_DIV,
-    T_LABEL, T_JUMP,
-    T_IFF, T_RET
+    T_LABEL, T_JUMP, T_END_FUN, T_LOAD_PARAM,
+    T_IFF, T_RET , T_WF, T_FUNC, T_CALL, T_INFO
 };
 
-char static tagName[25][25] = {
-    "ASIGN",
+char static tagName[40][40] = {
+    "ASIGN", "RETURN",
     "IF", "WHILE",
     "OR", "NOT", "AND",
     "IGUAL", "MAYOR", "MENOR",
     "SUM", "RES", "MOD", "PROD", "DIV",
-    "T_LABEL", "T_JUMP",
-    "T_IFF", "T_RET"
+    "T_LABEL", "T_JUMP", "END_FUN", "LOAD_PARAM",
+    "T_IFF", "T_RET","T_WF","T_FUNC", "T_CALL"
 };
 
 typedef struct PseudoASM {
@@ -42,6 +43,11 @@ void handleGenerateWhile(AST* ar);
 void handleGenerateBinaryOperation(AST* ar);
 void handleUnaryOp(AST* ar);
 void generateThreeDir(AST* ar);
+void handleGenerateFunc(AST* ar);
+void createRetTag(Tsymbol* func);
+void generateCallFunc(AST*ar);
+void generateLoadParams(AST* ar);
+void createTagForFunction(enum ASM_TAG tag , Tsymbol* func);
 PseudoASM* createTagForFalse(enum ASM_TAG tag, Tsymbol* condition);
 PseudoASM* createJump();
 void createAndAppendTagLabel(char* nameLabel);

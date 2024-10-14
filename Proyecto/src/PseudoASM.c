@@ -8,6 +8,7 @@ PseudoASM* instructions = NULL;
 
 int labID = 1;
 
+// para llevar cada funcion con el slato que le corresponde
 
 struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res) {
 
@@ -250,7 +251,15 @@ void generateThreeDir(AST* ar) {
 
 
 void generateCode(AST* ar) {
-    if((ar->symbol)->type  == EIF){
+    
+    if(((ar->symbol)->type == RETINT || (ar->symbol)->type == RETBOL ||(ar->symbol)->type == RETVOID) && (strcmp((ar->symbol)->varname,"MAIN") != 0) ){
+        handleGenerateFunc(ar);
+        createRetTag(ar->symbol);
+        createTagForFunction(T_END_FUN, ar->symbol);
+    }else if((ar->symbol)->type == CALL_F){
+        generateLoadParams(ar->right);
+        generateCallFunc(ar);
+    }else if((ar->symbol)->type  == EIF){
         handleGenerateIF(ar);
     } else if ((ar->symbol)->type  == EWHILE) {
         handleGenerateWhile(ar);
@@ -263,10 +272,81 @@ void generateCode(AST* ar) {
     }
 }
 
+void generateLoadParams(AST* ar) {
+    if(ar->left != NULL)
+        generateLoadParams(ar->left);
+    if(ar->right != NULL)
+        generateLoadParams(ar->right);
+
+    // printf("Nombre: %s, Tipo: %s \n", ar->symbol->varname, string[ar->symbol->type]);
+
+    if (ar->symbol->type == EID || ar->symbol->type == VARINT || ar->symbol->type == VARBOOL) {
+        PseudoASM* param = (PseudoASM*)malloc(sizeof(PseudoASM));
+        param->tag = T_LOAD_PARAM;
+        char * name1 = "_";
+        param->op1 = CreateSymbol(name1,OTHERS,0,0);
+        param->op2 =  CreateSymbol(name1,OTHERS,0,0);
+        param->result = CreateSymbol(ar->symbol->varname,OTHERS,0,0);
+
+        param->next = instructions;
+        instructions = param;
+    }
+}
+
+ void handleGenerateFunc(AST* ar){
+    createTagForFunction(T_FUNC,ar->symbol);
+    // genero codigo de la funcion para funciones externas
+    if(ar->right != NULL) {
+        generateCode(ar->right);
+    }
+ }
+ 
+ void createTagForFunction(enum ASM_TAG tag , Tsymbol* func){
+    PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
+    sequense->tag = tag;
+    
+    char * name1 = "_";
+    sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
+    sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
+    sequense->result = CreateSymbol(func->varname,OTHERS,0,0);
+    
+    sequense->next = instructions;
+    instructions = sequense;
+
+ }
+ 
+ void createRetTag(Tsymbol* func){
+    PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
+    sequense->tag = T_RETURN;
+    
+    char * name1 = " ";
+    sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
+    sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
+    sequense->result = CreateSymbol(name1,OTHERS,0,0);
+    
+    sequense->next = instructions;
+    instructions = sequense;
+
+ }
+
+void generateCallFunc(AST*ar){
+    PseudoASM* callFunc = (PseudoASM*)malloc(sizeof(PseudoASM));
+    char * name = "_";
+    callFunc->tag = T_CALL;
+
+    callFunc->op1 = CreateSymbol(name,OTHERS,0,0);
+    callFunc->op2 =  CreateSymbol(name,OTHERS,0,0); 
+
+    callFunc->result = ar->left->symbol;
+
+    callFunc->next = instructions;
+    instructions = callFunc;
+}
+
+
 
 void handleGenerateIF(AST* ar) {
     generateCode(ar->left);
-    //CREATE IFFt
     PseudoASM* IFF = createTagForFalse(T_IFF,  ar->left->symbol);
     char* labelIFF = (char*) malloc(10 * sizeof(char));
     strcpy(labelIFF, IFF->result->varname);
@@ -295,13 +375,12 @@ void handleGenerateIF(AST* ar) {
         createAndAppendTagLabel(jump->result->varname);
     }
 }
-
 void handleGenerateWhile(AST* ar) {
     PseudoASM* jump = createJump();
     //label jump para volver a ejecutar el WHILE
     createAndAppendTagLabel(jump->result->varname);
     //IFF en caso que no se cumpla la condicion saltar a...
-    PseudoASM* conditionFalse = createTagForFalse(T_IFF,  ar->left->symbol);
+    PseudoASM* conditionFalse = createTagForFalse(T_WF,  ar->left->symbol);
     conditionFalse->next = instructions;
     instructions = conditionFalse;
     generateCode(ar->right);    //instrucciones dentro del while
@@ -310,7 +389,6 @@ void handleGenerateWhile(AST* ar) {
     // create label IFF en caso que no se cumpla la condicion del WHILE
     createAndAppendTagLabel(conditionFalse->result->varname);
 }
-
 void handleGenerateBinaryOperation(AST* ar) {
     enum TYPES tipoActual = (ar->symbol)->type;
 
@@ -339,7 +417,6 @@ void handleUnaryOp(AST* ar) {
         instructions = not;
     }
 }
-
 void invertASM() {
     PseudoASM* prev = NULL;
     PseudoASM* current = instructions;
@@ -354,8 +431,8 @@ void invertASM() {
 
     instructions = prev;
 }
-
 void deleteInstructions() {
+    //printFuncJum();
     PseudoASM* current = instructions;
     PseudoASM* next = NULL;
 
@@ -372,8 +449,8 @@ void deleteInstructions() {
         free(current);
         current = next;
     }
+    //deleteFuncTable();
 }
-
 void printAsembler() {
     PseudoASM* current = instructions;
 
@@ -408,7 +485,6 @@ PseudoASM* createTagForFalse(enum ASM_TAG tag, Tsymbol* condition) {
 
     return sequense;
 }
-
 PseudoASM* createJump() {
     PseudoASM* jump = (PseudoASM*)malloc(sizeof(PseudoASM));
 
@@ -423,17 +499,14 @@ PseudoASM* createJump() {
 
     return jump;
 }
-
 char* generateNameLabel() {
     char* nameLabel = (char*) malloc(10 * sizeof(char));
     sprintf(nameLabel, "L%d", labID);
     labID++;
     return nameLabel;
 }
-
 void createAndAppendTagLabel(char* nameLabel) {
     PseudoASM* label = (PseudoASM*)malloc(sizeof(PseudoASM));
-
     char * name1 = "_";
     label->tag = T_LABEL;
     label->op1 =  CreateSymbol(name1,OTHERS,0,0);
@@ -441,4 +514,5 @@ void createAndAppendTagLabel(char* nameLabel) {
     label->result = CreateSymbol(nameLabel,OTHERS,0,0);
     label->next = instructions;
     instructions = label;
+
 }
