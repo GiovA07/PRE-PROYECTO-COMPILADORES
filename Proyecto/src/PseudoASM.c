@@ -251,14 +251,19 @@ void generateThreeDir(AST* ar) {
 
 
 void generateCode(AST* ar) {
-    
-    if(((ar->symbol)->type == RETINT || (ar->symbol)->type == RETBOL ||(ar->symbol)->type == RETVOID) && (strcmp((ar->symbol)->varname,"MAIN") != 0) ){
+    if(ar->symbol->type == ERETURN) {
+        createRetTag(ar->left->symbol);
+    } else
+    if (strcmp((ar->symbol)->varname,"MAIN") == 0) {
+        handleGenerateMain(ar);
+        createSentenThreeDir(T_END_FUN, ar->symbol);
+    } else if(((ar->symbol)->type == RETINT || (ar->symbol)->type == RETBOL ||(ar->symbol)->type == RETVOID) ){
         handleGenerateFunc(ar);
-        createRetTag(ar->symbol);
-        createTagForFunction(T_END_FUN, ar->symbol);
+        createSentenThreeDir(T_END_FUN, ar->symbol);
     }else if((ar->symbol)->type == CALL_F){
+        has_Call_Func(ar->right);
         generateLoadParams(ar->right);
-        generateCallFunc(ar);
+        createCall_Func(ar->left->symbol, ar->symbol);
     }else if((ar->symbol)->type  == EIF){
         handleGenerateIF(ar);
     } else if ((ar->symbol)->type  == EWHILE) {
@@ -272,76 +277,107 @@ void generateCode(AST* ar) {
     }
 }
 
-void generateLoadParams(AST* ar) {
-    if(ar->left != NULL)
-        generateLoadParams(ar->left);
-    if(ar->right != NULL)
+ void handleGenerateMain(AST* ar){
+    createSentenThreeDir(T_FUNC,ar->symbol);
+    if (ar->left != NULL)
+        generateCode(ar->left);
+    if (ar->right != NULL)
+        generateCode(ar->right);
+ }
+
+
+void has_Call_Func(AST* ar) {
+    if(ar == NULL) return;
+
+    if(ar->left)
+        has_Call_Func(ar->left);
+
+    if(ar->right)
+        has_Call_Func(ar->right);
+
+    if (ar->symbol->type == CALL_F) {
         generateLoadParams(ar->right);
-
-    // printf("Nombre: %s, Tipo: %s \n", ar->symbol->varname, string[ar->symbol->type]);
-
-    if (ar->symbol->type == EID || ar->symbol->type == VARINT || ar->symbol->type == VARBOOL) {
-        PseudoASM* param = (PseudoASM*)malloc(sizeof(PseudoASM));
-        param->tag = T_LOAD_PARAM;
-        char * name1 = "_";
-        param->op1 = CreateSymbol(name1,OTHERS,0,0);
-        param->op2 =  CreateSymbol(name1,OTHERS,0,0);
-        param->result = CreateSymbol(ar->symbol->varname,OTHERS,0,0);
-
-        param->next = instructions;
-        instructions = param;
+        createCall_Func(
+            ar->left->symbol, ar->symbol);
     }
 }
 
+void generateLoadParams(AST* ar) {
+    if(ar == NULL) return;
+
+    enum TYPES tipoActual = ar->symbol->type;
+
+    if (ar->symbol->type == CALL_F) {
+        createTagLoad(ar->left->symbol);
+    }
+
+    bool notOperArit = (tipoActual != SUMA && tipoActual != RESTA && tipoActual != PROD && tipoActual != EDIV && tipoActual != ERESTO);
+    bool notOperBool = (tipoActual != EOR && tipoActual != EAND && tipoActual != ENOT );
+    bool notOperCondi = (tipoActual != EMAYORQUE && tipoActual != EMENORQUE && tipoActual != EEQ);
+    bool ifNotType = (tipoActual != CALL_F && (notOperArit && notOperBool && notOperCondi));
+    if(ifNotType) {
+        if(ar->left != NULL){
+            generateLoadParams(ar->left);
+        }
+        if(ar->right != NULL){
+            generateLoadParams(ar->right);
+        }
+    }
+
+
+    bool operArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
+    bool operBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
+    bool operCondi = (tipoActual == EMAYORQUE || tipoActual == EMENORQUE || tipoActual == EEQ);
+    if (ar->symbol->type == EID ||ar->symbol->type == CONSINT || ar->symbol->type == CONSBOOL|| ar->symbol->type == VARINT || ar->symbol->type == VARBOOL || operArit || operBool || operCondi) {
+        createTagLoad(ar->symbol);
+    }
+}
+
+void createTagLoad(Tsymbol* symbol) {
+    PseudoASM* param = (PseudoASM*)malloc(sizeof(PseudoASM));
+    param->tag = T_LOAD_PARAM;
+    char * name1 = "_";
+    param->op1 = CreateSymbol(name1,OTHERS,0,0);
+    param->op2 =  CreateSymbol(name1,OTHERS,0,0);
+    param->result = CreateSymbol(symbol->varname,OTHERS,0,0);
+    param->next = instructions;
+    instructions = param;
+}
+
  void handleGenerateFunc(AST* ar){
-    createTagForFunction(T_FUNC,ar->symbol);
+    createSentenThreeDir(T_FUNC,ar->symbol);
     // genero codigo de la funcion para funciones externas
     if(ar->right != NULL) {
         generateCode(ar->right);
     }
  }
- 
- void createTagForFunction(enum ASM_TAG tag , Tsymbol* func){
+
+ void createCall_Func(Tsymbol* nameFunc, Tsymbol* tempResult){
+    PseudoASM* call_func = (PseudoASM*)malloc(sizeof(PseudoASM));
+    call_func->tag = T_CALL;
+
+    char * name1 = "_";
+    call_func->op1 = nameFunc;
+    call_func->op2 =  CreateSymbol(name1,OTHERS,0,0);
+    call_func->result = tempResult;
+
+    call_func->next = instructions;
+    instructions = call_func;
+ }
+
+ void createSentenThreeDir(enum ASM_TAG tag , Tsymbol* func){
     PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
     sequense->tag = tag;
-    
+
     char * name1 = "_";
     sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
     sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
     sequense->result = CreateSymbol(func->varname,OTHERS,0,0);
-    
+
     sequense->next = instructions;
     instructions = sequense;
 
  }
- 
- void createRetTag(Tsymbol* func){
-    PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
-    sequense->tag = T_RETURN;
-    
-    char * name1 = " ";
-    sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
-    sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
-    sequense->result = CreateSymbol(name1,OTHERS,0,0);
-    
-    sequense->next = instructions;
-    instructions = sequense;
-
- }
-
-void generateCallFunc(AST*ar){
-    PseudoASM* callFunc = (PseudoASM*)malloc(sizeof(PseudoASM));
-    char * name = "_";
-    callFunc->tag = T_CALL;
-
-    callFunc->op1 = CreateSymbol(name,OTHERS,0,0);
-    callFunc->op2 =  CreateSymbol(name,OTHERS,0,0); 
-
-    callFunc->result = ar->left->symbol;
-
-    callFunc->next = instructions;
-    instructions = callFunc;
-}
 
 
 
@@ -485,6 +521,7 @@ PseudoASM* createTagForFalse(enum ASM_TAG tag, Tsymbol* condition) {
 
     return sequense;
 }
+
 PseudoASM* createJump() {
     PseudoASM* jump = (PseudoASM*)malloc(sizeof(PseudoASM));
 
@@ -499,12 +536,14 @@ PseudoASM* createJump() {
 
     return jump;
 }
+
 char* generateNameLabel() {
     char* nameLabel = (char*) malloc(10 * sizeof(char));
     sprintf(nameLabel, "L%d", labID);
     labID++;
     return nameLabel;
 }
+
 void createAndAppendTagLabel(char* nameLabel) {
     PseudoASM* label = (PseudoASM*)malloc(sizeof(PseudoASM));
     char * name1 = "_";
@@ -516,3 +555,17 @@ void createAndAppendTagLabel(char* nameLabel) {
     instructions = label;
 
 }
+
+
+ void createRetTag(Tsymbol* func){
+    PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
+    sequense->tag = T_RETURN;
+    char * name1 = " ";
+    sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
+    sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
+    sequense->result = func;
+
+    sequense->next = instructions;
+    instructions = sequense;
+
+ }

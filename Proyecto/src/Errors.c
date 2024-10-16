@@ -195,7 +195,7 @@ void evaluate_op_condiciones(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* er
         } else if((!auxDer && tipoDer == CALL_F) ^ (!auxIzq && tipoIzq == CALL_F)){
             if(tipoDer == CALL_F){
                 Tsymbol *typeFuncDer = LookupExternVar((ar->right)->left->symbol->varname);
-                if(typeFuncDer) {  
+                if(typeFuncDer) {
                     if(((auxIzq->type != VARINT && auxIzq->type != PARAMINT) || typeFuncDer->type != RETINT)){
                         printf("\033[31mError de tipo, funcion invocada es de tipo incorrecto \033[0m, error en la linea: %d\n", lineErrLeft);
                         *err = true;
@@ -224,16 +224,16 @@ void evaluate_op_condiciones(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* er
         }
         if(tipoDer == CALL_F){
             Tsymbol *typeFuncDer = LookupExternVar((ar->right)->left->symbol->varname);
-            if(typeFuncDer){   
+            if(typeFuncDer){
                 if(typeFuncDer->type != RETINT){
                     printf("\033[31mError de tipo \033[0m, error en la linea: %d\n", lineErrLeft);
                     *err = true;
                 }
-            } 
+            }
         }
         if(tipoIzq == CALL_F){
             Tsymbol *typeFuncIzq = LookupExternVar((ar->left)->left->symbol->varname);
-            if(typeFuncIzq){   
+            if(typeFuncIzq){
                 if(typeFuncIzq->type != RETINT){
                     printf("\033[31mError de tipo \033[0m, error en la linea: %d\n",lineErrLeft);
                     *err = true;
@@ -271,12 +271,12 @@ void evaluate_op_booleanos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* err)
         } else if((!auxDer && tipoDer == CALL_F) ^ (!auxIzq && tipoIzq == CALL_F)){
             if(tipoDer == CALL_F){
                 Tsymbol *typeFuncDer = LookupExternVar((ar->right)->left->symbol->varname);
-                if(typeFuncDer){   
+                if(typeFuncDer){
                     if(((auxIzq->type != VARBOOL && auxIzq->type != PARAMBOOL) || typeFuncDer->type != RETBOL)){
                         printf("\033[31mError de tipo, funcion invocada es de tipo incorrecto \033[0m, error en la linea: %d\n", lineErrLeft);
                         *err = true;
                     }
-                } 
+                }
             }else {
                 Tsymbol *typeFuncIzq = LookupExternVar((ar->left)->left->symbol->varname);
                 if(((auxDer->type != VARBOOL && auxDer->type != PARAMBOOL) || typeFuncIzq->type != RETBOL)){
@@ -295,7 +295,7 @@ void evaluate_op_booleanos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* err)
         }
         if(tipoDer == CALL_F){
             Tsymbol *typeFuncDer = LookupExternVar((ar->right)->left->symbol->varname);
-            if(typeFuncDer){ 
+            if(typeFuncDer){
                 if(typeFuncDer->type != RETBOL){
                     printf("\033[31mError de tipo, funcion de tipo incorrecto \033[0m, error en la linea: %d\n", lineErrLeft);
                     *err = true;
@@ -304,7 +304,7 @@ void evaluate_op_booleanos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* err)
         }
         if(tipoIzq == CALL_F){
             Tsymbol *typeFuncIzq = LookupExternVar((ar->left)->left->symbol->varname);
-            if(typeFuncIzq){ 
+            if(typeFuncIzq){
                 if(typeFuncIzq->type != RETBOL){
                     printf("\033[31mError de tipo, funcion de tipo incorrecto \033[0m, error en la linea: %d\n", lineErrLeft);
                     *err = true;
@@ -337,7 +337,7 @@ void evaluate_op_aritmeticos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* er
             }
             if(tipoDer == CALL_F){
                 Tsymbol *typeFuncDer = LookupExternVar((ar->right)->left->symbol->varname);
-                if(typeFuncDer){ 
+                if(typeFuncDer){
                     if(typeFuncDer->type != RETINT){
                         printf("\033[31mError de tipo \033[0m, error en la linea: %d\n", lineErrLeft);
                         *err = true;
@@ -346,7 +346,7 @@ void evaluate_op_aritmeticos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* er
             }
             if(tipoIzq == CALL_F){
                 Tsymbol *typeFuncIzq = LookupExternVar((ar->left)->left->symbol->varname);
-                if(typeFuncIzq){ 
+                if(typeFuncIzq){
                     if(typeFuncIzq->type != RETINT){
                         printf("\033[31mError de tipo \033[0m, error en la linea: %d\n",lineErrLeft);
                         *err = true;
@@ -365,7 +365,7 @@ void evaluate_op_aritmeticos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* er
             } else if((!auxDer && tipoDer == CALL_F) ^ (!auxIzq && tipoIzq == CALL_F)){
                 if(tipoDer == CALL_F) {
                     Tsymbol *typeFuncDer = LookupExternVar((ar->right)->left->symbol->varname);
-                    if(typeFuncDer){ 
+                    if(typeFuncDer){
                         if(((auxIzq->type != VARINT && auxIzq->type != PARAMINT) || typeFuncDer->type != RETINT)){
                             printf("\033[31mError de tipo \033[0m, linea de error: %d\n", lineErrLeft);
                             *err = true;
@@ -395,8 +395,6 @@ void errorCall(AST *ar,  bool *err) {
         recorrer(ar->right,typesArg, &index, len, ar->symbol->size, err);
         int i = 0;
         int *typesParam = typeParam(func);
-                printf("%d\n",len);
-                printf("%d\n",index);
         if(len == index) {
              for (int j = 0; j < len; j++) {
                 bool bolCond1 = (typesParam[j] == PARAMBOOL) && (typesArg[j] == VARINT || typesArg[j] == CONSINT|| typesArg[j] == RETINT);
@@ -415,9 +413,9 @@ void errorCall(AST *ar,  bool *err) {
 
 void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size, bool *err){
     if(ar == NULL) return;
-    
+
     enum TYPES tipoActual = ar->symbol->type;
-    
+
     bool operArit = (tipoActual != SUMA && tipoActual != RESTA && tipoActual != PROD && tipoActual != EDIV && tipoActual != ERESTO);
     bool operBool = (tipoActual != EOR && tipoActual != EAND && tipoActual != ENOT );
     bool operCondi = (tipoActual != EMAYORQUE && tipoActual != EMENORQUE && tipoActual != EEQ);
@@ -443,28 +441,27 @@ void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size, bool *err)
 
 
             if (arg == NULL) {
-                
+
                 bool operArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
                 bool operBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
                 bool operCondi = (tipoActual == EMAYORQUE || tipoActual == EMENORQUE || tipoActual == EEQ);
 
                 if(ar->symbol->type == CALL_F) {
                     Tsymbol *typeFunc = LookupExternVar(ar->left->symbol->varname);
+                    if(typeFunc) {
                     tipos[*index] = typeFunc->type;
                     (*index)++;
-
-                    // errorCall(ar, err);
-
+                    }
                 }else if (ar->symbol->type == CONSINT || ar->symbol->type == CONSBOOL) {
                     tipos[*index] = ar->symbol->type;
                     (*index)++;
-                    
+
                 }else if(operArit) {
                     tipos[*index] = VARINT;
-                    (*index)++; 
+                    (*index)++;
                 }else if(operBool || operCondi){
                     tipos[*index] = VARBOOL;
-                    (*index)++; 
+                    (*index)++;
                 }else{
                     printf("\033[31mArgumento no declarado \033[0m, error en la linea: %d\n", (ar->symbol)->line);
                     *err = true;

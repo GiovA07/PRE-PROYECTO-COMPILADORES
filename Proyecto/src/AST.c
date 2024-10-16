@@ -92,7 +92,7 @@ void createTable(AST* ar) {
         InstallScope();
     }
     //si no se permite crear funciones dentro de funciones anda
-    if( tipoActual == EIF || tipoActual == EWHILE){
+    if( tipoActual == EIF || tipoActual == EWHILE || tipoActual == EELSE){
        // printf("PROBLEMA -> %s\n",ar->symbol->varname);
         InstallScope();
         InstallInCurrentScope(ar->symbol);

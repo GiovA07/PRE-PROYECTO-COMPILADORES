@@ -1,13 +1,11 @@
 Program {
     bool x;
-    int z ;
+    int z;
 
     //void pritfResult() extern;
-
-    int getNum(int s){
-        x = true;
-        z = 10;
-        return z;
+    int get_num(int x) {
+        int z;
+        return z+x;
     }
 
     int get_bool(bool r,bool t,bool y,int z){
@@ -15,20 +13,28 @@ Program {
         x = false;
         return 1;
     }
-    
+
     int main(){
         bool x;
+        bool y;
+        bool w;
         int c;
         x = true;
-        z = 10;
-        c = get_bool(x,x,x,5+5);       
+
+        if (x) then{
+            y = true;
+            w = false;
+        } else {
+            w = true;
+            y = false;
+        }
+
+        c = get_bool(x,y,w,get_num(5));
 
 
-
-        //while(true) {
-        //    x = false;
-        //    //c = getNum(x);
-        //}
+        while(true) {
+            c = c + 1;
+        }
         return 0;
     }
 }
