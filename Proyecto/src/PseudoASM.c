@@ -49,6 +49,7 @@ struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res) {
             sequense->op1->value = auxRigth->value;
             sequense->result = sequense->op1;
         }else {
+
             sequense->op1->value = sequense->op2->value;
             sequense->result = sequense->op1;
         }
@@ -59,7 +60,7 @@ struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res) {
             sequense->result->value = auxRigth->value + auxLeft->value;
         } else if (auxRigth == NULL && auxLeft != NULL) {
             sequense->result->value = op2->symbol->value + auxLeft->value;
-        } else if(auxRigth != NULL && auxLeft == NULL){
+        } else if(auxRigth != NULL && auxLeft == NULL) {
             sequense->result->value = auxRigth->value + op1->symbol->value;
         } else {
             sequense->result->value = op2->symbol->value  + op1->symbol->value;
@@ -249,15 +250,80 @@ void generateThreeDir(AST* ar) {
     invertASM();
 }
 
+// int offset = -4;
+// int cantBloq = 0;
+// void addOffSet(AST* ar) {
+//     if (ar == NULL) return;
+
+//     if (strcmp((ar->symbol)->varname,"MAIN") == 0) {
+//         addOffSetFuncBody(ar);
+//         offset = -4;
+//     }else if((ar->symbol)->type == RETINT || (ar->symbol)->type == RETBOL ||(ar->symbol)->type == RETVOID) {
+//         addOffSetFuncParams(ar->left);
+//         addOffSetFuncBody(ar->right);
+//         offset = -4;
+
+//     } else {
+//         if(ar->left)
+//             addOffSet(ar->left);
+//         if(ar->right)
+//             addOffSet(ar->right);
+//     }
+// }
+
+// void addOffSetFuncParams(AST* ar) {
+//     if (ar == NULL) return;
+//     if(ar->left)
+//         addOffSetFuncParams(ar->left);
+//     if(ar->right)
+//         addOffSetFuncParams(ar->right);
+
+//     printf("Llego aca?\n");
+//     printf("El nombre es: %s, el tipo es: %s,  el offset es: %d\n", ar->symbol->varname, string[ar->symbol->type], ar->symbol->offset);
+
+//     enum TYPES tipoActual = ar->symbol->type;
+//     bool isParam = (tipoActual == PARAMBOOL || tipoActual == PARAMINT);
+//     if((isParam) && ar->symbol->offset == 0) {
+//         ar->symbol->offset =  offset;
+//         offset  -= 4;
+//     }
+
+//     printf("El nombre es: %s, el tipo es: %s,  el offset es: %d\n", ar->symbol->varname, string[ar->symbol->type], ar->symbol->offset);
+
+// }
+
+// void addOffSetFuncBody(AST* ar) {
+//     if (ar == NULL) return;
+//     if(ar->left)
+//         addOffSetFuncBody(ar->left);
+//     if(ar->right)
+//         addOffSetFuncBody(ar->right);
+
+//     enum TYPES tipoActual = ar->symbol->type;
+//     bool isVariable = (tipoActual == VARINT || tipoActual == VARBOOL);
+//     bool isOperArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
+//     bool isOperBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
+//     if((isVariable||isOperArit|| isOperBool) && ar->symbol->offset == 0) {
+//         ar->symbol->offset =  offset;
+//         offset  += -4;
+//     }
+
+// }
+
 
 void generateCode(AST* ar) {
     if(ar->symbol->type == ERETURN) {
+        handleGenerateOpReturn(ar);
         createRetTag(ar->left->symbol);
     } else
     if (strcmp((ar->symbol)->varname,"MAIN") == 0) {
+        //aca puede ir el coso para darle el offset
+        // handleAddOffset(ar->left);
         handleGenerateMain(ar);
         createSentenThreeDir(T_END_FUN, ar->symbol);
     } else if(((ar->symbol)->type == RETINT || (ar->symbol)->type == RETBOL ||(ar->symbol)->type == RETVOID) ){
+        //aca puede ir el coso para darle el offset
+        // handleAddOffset(ar->left);
         handleGenerateFunc(ar);
         createSentenThreeDir(T_END_FUN, ar->symbol);
     }else if((ar->symbol)->type == CALL_F){
@@ -275,6 +341,24 @@ void generateCode(AST* ar) {
     }else if (ar->right != NULL) {
         generateCode(ar->right);
     }
+}
+
+
+// void handleAddOffset(AST* ar) {
+//     if (ar !=  NULL) return;
+
+//     if(strcmpa(ar->left->symbol->varname,"BLOCK_INTERNO") == 0)
+//         handleAddOffset(ar->left);
+
+//     if(ar->symbol->varname)
+
+// }
+
+void handleGenerateOpReturn(AST* ar) {
+    if (ar->left != NULL)
+        generateCode(ar->left);
+    if (ar->right != NULL)
+        generateCode(ar->right);
 }
 
  void handleGenerateMain(AST* ar){
@@ -316,11 +400,11 @@ void generateLoadParams(AST* ar) {
     bool notOperCondi = (tipoActual != EMAYORQUE && tipoActual != EMENORQUE && tipoActual != EEQ);
     bool ifNotType = (tipoActual != CALL_F && (notOperArit && notOperBool && notOperCondi));
     if(ifNotType) {
-        if(ar->left != NULL){
-            generateLoadParams(ar->left);
-        }
         if(ar->right != NULL){
             generateLoadParams(ar->right);
+        }
+        if(ar->left != NULL){
+            generateLoadParams(ar->left);
         }
     }
 
@@ -339,7 +423,7 @@ void createTagLoad(Tsymbol* symbol) {
     char * name1 = "_";
     param->op1 = CreateSymbol(name1,OTHERS,0,0);
     param->op2 =  CreateSymbol(name1,OTHERS,0,0);
-    param->result = CreateSymbol(symbol->varname,OTHERS,0,0);
+    param->result = symbol;
     param->next = instructions;
     instructions = param;
 }
@@ -347,6 +431,7 @@ void createTagLoad(Tsymbol* symbol) {
  void handleGenerateFunc(AST* ar){
     createSentenThreeDir(T_FUNC,ar->symbol);
     // genero codigo de la funcion para funciones externas
+
     if(ar->right != NULL) {
         generateCode(ar->right);
     }
@@ -372,7 +457,7 @@ void createTagLoad(Tsymbol* symbol) {
     char * name1 = "_";
     sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
     sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
-    sequense->result = CreateSymbol(func->varname,OTHERS,0,0);
+    sequense->result = func;
 
     sequense->next = instructions;
     instructions = sequense;
@@ -502,6 +587,13 @@ void printAsembler() {
         }else{
             printf("%s     %s\n", tagName[current->tag], current->result->varname);
         }
+
+        if (current->op1->offset != 0)
+            printf(" El offset de %s  es: %d\n", current->op1->varname, current->op1->offset);
+        if (current->op2->offset != 0)
+            printf(" El offset de %s  es: %d\n", current->op2->varname, current->op2->offset);
+        if (current->result->offset != 0)
+            printf(" El offset de %s  es: %d\n", current->result->varname, current->result->offset);
         current = current->next;
     }
 }

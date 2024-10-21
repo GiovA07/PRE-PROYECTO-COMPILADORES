@@ -13,6 +13,7 @@ bool errRet = false;
 
 
 
+
 struct AST* createTree(Tsymbol* symbol, struct AST *l, struct AST *r) {
     AST *arbol = (AST *)malloc(sizeof(AST));
     arbol->symbol = symbol;
@@ -99,9 +100,11 @@ void createTable(AST* ar) {
     }
 
     if (tipoActual == VARBOOL || tipoActual == VARINT){
+
         InstallInCurrentScope(ar->symbol);
     }
     if(tipoActual == PARAMINT || tipoActual == PARAMBOOL)  {
+
         InstallInCurrentScope(ar->symbol);
         InstallParam(ar->symbol, auxFunc);
     }

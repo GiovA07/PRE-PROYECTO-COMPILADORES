@@ -60,6 +60,7 @@ typedef struct Tsymbol {
     struct Tsymbol *next;
     int line;
     int value;
+    int offset;
     struct Tsymbol *table;
 } Tsymbol;
 
@@ -69,6 +70,7 @@ void DeleteList();
 void prinTable();
 struct Tsymbol * CreateSymbol(char *name, enum TYPES type, int size, int line);
 void setValue(Tsymbol* symbol, int value);
+void addOffset(Tsymbol* symbol, int offset);
 // Nuevas funciones para el alcance de las variables
 
 void InstallInCurrentScope (Tsymbol *symbol);

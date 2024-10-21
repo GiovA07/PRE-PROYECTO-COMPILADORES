@@ -12,6 +12,7 @@ struct Tsymbol * CreateSymbol(char *name, enum TYPES type, int size, int line){
     newSymbol->line = line;
     newSymbol->value = 0;
     newSymbol->table = NULL;
+    newSymbol->offset = 0;
     return newSymbol;
 }
 
@@ -154,6 +155,11 @@ void prinTable(){
         }
         aux = aux->next;
     }
+}
+
+
+void addOffset(Tsymbol* symbol, int offset) {
+  symbol->offset = offset;
 }
 
 

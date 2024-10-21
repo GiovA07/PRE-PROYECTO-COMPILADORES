@@ -6,6 +6,7 @@ Program {
     int main() {
         int x;
         x = foo(10);
+        x = 2 + 3 + 5;
         return x;
     }
 }

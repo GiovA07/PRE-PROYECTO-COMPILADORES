@@ -55,6 +55,14 @@ PseudoASM* createTagForFalse(enum ASM_TAG tag, Tsymbol* condition);
 PseudoASM* createJump();
 void createAndAppendTagLabel(char* nameLabel);
 char* generateNameLabel();
+void handleGenerateOpReturn(AST* ar);
+
+
+
+
+void addOffSetFuncParams(AST* ar);
+void addOffSetFuncBody(AST* ar);
+void addOffSet(AST* ar);
 
 struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res);
 struct Tsymbol *LookupVar(char * name);

@@ -73,7 +73,6 @@ int blockNum = 0;
 %type <arbol> list_decls list_sents list_func parametros
 %type <arbol> if_else while block
 
-
 %%
 
 prog: PROGRAM TLLAVE_OP list_decls list_func main TLLAVE_CL  { char * name = "PROGRAM_BLOCK"; struct AST* aux= createTreeWhitSymbol(name,OTHERS,blockNum,yylineno,$4, $5);
@@ -97,7 +96,7 @@ list_sents:                                     {$$ = NULL;}
           ;
 
 block: TLLAVE_OP list_decls list_sents TLLAVE_CL  { char *name1 = "BLOCK_FIN"; struct AST*aux = createTreeWhitSymbol(name1,BLOCK_FIN,blockNum,yylineno,NULL, NULL);
-                                                    char *name2 = "BLOCK_INTERNO"; struct AST*aux2 = createTreeWhitSymbol(name2,OTHERS,blockNum,yylineno,$2, $3); 
+                                                    char *name2 = "BLOCK_INTERNO"; struct AST*aux2 = createTreeWhitSymbol(name2,OTHERS,blockNum,yylineno,$2, $3);
                                                     char *name = "BLOCK"; $$ = createTreeWhitSymbol(name,BLOCK,blockNum,yylineno,aux2, aux); }
      | TLLAVE_OP list_sents TLLAVE_CL             { char *name1 = "BLOCK_FIN"; struct AST*aux = createTreeWhitSymbol(name1,BLOCK_FIN,blockNum,yylineno,NULL, NULL);
                                                     char *name = "BLOCK"; $$ = createTreeWhitSymbol(name,BLOCK,blockNum,yylineno,$2, aux); }
@@ -200,6 +199,7 @@ void compilador(struct AST* ar){
        elimArbol(ar);
        exit(1);
     }
+    /* addOffSet(ar); */
     generateThreeDir(ar);
     printAsembler();
     deleteInstructions();
