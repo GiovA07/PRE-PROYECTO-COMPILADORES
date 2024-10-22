@@ -2,6 +2,7 @@
 Tsymbol *table = NULL;
 
 int num = 0;
+int numScope = 0;
 
 struct Tsymbol * CreateSymbol(char *name, enum TYPES type, int size, int line){
     Tsymbol *newSymbol = (Tsymbol *)malloc(sizeof(Tsymbol));
@@ -16,11 +17,17 @@ struct Tsymbol * CreateSymbol(char *name, enum TYPES type, int size, int line){
     return newSymbol;
 }
 
+int getScope() {
+  return numScope;
+}
 
 //push - instalo en la tabla el scope
 void InstallScope(){
-  char *aux = "scope";
+  char aux[10];
+  numScope++;
+  sprintf(aux,"Scope %d",numScope);
   Tsymbol *scope = CreateSymbol(aux,OTHERS, 0, 0);
+
   scope->next =  table;
   table = scope;
 }
@@ -67,6 +74,7 @@ void InstallInCurrentScope (Tsymbol *symbol){
 void PopScope(){
   Tsymbol* elim = table;
   table = table -> next;
+  numScope--;
   free(elim);
 }
 

@@ -199,7 +199,6 @@ void compilador(struct AST* ar){
        elimArbol(ar);
        exit(1);
     }
-    /* addOffSet(ar); */
     generateThreeDir(ar);
     printAsembler();
     deleteInstructions();

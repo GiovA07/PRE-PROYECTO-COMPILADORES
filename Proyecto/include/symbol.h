@@ -71,6 +71,7 @@ void prinTable();
 struct Tsymbol * CreateSymbol(char *name, enum TYPES type, int size, int line);
 void setValue(Tsymbol* symbol, int value);
 void addOffset(Tsymbol* symbol, int offset);
+int getScope();
 // Nuevas funciones para el alcance de las variables
 
 void InstallInCurrentScope (Tsymbol *symbol);

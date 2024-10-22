@@ -273,9 +273,9 @@ void generateThreeDir(AST* ar) {
 
 // void addOffSetFuncParams(AST* ar) {
 //     if (ar == NULL) return;
-//     if(ar->left)
+//     if(ar->left != NULL)
 //         addOffSetFuncParams(ar->left);
-//     if(ar->right)
+//     if(ar->right != NULL)
 //         addOffSetFuncParams(ar->right);
 
 //     printf("Llego aca?\n");
@@ -283,13 +283,13 @@ void generateThreeDir(AST* ar) {
 
 //     enum TYPES tipoActual = ar->symbol->type;
 //     bool isParam = (tipoActual == PARAMBOOL || tipoActual == PARAMINT);
-//     if((isParam) && ar->symbol->offset == 0) {
-//         ar->symbol->offset =  offset;
+
+//     Tsymbol *auxSymbol = LookupVar(ar->symbol->varname);
+//     if(auxSymbol != NULL && isParam && ar->symbol->offset == 0) {
+//         auxSymbol->offset =  offset;
 //         offset  -= 4;
+//         printf("El nombre es: %s, el tipo es: %s,  el offset es: %d\n", ar->symbol->varname, string[ar->symbol->type], ar->symbol->offset);
 //     }
-
-//     printf("El nombre es: %s, el tipo es: %s,  el offset es: %d\n", ar->symbol->varname, string[ar->symbol->type], ar->symbol->offset);
-
 // }
 
 // void addOffSetFuncBody(AST* ar) {
@@ -303,9 +303,16 @@ void generateThreeDir(AST* ar) {
 //     bool isVariable = (tipoActual == VARINT || tipoActual == VARBOOL);
 //     bool isOperArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
 //     bool isOperBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
-//     if((isVariable||isOperArit|| isOperBool) && ar->symbol->offset == 0) {
+//     if((isOperArit|| isOperBool) && ar->symbol->offset == 0) {
 //         ar->symbol->offset =  offset;
 //         offset  += -4;
+//     }else if(isVariable) {
+//         Tsymbol *auxSymbol = LookupVar(ar->symbol->varname);
+//         if (auxSymbol != NULL) {
+//             auxSymbol->offset =  offset;
+//             offset  += -4;
+//             printf("El nombre es: %s, el tipo es: %s,  el offset es: %d\n", ar->symbol->varname, string[ar->symbol->type], ar->symbol->offset);
+//         }
 //     }
 
 // }
@@ -588,12 +595,13 @@ void printAsembler() {
             printf("%s     %s\n", tagName[current->tag], current->result->varname);
         }
 
-        if (current->op1->offset != 0)
-            printf(" El offset de %s  es: %d\n", current->op1->varname, current->op1->offset);
-        if (current->op2->offset != 0)
-            printf(" El offset de %s  es: %d\n", current->op2->varname, current->op2->offset);
-        if (current->result->offset != 0)
-            printf(" El offset de %s  es: %d\n", current->result->varname, current->result->offset);
+        //Para ver que OFFSET TIENEN los operadores de la instruccion
+        // if (current->op1->offset != 0)
+        //     printf(" El offset de %s  es: %d\n", current->op1->varname, current->op1->offset);
+        // if (current->op2->offset != 0)
+        //     printf(" El offset de %s  es: %d\n", current->op2->varname, current->op2->offset);
+        // if (current->result->offset != 0)
+        //     printf(" El offset de %s  es: %d\n", current->result->varname, current->result->offset);
         current = current->next;
     }
 }

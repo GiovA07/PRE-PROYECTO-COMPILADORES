@@ -79,6 +79,9 @@ void printDot(AST* tree, const char* filename) {
 }
 
 Tsymbol *auxFunc = NULL;
+int offset = -4;
+int cantBloq = 0;
+
 // bool correct = false;
 void createTable(AST* ar) {
     enum TYPES tipoActual = (ar->symbol)->type;
@@ -95,21 +98,41 @@ void createTable(AST* ar) {
     //si no se permite crear funciones dentro de funciones anda
     if( tipoActual == EIF || tipoActual == EWHILE || tipoActual == EELSE){
        // printf("PROBLEMA -> %s\n",ar->symbol->varname);
+       cantBloq++;
         InstallScope();
         InstallInCurrentScope(ar->symbol);
     }
 
     if (tipoActual == VARBOOL || tipoActual == VARINT){
-
+        //Esto es para las variables globales, no tengan un scope  Ya que pertenecen al scope 1. (DESPUES FIJARNOS QUE M**** HACER CON ESTOS.)
+        if (getScope() != 1) {
+            ar->symbol->offset = offset;
+            offset += -4;
+        }
         InstallInCurrentScope(ar->symbol);
     }
     if(tipoActual == PARAMINT || tipoActual == PARAMBOOL)  {
-
+        ar->symbol->offset = offset;
+        offset += -4;
         InstallInCurrentScope(ar->symbol);
         InstallParam(ar->symbol, auxFunc);
     }
 
+    //Esto es para que cada ocurrencia de una variable en el arbol tenga el mismo Tsymbol.
+    if (tipoActual == EID) {
+        Tsymbol* symbolStack = LookupInCurrentLevel(ar->symbol->varname);
+        if (symbolStack != NULL) {
+            ar->symbol = symbolStack;
+        }
+    }
+
+
     if(tipoActual == BLOCK_FIN) {
+        if (cantBloq > 0)
+            cantBloq--;
+        if (cantBloq == 0)
+            offset =  -4;
+
         PopScope();
     }
     // type
@@ -121,6 +144,8 @@ void createTable(AST* ar) {
         if (tipoActual == ASIG) {
             errorAsig(ar, &err);
         } else if(operArit || operBool || operCondi) {
+              ar->symbol->offset = offset;
+              offset += -4;
              errorOpera(ar, tipoActual, &err);
         }else if(tipoActual == EIF || tipoActual == EWHILE) {
             errorCond(ar, &err);
@@ -137,6 +162,8 @@ void createTable(AST* ar) {
     if(ar->symbol->type == CALL_F) {
         Tsymbol* exist = LookupExternVar(ar->left->symbol->varname);
         if(exist){
+            ar->symbol->offset = offset;
+            offset += -4;
             errorCall(ar, &err);
         }else {
            printf("\033[31mLa funcion no existe\033[0m, error en linea:%d\n",ar->left->symbol->line);
