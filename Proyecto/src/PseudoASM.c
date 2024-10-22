@@ -1,4 +1,5 @@
 #include "../include/PseudoASM.h"
+#include "../include/ASM.h"
 #include <string.h>
 
 
@@ -205,8 +206,8 @@ struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res) {
         } else {
             sequense->result->value = (op1->symbol->value == op2->symbol->value);
         }
-        sequense->tag = T_WHILE;
     } else if (tag == EWHILE) {
+        sequense->tag = T_WHILE;
         if (op1->symbol->value == 1)
         //ver
             sequense->result = op2->right->symbol;
@@ -250,73 +251,6 @@ void generateThreeDir(AST* ar) {
     invertASM();
 }
 
-// int offset = -4;
-// int cantBloq = 0;
-// void addOffSet(AST* ar) {
-//     if (ar == NULL) return;
-
-//     if (strcmp((ar->symbol)->varname,"MAIN") == 0) {
-//         addOffSetFuncBody(ar);
-//         offset = -4;
-//     }else if((ar->symbol)->type == RETINT || (ar->symbol)->type == RETBOL ||(ar->symbol)->type == RETVOID) {
-//         addOffSetFuncParams(ar->left);
-//         addOffSetFuncBody(ar->right);
-//         offset = -4;
-
-//     } else {
-//         if(ar->left)
-//             addOffSet(ar->left);
-//         if(ar->right)
-//             addOffSet(ar->right);
-//     }
-// }
-
-// void addOffSetFuncParams(AST* ar) {
-//     if (ar == NULL) return;
-//     if(ar->left != NULL)
-//         addOffSetFuncParams(ar->left);
-//     if(ar->right != NULL)
-//         addOffSetFuncParams(ar->right);
-
-//     printf("Llego aca?\n");
-//     printf("El nombre es: %s, el tipo es: %s,  el offset es: %d\n", ar->symbol->varname, string[ar->symbol->type], ar->symbol->offset);
-
-//     enum TYPES tipoActual = ar->symbol->type;
-//     bool isParam = (tipoActual == PARAMBOOL || tipoActual == PARAMINT);
-
-//     Tsymbol *auxSymbol = LookupVar(ar->symbol->varname);
-//     if(auxSymbol != NULL && isParam && ar->symbol->offset == 0) {
-//         auxSymbol->offset =  offset;
-//         offset  -= 4;
-//         printf("El nombre es: %s, el tipo es: %s,  el offset es: %d\n", ar->symbol->varname, string[ar->symbol->type], ar->symbol->offset);
-//     }
-// }
-
-// void addOffSetFuncBody(AST* ar) {
-//     if (ar == NULL) return;
-//     if(ar->left)
-//         addOffSetFuncBody(ar->left);
-//     if(ar->right)
-//         addOffSetFuncBody(ar->right);
-
-//     enum TYPES tipoActual = ar->symbol->type;
-//     bool isVariable = (tipoActual == VARINT || tipoActual == VARBOOL);
-//     bool isOperArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
-//     bool isOperBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
-//     if((isOperArit|| isOperBool) && ar->symbol->offset == 0) {
-//         ar->symbol->offset =  offset;
-//         offset  += -4;
-//     }else if(isVariable) {
-//         Tsymbol *auxSymbol = LookupVar(ar->symbol->varname);
-//         if (auxSymbol != NULL) {
-//             auxSymbol->offset =  offset;
-//             offset  += -4;
-//             printf("El nombre es: %s, el tipo es: %s,  el offset es: %d\n", ar->symbol->varname, string[ar->symbol->type], ar->symbol->offset);
-//         }
-//     }
-
-// }
-
 
 void generateCode(AST* ar) {
     if(ar->symbol->type == ERETURN) {
@@ -350,16 +284,6 @@ void generateCode(AST* ar) {
     }
 }
 
-
-// void handleAddOffset(AST* ar) {
-//     if (ar !=  NULL) return;
-
-//     if(strcmpa(ar->left->symbol->varname,"BLOCK_INTERNO") == 0)
-//         handleAddOffset(ar->left);
-
-//     if(ar->symbol->varname)
-
-// }
 
 void handleGenerateOpReturn(AST* ar) {
     if (ar->left != NULL)
@@ -669,3 +593,9 @@ void createAndAppendTagLabel(char* nameLabel) {
     instructions = sequense;
 
  }
+
+
+void generateAssembler() {
+    createFile();
+    createWriteASM(instructions);
+}

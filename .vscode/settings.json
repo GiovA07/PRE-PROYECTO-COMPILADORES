@@ -1,11 +1,15 @@
 {
     "files.associations": {
+        "*.y": "yacc",
         "*.java": "java",
         "*.c++": "cpp",
-        "*.y": "yacc",
         "ast.h": "c",
         "stdio.h": "c",
         "symbol.h": "c",
-        "errors.h": "c"
+        "errors.h": "c",
+        "asm.h": "c",
+        "pseudoasm.h": "c",
+        "string.h": "c",
+        "stdlib.h": "c"
     }
 }

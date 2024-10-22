@@ -67,4 +67,8 @@ void addOffSet(AST* ar);
 struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res);
 struct Tsymbol *LookupVar(char * name);
 
+
+
+void generateAssembler();
+
 #endif
