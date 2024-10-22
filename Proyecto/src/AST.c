@@ -91,6 +91,7 @@ void createTable(AST* ar) {
     }
     if(tipoActual == RETINT || tipoActual == RETBOL || tipoActual == RETVOID ) {
         //printf("APILO -> %s\n",ar->symbol->varname);
+        cantBloq++;
         auxFunc = ar->symbol;
         InstallInCurrentScope(ar->symbol);
         InstallScope();
@@ -98,7 +99,7 @@ void createTable(AST* ar) {
     //si no se permite crear funciones dentro de funciones anda
     if( tipoActual == EIF || tipoActual == EWHILE || tipoActual == EELSE){
        // printf("PROBLEMA -> %s\n",ar->symbol->varname);
-       cantBloq++;
+        cantBloq++;
         InstallScope();
         InstallInCurrentScope(ar->symbol);
     }
@@ -132,7 +133,6 @@ void createTable(AST* ar) {
             cantBloq--;
         if (cantBloq == 0)
             offset =  -4;
-
         PopScope();
     }
     // type

@@ -7,6 +7,15 @@ Program {
         int x;
         x = foo(10);
         x = 2 + 3 + 5;
+
+        if(true) then {
+            int x;
+            x = 2;
+        } else {
+            int x;
+            x = 3;
+        }
+
         return x;
     }
 }
