@@ -208,8 +208,8 @@ void evaluate_op_condiciones(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* er
                     *err = true;
                 }
             }
-        }else if((auxIzq->type != VARINT && auxIzq->type != PARAMINT) || errorIntDer) {
-            if(errorSintacticoDer){
+        }else if((!auxDer && (auxIzq->type != VARINT && auxIzq->type != PARAMINT) || errorIntDer) ^ (!auxIzq && (auxDer->type != VARINT && auxDer->type != PARAMINT) || errorIntIzq)) {
+            if(!auxDer && errorSintacticoDer || !auxIzq && errorSintacticoIzq){
                 printf("\033[31mError Sintactico \033[0m, error en la linea: %d\n", lineErrLeft);
                 *err = true;
             }else{

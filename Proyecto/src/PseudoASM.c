@@ -519,7 +519,7 @@ void printAsembler() {
             printf("%s     %s\n", tagName[current->tag], current->result->varname);
         }
 
-        //Para ver que OFFSET TIENEN los operadores de la instruccion
+        // Para ver que OFFSET TIENEN los operadores de la instruccion
         // if (current->op1->offset != 0)
         //     printf(" El offset de %s  es: %d\n", current->op1->varname, current->op1->offset);
         // if (current->op2->offset != 0)

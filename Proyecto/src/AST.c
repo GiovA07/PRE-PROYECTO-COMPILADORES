@@ -79,7 +79,7 @@ void printDot(AST* tree, const char* filename) {
 }
 
 Tsymbol *auxFunc = NULL;
-int offset = -4;
+int offset = -8;
 int cantBloq = 0;
 
 // bool correct = false;
@@ -96,6 +96,8 @@ void createTable(AST* ar) {
         InstallInCurrentScope(ar->symbol);
         InstallScope();
     }
+
+    // if(tipoActual == BLOCK) tendriamos que modificar esto
     //si no se permite crear funciones dentro de funciones anda
     if( tipoActual == EIF || tipoActual == EWHILE || tipoActual == EELSE){
        // printf("PROBLEMA -> %s\n",ar->symbol->varname);
@@ -108,20 +110,20 @@ void createTable(AST* ar) {
         //Esto es para las variables globales, no tengan un scope  Ya que pertenecen al scope 1. (DESPUES FIJARNOS QUE M**** HACER CON ESTOS.)
         if (getScope() != 1) {
             ar->symbol->offset = offset;
-            offset += -4;
+            offset += -8;
         }
         InstallInCurrentScope(ar->symbol);
     }
     if(tipoActual == PARAMINT || tipoActual == PARAMBOOL)  {
         ar->symbol->offset = offset;
-        offset += -4;
+        offset += -8;
         InstallInCurrentScope(ar->symbol);
         InstallParam(ar->symbol, auxFunc);
     }
 
     //Esto es para que cada ocurrencia de una variable en el arbol tenga el mismo Tsymbol.
     if (tipoActual == EID) {
-        Tsymbol* symbolStack = LookupInCurrentLevel(ar->symbol->varname);
+        Tsymbol* symbolStack = LookupExternVar(ar->symbol->varname);
         if (symbolStack != NULL) {
             ar->symbol = symbolStack;
         }
@@ -132,7 +134,7 @@ void createTable(AST* ar) {
         if (cantBloq > 0)
             cantBloq--;
         if (cantBloq == 0)
-            offset =  -4;
+            offset =  -8;
         PopScope();
     }
     // type
@@ -145,7 +147,7 @@ void createTable(AST* ar) {
             errorAsig(ar, &err);
         } else if(operArit || operBool || operCondi) {
               ar->symbol->offset = offset;
-              offset += -4;
+              offset += -8;
              errorOpera(ar, tipoActual, &err);
         }else if(tipoActual == EIF || tipoActual == EWHILE) {
             errorCond(ar, &err);
@@ -163,7 +165,7 @@ void createTable(AST* ar) {
         Tsymbol* exist = LookupExternVar(ar->left->symbol->varname);
         if(exist){
             ar->symbol->offset = offset;
-            offset += -4;
+            offset += -8;
             errorCall(ar, &err);
         }else {
            printf("\033[31mLa funcion no existe\033[0m, error en linea:%d\n",ar->left->symbol->line);
@@ -191,50 +193,6 @@ void createTable(AST* ar) {
 
 
 }
-
-// void evaluate(AST* ar) {
-//     if((ar->symbol)->type == ERETURN){
-//         struct Tsymbol* auxIzqRet = Lookup(((ar->left)->symbol)->varname);
-//         evaluate(ar->left);
-//         if(auxIzqRet){
-//             printf("\033[32mValor retornado : \033[0m%d \n", auxIzqRet->value);
-//             exit(1);
-//         }else {
-//              printf("\033[32mValor retornado : \033[0m%d \n", ((ar->left)->symbol)->value);
-//              exit(1);
-//         }
-//     }
-//     // me rompe el retorno ver cual es el error
-//     if((ar->symbol)->type  == EIF){
-//         evaluate(ar->left);
-//         struct Tsymbol* auxIzq = Lookup(((ar->left)->symbol)->varname);
-//         if((strcmp((ar->symbol)->varname,"if_then") == 0)){
-//             if(auxIzq){
-//                 if(auxIzq->value){
-//                     evaluate(ar->right);
-//                 }
-//             }else{
-//                 if(((ar->left)->symbol)->value){
-//                     evaluate(ar->right);
-//                 }
-//             }
-//         }else if((strcmp((ar->symbol)->varname,"if_else") == 0)){
-//             if(auxIzq){
-//                 if(auxIzq->value){
-//                     evaluate((ar->right)->left);
-//                 }else{
-//                     evaluate((ar->right)->right->left);
-//                 }
-//             }else{
-//                 if(((ar->left)->symbol)->value){
-//                     evaluate((ar->right)->left);
-//                 }else {
-//                     evaluate((ar->right)->right->left);
-//                 }
-//             }
-//         }
-
-
 
 void retError(){
     if(errRet){

@@ -1,17 +1,12 @@
 Program {
-    int main(){
-        int s;
+    int main() {
         int x;
         int y;
-        int z;
-        int w;
-        x = 2;
-        y = 2;
-        s = 1 + 6;
-        w = 10 / 5;
-        z = 10 * 4;
-        y = 10 - 3;
-        x = 10 % 2;
-        return s;
+        bool z;
+        z = true || false;
+        z = y==y==z;
+        x = 1;
+        y = 1;
+        return x;
     }
 }
