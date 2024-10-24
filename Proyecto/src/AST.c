@@ -125,7 +125,10 @@ void createTable(AST* ar) {
     if (tipoActual == EID) {
         Tsymbol* symbolStack = LookupExternVar(ar->symbol->varname);
         if (symbolStack != NULL) {
-            ar->symbol = symbolStack;
+            // lo que pasa es que si guardo el symbolo que busque 
+            // estoy guardado la el mismo es decir con misma memoria 
+            //entonces cuando borro se borra dos veces lo mismo
+            ar->symbol->offset = symbolStack->offset;
         }
     }
 

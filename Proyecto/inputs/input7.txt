@@ -3,10 +3,9 @@ Program {
         int x;
         int y;
         bool z;
-        z = true || false;
-        z = y==y==z;
-        x = 1;
-        y = 1;
+        z = x==y;
+        z = x<y;
+        z = x>y;
         return x;
     }
 }

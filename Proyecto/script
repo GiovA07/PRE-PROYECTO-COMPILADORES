@@ -1,7 +1,5 @@
 #!/bin/bash
 
-flex -o./default/lexer.c ./syntax/TDS24_lexico.l || exit 1
-bison -d ./syntax/TDS24_sintaxis.y -o./default/syntax_tab.c || exit 1
-gcc -o c-tds ./default/*.c ./src/*.c || exit 1
-
-
+flex -o./default/lexer.c ./syntax/TDS24_lexico.l
+bison -d ./syntax/TDS24_sintaxis.y -o./default/syntax_tab.c
+gcc -o c-tds ./default/*.c ./src/*.c

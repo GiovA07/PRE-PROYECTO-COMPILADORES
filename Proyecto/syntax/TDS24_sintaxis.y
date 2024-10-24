@@ -198,7 +198,7 @@ void compilador(struct AST* ar){
     if(getError()) {
        elimArbol(ar);
        exit(1);
-    }
+    } 
     generateThreeDir(ar);
     printAsembler();
     generateAssembler();

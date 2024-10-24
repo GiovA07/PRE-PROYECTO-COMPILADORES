@@ -44,7 +44,7 @@ void createWriteASM(PseudoASM* instruction) {
         writeOperation(instruction->op1, instruction->op2, instruction->result, currentTag);
     else if (currentTag == T_NOT || currentTag == T_AND || currentTag == T_OR)
         writeBooleanOp(instruction->op1, instruction->op2, instruction->result, currentTag);
-    else if(instruction->tag == T_IGUAL) {
+    else if(instruction->tag == T_IGUAL || instruction->tag == T_MENOR || instruction->tag == T_MAYOR) {
         writeComparation(instruction->op1, instruction->op2, instruction->result, instruction->tag);
     }else if(instruction->tag == T_RETURN) {
         writeReturn(instruction);
@@ -199,7 +199,7 @@ void writeBooleanOp(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
     if (tag == T_AND || tag == T_OR){
 
         if(op1->type == CONSBOOL)
-            sprintf(aux, "    comb $0, $%s\n", op2->offset);
+            sprintf(aux, "    comb $0, $%d\n", op2->offset);
         else
             sprintf(aux, "    comb $0 %d(%srbp)\n", op2->offset, por);
 
@@ -213,7 +213,7 @@ void writeBooleanOp(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
         labNum++;
 
         if(op1->type == CONSBOOL)
-            sprintf(aux, "    comb $0, $%s\n", op1->offset);
+            sprintf(aux, "    comb $0, $%d\n", op1->offset);
         else
             sprintf(aux, "    comb $0 %d(%srbp)\n", op1->offset, por);
         writeArchive(aux);
@@ -276,9 +276,10 @@ void writeBooleanOp(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
 void writeComparation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag){
     file = fopen("result.s","a");
     if (file == NULL) {
-        fprintf(stderr, "Error al abrir el archivo %s\n", file);
+        printf("Error al abrir el archivo");
         return;
     }
+    
     char aux[30];
     char* por = "%%";
 
@@ -297,16 +298,18 @@ void writeComparation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG t
 
     fprintf(file, aux);
 
-    fprintf(file, "    sete %%al\n");
+    if(tag == T_IGUAL)
+        fprintf(file, "    sete %%al\n");
+    if(tag == T_MAYOR)
+        fprintf(file, "    setg %%al\n");
+    if(tag == T_MENOR)
+        fprintf(file, "    setl %%al\n");
     //movb    %al, -5(%rbp)
+    
     sprintf(aux, "    movzbl %sal, %seax\n", por, por);
     fprintf(file, aux);
     sprintf(aux, "    movl  %seax %d(%srbp)\n",por, final->offset, por);
     fprintf(file, aux);
     fclose(file);
 
-    //          movl    -4(%rbp), %eax
-    //         cmpl    -8(%rbp), %eax
-    //         sete    %al
-    //         movzbl  %al, %eax
 }
