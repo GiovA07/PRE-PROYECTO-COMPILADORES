@@ -13,17 +13,17 @@ enum ASM_TAG {
     T_IGUAL, T_MAYOR, T_MENOR,
     T_SUM, T_RES, T_MOD, T_PROD, T_DIV,
     T_LABEL, T_JUMP, T_END_FUN, T_LOAD_PARAM,
-    T_IFF, T_RET , T_WF, T_FUNC, T_CALL, T_INFO
+    T_IFF, T_RET , T_WF, T_FUNC, T_CALL, T_INFO,T_REQUIRED_PARAM
 };
 
-char static tagName[40][40] = {
+char static tagName[42][42] = {
     "ASIGN", "RETURN",
     "IF", "WHILE",
     "OR", "NOT", "AND",
     "IGUAL", "MAYOR", "MENOR",
     "SUM", "RES", "MOD", "PROD", "DIV",
     "T_LABEL", "T_JUMP", "END_FUN", "LOAD_PARAM",
-    "T_IFF", "T_RET","T_WF","T_FUNC", "T_CALL"
+    "T_IFF", "T_RET","T_WF","T_FUNC", "T_CALL","T_INFO","T_REQUIRED_PARAM"
 };
 
 typedef struct PseudoASM {
@@ -56,8 +56,8 @@ PseudoASM* createJump();
 void createAndAppendTagLabel(char* nameLabel);
 char* generateNameLabel();
 void handleGenerateOpReturn(AST* ar);
-
-
+void requireParams(AST* ar);
+void createCodRequiredParam(Tsymbol* param);
 
 
 void addOffSetFuncParams(AST* ar);

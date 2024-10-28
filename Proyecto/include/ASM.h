@@ -19,4 +19,8 @@ void writeComparation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG t
 void writeIFF(PseudoASM* instruction);
 void writeLabel(PseudoASM* instruction);
 void writeJump(PseudoASM* instruction);
+void writeLoadParam(PseudoASM* instruction, int cantParam);
+
+void writeLoadParamInFunc(PseudoASM* instruction);
+void writeCallFunc(PseudoASM* instruction);
 #endif

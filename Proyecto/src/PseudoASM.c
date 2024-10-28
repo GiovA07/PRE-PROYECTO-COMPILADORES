@@ -326,26 +326,26 @@ void generateLoadParams(AST* ar) {
         createTagLoad(ar->left->symbol);
     }
 
+
     bool notOperArit = (tipoActual != SUMA && tipoActual != RESTA && tipoActual != PROD && tipoActual != EDIV && tipoActual != ERESTO);
     bool notOperBool = (tipoActual != EOR && tipoActual != EAND && tipoActual != ENOT );
     bool notOperCondi = (tipoActual != EMAYORQUE && tipoActual != EMENORQUE && tipoActual != EEQ);
     bool ifNotType = (tipoActual != CALL_F && (notOperArit && notOperBool && notOperCondi));
     if(ifNotType) {
-        if(ar->right != NULL){
-            generateLoadParams(ar->right);
-        }
         if(ar->left != NULL){
             generateLoadParams(ar->left);
         }
+        if(ar->right != NULL){
+            generateLoadParams(ar->right);
+        }
     }
-
-
     bool operArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
     bool operBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
     bool operCondi = (tipoActual == EMAYORQUE || tipoActual == EMENORQUE || tipoActual == EEQ);
     if (ar->symbol->type == EID ||ar->symbol->type == CONSINT || ar->symbol->type == CONSBOOL|| ar->symbol->type == VARINT || ar->symbol->type == VARBOOL || operArit || operBool || operCondi) {
         createTagLoad(ar->symbol);
     }
+
 }
 
 void createTagLoad(Tsymbol* symbol) {
@@ -362,10 +362,22 @@ void createTagLoad(Tsymbol* symbol) {
  void handleGenerateFunc(AST* ar){
     createSentenThreeDir(T_FUNC,ar->symbol);
     // genero codigo de la funcion para funciones externas
-
+    if(ar->left != NULL) {
+        requireParams(ar->left);
+    }
     if(ar->right != NULL) {
         generateCode(ar->right);
     }
+ }
+
+ void requireParams(AST* ar) {
+    if(ar->symbol->type == PARAMBOOL || ar->symbol->type == PARAMINT)
+        createCodRequiredParam(ar->symbol);
+
+    if(ar->left)
+        requireParams(ar->left);
+    if(ar->right)
+        requireParams(ar->right);
  }
 
  void createCall_Func(Tsymbol* nameFunc, Tsymbol* tempResult){
@@ -431,6 +443,7 @@ void handleGenerateWhile(AST* ar) {
     PseudoASM* jump = createJump();
     //label jump para volver a ejecutar el WHILE
     createAndAppendTagLabel(jump->result->varname);
+    generateCode(ar->left);
     //IFF en caso que no se cumpla la condicion saltar a...
     PseudoASM* conditionFalse = createTagForFalse(T_WF,  ar->left->symbol);
     conditionFalse->next = instructions;
@@ -520,12 +533,15 @@ void printAsembler() {
         }
 
         // Para ver que OFFSET TIENEN los operadores de la instruccion
+        // if(current->tag == T_LOAD_PARAM) {
+        //     printf(" El VALOR del parametro es: %s  y de tipo: %s\n", current->result->varname,string[current->result->type]);
+        // }
         // if (current->op1->offset != 0)
-        //     printf(" El offset de %s  es: %d\n", current->op1->varname, current->op1->offset);
+        //     printf(" El offset de %s  es: %d y de tipo: %s\n", current->op1->varname, current->op1->offset,string[current->result->type]);
         // if (current->op2->offset != 0)
-        //     printf(" El offset de %s  es: %d\n", current->op2->varname, current->op2->offset);
+        //     printf(" El offset de %s  es: %d y de tipo: %s \n", current->op2->varname, current->op2->offset,string[current->result->type]);
         // if (current->result->offset != 0)
-        //     printf(" El offset de %s  es: %d\n", current->result->varname, current->result->offset);
+        //     printf(" El offset de %s  es: %d y de tipo: %s\n", current->result->varname, current->result->offset, string[current->result->type]);
         current = current->next;
     }
 }
@@ -594,6 +610,19 @@ void createAndAppendTagLabel(char* nameLabel) {
 
  }
 
+
+ void createCodRequiredParam(Tsymbol* param){
+    PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
+    sequense->tag = T_REQUIRED_PARAM;
+    char * name1 = " ";
+    sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
+    sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
+    sequense->result = param;
+
+    sequense->next = instructions;
+    instructions = sequense;
+
+ }
 
 void generateAssembler() {
     createFile();

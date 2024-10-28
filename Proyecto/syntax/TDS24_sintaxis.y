@@ -130,7 +130,7 @@ argumento:                         {$$ = NULL;}
 
 parametros:                                 {$$ = NULL;}
           | dec_parametro                   {$$ = $1;}
-          | dec_parametro ',' parametros    {char * name = "DECLARACION"; $$ = createTreeWhitSymbol(name,DECLA,blockNum,yylineno,$1, $3);}
+          | dec_parametro ',' parametros    {char * name = "PARAMETROS"; $$ = createTreeWhitSymbol(name,DECLA,blockNum,yylineno,$1, $3);}
           ;
 
 dec_parametro : TYPE_INT ID  {char * name = $2->varname; $$ = createTreeWhitSymbol(name,PARAMINT,blockNum,yylineno,NULL, NULL);}
@@ -198,7 +198,7 @@ void compilador(struct AST* ar){
     if(getError()) {
        elimArbol(ar);
        exit(1);
-    } 
+    }
     generateThreeDir(ar);
     printAsembler();
     generateAssembler();

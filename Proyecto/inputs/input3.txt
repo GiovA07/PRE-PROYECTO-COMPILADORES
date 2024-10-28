@@ -1,21 +1,20 @@
 Program {
-    int foo(int y) {
-        return y * 2;
+    int func_1() extern;
+
+    int mult(int x, int y) {
+        int z;
+        return x * y;
+    }
+
+    int llamadoFunc(int x, int y) {
+        int z;
+        return x * y;
     }
 
     int main() {
         int x;
-        x = foo(10);
-        x = 2 + 3 + 5;
-
-        if(true) then {
-            int x;
-            x = 2;
-        } else {
-            int x;
-            x = 3;
-        }
-
-        return x;
+        x = mult(5,6);
+        x = llamadoFunc(9,10);
+        return 0;
     }
 }

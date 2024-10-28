@@ -449,6 +449,9 @@ void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size, bool *err)
                 if(ar->symbol->type == CALL_F) {
                     Tsymbol *typeFunc = LookupExternVar(ar->left->symbol->varname);
                     if(typeFunc) {
+            if(!arg && argGlob){
+                arg = argGlob;
+            }
                     tipos[*index] = typeFunc->type;
                     (*index)++;
                     }

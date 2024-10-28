@@ -5,6 +5,8 @@
 
 FILE* file;
 int labNum = 0;
+int cantParamFunc = -1;
+char params[7][20] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
 
 void createFile() {
     file = fopen("result.s", "w");
@@ -27,18 +29,27 @@ void writeArchive(char* string) {
 
 void createWriteASM(PseudoASM* instruction) {
     enum ASM_TAG currentTag = instruction->tag;
-    if(currentTag == T_FUNC)
+    if(currentTag == T_FUNC) {
         writeFunc(instruction);
+        cantParamFunc = -1;
+    }
     if(currentTag == T_ASIGN)
         writeAsign(instruction);
-    if(currentTag == T_IFF)
+    if(currentTag == T_IFF || currentTag == T_WF)
         writeIFF(instruction);
     if(currentTag == T_LABEL)
         writeLabel(instruction);
-
     if(currentTag == T_JUMP)
         writeJump(instruction);
-
+    if(currentTag == T_LOAD_PARAM) {
+        int cantParam = 0;
+        writeLoadParam(instruction, cantParam);
+        return;
+    }
+    if(currentTag == T_REQUIRED_PARAM)
+        writeLoadParamInFunc(instruction);
+    if(currentTag == T_CALL)
+        writeCallFunc(instruction);
 
     if(currentTag == T_SUM || currentTag == T_RES || currentTag == T_DIV || currentTag == T_PROD || currentTag == T_MOD)
         writeOperation(instruction->op1, instruction->op2, instruction->result, currentTag);
@@ -58,6 +69,48 @@ void writeFunc(PseudoASM* instruction) {
     char buffer[256];
     sprintf(buffer, "%s:\n    pushq   %%rbp\n    movq    %%rsp, %%rbp\n",instruction->result->varname);
     writeArchive(buffer);
+}
+
+void writeLoadParamInFunc(PseudoASM* instruction) {
+    char buffer[256];
+    char* por = "%";
+    cantParamFunc +=1;
+    writeArchive("     ;Cargando parametro\n");
+    Tsymbol* param = instruction->result;
+            // movl    %edi, -4(%rbp)
+
+    sprintf(buffer, "    movl %s%s, %d(%%rbp)\n", por, params[cantParamFunc], param->offset);
+    writeArchive(buffer);
+    writeArchive("     ;TERMINO CARGAR parametro\n");
+}
+
+//1-rdi, 2-rsi, 3-rdx, 4-rcx, 5-r8, 6-r9
+//Si cantParam es > 6, se debe pushear a la pila....
+void writeLoadParam(PseudoASM* instruction, int cantParam) {
+    char buffer[256];
+    char por[3] = "%";
+    Tsymbol *result = instruction->result;
+    writeArchive("    ;CARGANDO PARAMETRO\n");
+    if(result->type == CONSINT || result->type == CONSBOOL) {
+        sprintf(buffer, "    movl $%s, %s%s\n", result->varname, por, params[cantParam]);
+        writeArchive(buffer);
+    }
+    if(result->type == EID) {
+        sprintf(buffer, "    movl %d(%%rbp), %seax\n",result->offset, por);
+        writeArchive(buffer);
+        sprintf(buffer, "    movl %%eax, %s%s\n", por, params[cantParam]);
+        writeArchive(buffer);
+    }
+    writeArchive("    ;FIN DEL CARGO DE PARAMETRO\n");
+    cantParam += 1;
+
+    if(instruction->next->tag ==  T_LOAD_PARAM) {
+        instruction = instruction->next;
+        writeLoadParam(instruction, cantParam);
+    } else {
+        createWriteASM(instruction->next);
+    }
+
 }
 
 void writeAsign(PseudoASM* instruction) {
@@ -128,12 +181,18 @@ void writeJump(PseudoASM* instruction) {
     writeArchive(buffer);
 }
 
-//1-rdi, 2-rsi, 3-rdx, 4-rcx, 5-r8, 6-r9
-char static params[6][3] = {"rdi","rsi","rdx","rcx","r8","r9"};
-int cantParam = 0;
-void writeLoadParam(PseudoASM* instruction) {
 
+void writeCallFunc(PseudoASM* instruction) {
+    char buffer[256];
+    char* nameLabel = instruction->op1->varname;
+    sprintf(buffer, "    call %s\n", nameLabel);
+    writeArchive(buffer);
+
+    Tsymbol* result = instruction->result;
+    sprintf(buffer, "    movl %%eax, %d(%%rbp)\n", result->offset);
+    writeArchive(buffer);
 }
+
 
 
 void writeOperation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag){
@@ -279,7 +338,7 @@ void writeComparation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG t
         printf("Error al abrir el archivo");
         return;
     }
-    
+
     char aux[30];
     char* por = "%%";
 
@@ -305,7 +364,7 @@ void writeComparation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG t
     if(tag == T_MENOR)
         fprintf(file, "    setl %%al\n");
     //movb    %al, -5(%rbp)
-    
+
     sprintf(aux, "    movzbl %sal, %seax\n", por, por);
     fprintf(file, aux);
     sprintf(aux, "    movl  %seax %d(%srbp)\n",por, final->offset, por);
