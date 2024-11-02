@@ -13,7 +13,7 @@ enum ASM_TAG {
     T_IGUAL, T_MAYOR, T_MENOR,
     T_SUM, T_RES, T_MOD, T_PROD, T_DIV,
     T_LABEL, T_JUMP, T_END_FUN, T_LOAD_PARAM,
-    T_IFF, T_RET , T_WF, T_FUNC, T_CALL, T_INFO,T_REQUIRED_PARAM
+    T_IFF, T_RET , T_WF, T_FUNC, T_CALL, T_INFO,T_REQUIRED_PARAM,T_GLOBAL
 };
 
 char static tagName[42][42] = {
@@ -23,7 +23,7 @@ char static tagName[42][42] = {
     "IGUAL", "MAYOR", "MENOR",
     "SUM", "RES", "MOD", "PROD", "DIV",
     "T_LABEL", "T_JUMP", "END_FUN", "LOAD_PARAM",
-    "T_IFF", "T_RET","T_WF","T_FUNC", "T_CALL","T_INFO","T_REQUIRED_PARAM"
+    "T_IFF", "T_RET","T_WF","T_FUNC", "T_CALL","T_INFO","T_REQUIRED_PARAM","T_GLOBAL"
 };
 
 typedef struct PseudoASM {

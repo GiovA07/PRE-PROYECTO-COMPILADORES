@@ -74,6 +74,7 @@ void addOffset(Tsymbol* symbol, int offset);
 int getScope();
 // Nuevas funciones para el alcance de las variables
 
+struct Tsymbol * getTable();
 void InstallInCurrentScope (Tsymbol *symbol);
 
 void PopScope();

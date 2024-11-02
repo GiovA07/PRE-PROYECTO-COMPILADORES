@@ -6,7 +6,7 @@
 FILE* file;
 int labNum = 0;
 int cantParamFunc = -1;
-char params[7][20] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
+char params[7][20] = {"edi", "esi", "edx", "ecx", "r8d", "r9d"};
 
 void createFile() {
     file = fopen("result.s", "w");
@@ -67,6 +67,10 @@ void createWriteASM(PseudoASM* instruction) {
 
 void writeFunc(PseudoASM* instruction) {
     char buffer[256];
+    if(strcmp(instruction->result->varname,"main") == 0){
+        sprintf(buffer, ".global %s\n ",instruction->result->varname);
+        writeArchive(buffer);
+    } 
     sprintf(buffer, "%s:\n    pushq   %%rbp\n    movq    %%rsp, %%rbp\n",instruction->result->varname);
     writeArchive(buffer);
 }
@@ -75,22 +79,26 @@ void writeLoadParamInFunc(PseudoASM* instruction) {
     char buffer[256];
     char* por = "%";
     cantParamFunc +=1;
-    writeArchive("     ;Cargando parametro\n");
+    //writeArchive("     ;Cargando parametro\n");
     Tsymbol* param = instruction->result;
             // movl    %edi, -4(%rbp)
 
     sprintf(buffer, "    movl %s%s, %d(%%rbp)\n", por, params[cantParamFunc], param->offset);
     writeArchive(buffer);
-    writeArchive("     ;TERMINO CARGAR parametro\n");
+   // writeArchive("     ;TERMINO CARGAR parametro\n");
 }
+// elegir una forma
+//1-rdi, 2-rsi, 3-rdx, 4-rcx, 5-r8, 6-r9 => 64 bits
+//1-edi, 2-esi, 3-edx, 4-ecx, 5-r8d, 6-r9d => 32 bits 
+// 32 bits usa movl
+// 64 bits usa movq
 
-//1-rdi, 2-rsi, 3-rdx, 4-rcx, 5-r8, 6-r9
 //Si cantParam es > 6, se debe pushear a la pila....
 void writeLoadParam(PseudoASM* instruction, int cantParam) {
     char buffer[256];
     char por[3] = "%";
     Tsymbol *result = instruction->result;
-    writeArchive("    ;CARGANDO PARAMETRO\n");
+    //writeArchive("    ;CARGANDO PARAMETRO\n");
     if(result->type == CONSINT || result->type == CONSBOOL) {
         sprintf(buffer, "    movl $%s, %s%s\n", result->varname, por, params[cantParam]);
         writeArchive(buffer);
@@ -101,7 +109,7 @@ void writeLoadParam(PseudoASM* instruction, int cantParam) {
         sprintf(buffer, "    movl %%eax, %s%s\n", por, params[cantParam]);
         writeArchive(buffer);
     }
-    writeArchive("    ;FIN DEL CARGO DE PARAMETRO\n");
+   // writeArchive("    ;FIN DEL CARGO DE PARAMETRO\n");
     cantParam += 1;
 
     if(instruction->next->tag ==  T_LOAD_PARAM) {
@@ -119,10 +127,16 @@ void writeAsign(PseudoASM* instruction) {
     enum TYPES typeOp2 = op2->type;
     char buffer[256];
     char* por = "%%";
-    writeArchive("    ;PRINCIPIO ASIGN\n");
-    if(typeOp2 == CONSBOOL || typeOp2 == CONSINT){
+    //writeArchive("    ;PRINCIPIO ASIGN\n");
+    if(typeOp2 == CONSINT){
         sprintf(buffer, "    movl $%s, %d(%%rbp)\n", op2->varname, op1->offset);
-    } else {
+    } else if(typeOp2 == CONSBOOL ){
+        if(strcmp("true",op2->varname) == 0){
+			sprintf(buffer, "    movl $1, %d(%%rbp)\n", op1->offset);
+		}else {
+			sprintf(buffer, "    movl $0, %d(%%rbp)\n", op1->offset);	
+		}
+    }else {
         //Primero paso el valor de la otra variable al eax
         sprintf(buffer, "    movl %d(%%rbp), %%eax\n\n", op2->offset);
         writeArchive(buffer);
@@ -130,7 +144,7 @@ void writeAsign(PseudoASM* instruction) {
         sprintf(buffer, "    movl %%eax, %d(%%rbp)\n\n", op1->offset);
     }
     writeArchive(buffer);
-    writeArchive("    ;FINAL ASIGN\n");
+    //writeArchive("    ;FINAL ASIGN\n");
 }
 
 void writeReturn(PseudoASM* instruction) {
@@ -156,8 +170,9 @@ void writeIFF(PseudoASM* instruction) {
     Tsymbol* result = instruction->result;
     char buffer[256];
     char* por = "%%";
-    //Compara si es true
-    sprintf(buffer, "    cmpl %d(%rbp), 1\n", op1->offset);
+    //Compara si es true 
+    //cambien esto me tirava error sprintf(buffer, "    cmpl  %d(%rbp),  1\n", op1->offset);
+    sprintf(buffer, "    cmpl  $1,  %d(%rbp)\n", op1->offset);
     writeArchive(buffer);
     //salto por falso
     char* nameLabel = result->varname;
@@ -177,7 +192,7 @@ void writeLabel(PseudoASM* instruction) {
 void writeJump(PseudoASM* instruction) {
     char buffer[256];
     char* nameLabel = instruction->result->varname;
-    sprintf(buffer, "    jump %s\n", nameLabel);
+    sprintf(buffer, "    jmp %s\n", nameLabel);
     writeArchive(buffer);
 }
 
@@ -256,54 +271,80 @@ void writeBooleanOp(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
     char* por = "%%";
 
     if (tag == T_AND || tag == T_OR){
-
-        if(op1->type == CONSBOOL)
-            sprintf(aux, "    comb $0, $%d\n", op2->offset);
-        else
-            sprintf(aux, "    comb $0 %d(%srbp)\n", op2->offset, por);
-
+        
+        if(op1->type == CONSBOOL){
+            if(strcmp("true",op1->varname) == 0){
+                sprintf(aux, "    movl $1, %%eax\n");
+                writeArchive(aux);
+		    	sprintf(aux, "    cmpl $0, %%eax\n");
+		    }else {
+                sprintf(aux, "    movl $0, %%eax\n");
+                writeArchive(aux);
+			    sprintf(aux, "    cmpl $0, %%eax\n");	
+		    }
+        }else{
+            sprintf(aux, "    cmpl $0, %d(%%rbp)\n", op1->offset);
+        }
+        
         writeArchive(aux);
 
         if (tag == T_AND)
+            sprintf(aux, "    je .LA%d \n", labNum+1);
+        else
+            sprintf(aux, "    jne .LO%d \n", labNum+1);
+       
+        writeArchive(aux);
+
+        if(op2->type == CONSBOOL){
+            if(strcmp("true",op2->varname) == 0){
+		    	sprintf(aux, "    movl $1, %%eax\n");
+                writeArchive(aux);
+		    	sprintf(aux, "    cmpl $0, %%eax\n");
+		    }else {
+			    sprintf(aux, "    movl $0, %%eax\n");
+                writeArchive(aux);
+			    sprintf(aux, "    cmpl $0, %%eax\n");		
+		    }
+        }else{
+            sprintf(aux, "    cmpl $0, %d(%%rbp)\n", op2->offset);
+        }
+        writeArchive(aux);
+
+        if (tag == T_AND){
+            labNum++;
             sprintf(aux, "    je .LA%d \n", labNum);
-        else
-            sprintf(aux, "    je .LO%d \n", labNum);
-        writeArchive(aux);
-        labNum++;
-
-        if(op1->type == CONSBOOL)
-            sprintf(aux, "    comb $0, $%d\n", op1->offset);
-        else
-            sprintf(aux, "    comb $0 %d(%srbp)\n", op1->offset, por);
+        }else{
+            labNum++;
+            sprintf(aux, "    je .LO%d \n", labNum+1);
+        }
         writeArchive(aux);
 
-        if (tag == T_AND)
-            sprintf(aux, "    je .LA%d \n", labNum-1);
-        else
-            sprintf(aux, "    je .LO%d \n", labNum);
-        writeArchive(aux);
 
         if (tag == T_OR) {
             sprintf(aux, ".LO%d: \n", labNum);
             writeArchive(aux);
         }
 
-        sprintf(aux, "    movl $1, %seax\n", por);
+        sprintf(aux, "    movl $1, %%eax\n");
         writeArchive(aux);
 
+        
+        
         if (tag == T_AND) {
             labNum++;
             sprintf(aux, "    jmp .LA%d \n", labNum);
             writeArchive(aux);
+            labNum --;
             sprintf(aux, ".LA%d: \n", labNum);
         } else {
-            labNum+=2;
-            sprintf(aux, "    jmp .LO%d \n", labNum);
+            labNum++;
+            sprintf(aux, "    jmp .LO%d \n", labNum+1);
             writeArchive(aux);
+            //labNum --;
             sprintf(aux, ".LO%d: \n", labNum);
         }
         writeArchive(aux);
-        sprintf(aux, "    movl $0, %seax\n", por);
+        sprintf(aux, "    movl $0, %%eax\n");
         writeArchive(aux);
 
         labNum++;
@@ -311,8 +352,8 @@ void writeBooleanOp(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
             sprintf(aux, ".LA%d: \n", labNum);
         } else {
             sprintf(aux, ".LO%d: \n", labNum);
-            writeArchive(aux);
-            sprintf(aux, "    movb %sal, %d(%srbp) \n",por, op2->offset, por);
+            //writeArchive(aux);
+            //sprintf(aux, "    movb %sal, %d(%srbp) \n",por, op2->offset, por);
         }
         writeArchive(aux);
 
@@ -325,10 +366,10 @@ void writeBooleanOp(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
         writeArchive(aux);
     }
 
-    sprintf(aux, "     movl %sal, %d(%srbp)\n", por, final->offset, por);
+    sprintf(aux, "    movl %%eax, %d(%%rbp)\n",final->offset);
     writeArchive(aux);
-    sprintf(aux, "     movl %d(%srbp), %seax\n", op1->offset, por, por);
-    writeArchive(aux);
+    //sprintf(aux, "    movl %d(%srbp), %seax\n", op1->offset, por, por);
+   // writeArchive(aux);
 }
 
 
@@ -367,7 +408,7 @@ void writeComparation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG t
 
     sprintf(aux, "    movzbl %sal, %seax\n", por, por);
     fprintf(file, aux);
-    sprintf(aux, "    movl  %seax %d(%srbp)\n",por, final->offset, por);
+    sprintf(aux, "    movl  %seax, %d(%srbp)\n",por, final->offset, por);
     fprintf(file, aux);
     fclose(file);
 

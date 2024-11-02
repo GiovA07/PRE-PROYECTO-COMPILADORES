@@ -1,12 +1,8 @@
 Program {
-    bool flag;
     int main() {
-        flag = true;
-        if (flag && (5 > 3)) then {
-            flag = false;
-        } else {
-            flag = true;
-        }
-        return 0;
+    bool flag;
+    bool aux;
+    flag = 3 > 3 && false;
+    return 0;
     }
 }

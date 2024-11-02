@@ -82,9 +82,9 @@ prog: PROGRAM TLLAVE_OP list_decls list_func main TLLAVE_CL  { char * name = "PR
     | PROGRAM TLLAVE_OP list_decls  main TLLAVE_CL  {char * name = "PROGRAM"; compilador(createTreeWhitSymbol(name,EPROGRAM,blockNum,yylineno,$3, $4));}
     ;
 
-main: TYPE_BOOL MAIN TPAR_OP TPAR_CL block  { char * name = "MAIN";$$ = createTreeWhitSymbol(name,RETBOL,blockNum,yylineno,$5, NULL);}
-    | TYPE_INT MAIN TPAR_OP TPAR_CL block   { char * name = "MAIN";$$ = createTreeWhitSymbol(name,RETINT,blockNum,yylineno,$5, NULL);}
-    | TYPE_VOID MAIN TPAR_OP TPAR_CL block  { char * name = "MAIN";$$ = createTreeWhitSymbol(name,RETVOID,blockNum,yylineno,$5, NULL);}
+main: TYPE_BOOL MAIN TPAR_OP TPAR_CL block  { char * name = "main";$$ = createTreeWhitSymbol(name,RETBOL,blockNum,yylineno,$5, NULL);}
+    | TYPE_INT MAIN TPAR_OP TPAR_CL block   { char * name = "main";$$ = createTreeWhitSymbol(name,RETINT,blockNum,yylineno,$5, NULL);}
+    | TYPE_VOID MAIN TPAR_OP TPAR_CL block  { char * name = "main";$$ = createTreeWhitSymbol(name,RETVOID,blockNum,yylineno,$5, NULL);}
     ;
 
 list_decls: declaracion              {char * name = "DECLARACION"; $$ = createTreeWhitSymbol(name,DECLA,blockNum,yylineno,$1, NULL);}
@@ -198,7 +198,7 @@ void compilador(struct AST* ar){
     if(getError()) {
        elimArbol(ar);
        exit(1);
-    }
+    }    
     generateThreeDir(ar);
     printAsembler();
     generateAssembler();

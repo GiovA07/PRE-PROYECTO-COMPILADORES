@@ -1,6 +1,6 @@
 Program {
     void main() {
-        int x;
+    int x;
         x = 10;
         if (x > 5) then {
             while (x > 0) {

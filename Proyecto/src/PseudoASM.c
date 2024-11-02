@@ -50,7 +50,6 @@ struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res) {
             sequense->op1->value = auxRigth->value;
             sequense->result = sequense->op1;
         }else {
-
             sequense->op1->value = sequense->op2->value;
             sequense->result = sequense->op1;
         }
@@ -256,8 +255,7 @@ void generateCode(AST* ar) {
     if(ar->symbol->type == ERETURN) {
         handleGenerateOpReturn(ar);
         createRetTag(ar->left->symbol);
-    } else
-    if (strcmp((ar->symbol)->varname,"MAIN") == 0) {
+    } else if (strcmp((ar->symbol)->varname,"main") == 0) {
         //aca puede ir el coso para darle el offset
         // handleAddOffset(ar->left);
         handleGenerateMain(ar);
@@ -293,6 +291,26 @@ void handleGenerateOpReturn(AST* ar) {
 }
 
  void handleGenerateMain(AST* ar){
+    Tsymbol * aux = getTable();
+    while(aux != NULL) {
+        if(aux->type == VARINT || aux->type == VARBOOL ){
+            // printf("| %s |", aux->varname);
+            // printf(" %s |", string[aux->type]);
+            // printf(" %d |", aux->size);
+            // printf(" %d |\n", aux->value);
+            PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
+            sequense->tag = T_GLOBAL;
+            char * name1 = "_";
+            sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
+            sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
+            sequense->result = aux;
+            sequense->next = instructions;
+            instructions = sequense;
+        }
+        aux = aux->next;
+    }
+
+
     createSentenThreeDir(T_FUNC,ar->symbol);
     if (ar->left != NULL)
         generateCode(ar->left);
