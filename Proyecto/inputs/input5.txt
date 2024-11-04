@@ -1,11 +1,17 @@
 Program {
-    //int x;
-    //int yyyy;
+
+    int getA() {
+        bool aux;
+        aux = true;
+        return 10;
+    }
     int prinInt(int a) extern;
     
     int main() {
         int x;
-        x = 2;
+        bool aux;
+        //x = yyyy;
+        aux = false;
         x = prinInt(prinInt(x));
         prinInt(x);
         return x;

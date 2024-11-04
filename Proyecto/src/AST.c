@@ -89,6 +89,7 @@ void createTable(AST* ar) {
        InstallScope();
        InstallInCurrentScope(ar->symbol);
     }
+    
     if(tipoActual == RETINT || tipoActual == RETBOL || tipoActual == RETVOID || tipoActual == EXTVOID || tipoActual == EXTINT || tipoActual == EXTBOL) {
         //printf("APILO -> %s\n",ar->symbol->varname);
         cantBloq++;

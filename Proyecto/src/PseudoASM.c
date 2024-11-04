@@ -252,6 +252,27 @@ void generateThreeDir(AST* ar) {
 
 
 void generateCode(AST* ar) {
+    if(strcmp((ar->symbol)->varname,"PROGRAM") == 0){
+        Tsymbol * aux = getTable();
+        while(aux != NULL) {
+            printf("ENTRO\n");
+            Tsymbol * recorrert = aux->table;
+            while(recorrert != NULL) {
+                if(recorrert->type == VARINT || recorrert->type == VARBOOL ){
+                    PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
+                    sequense->tag = T_GLOBAL;
+                    char * name1 = "_";
+                    sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
+                    sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
+                    sequense->result = recorrert;
+                    sequense->next = instructions;
+                    instructions = sequense;
+                }
+            recorrert = recorrert->next;    
+            }
+            aux = aux->next;
+        }
+    }
     if(ar->symbol->type == ERETURN) {
         handleGenerateOpReturn(ar);
         createRetTag(ar->left->symbol);
@@ -290,27 +311,7 @@ void handleGenerateOpReturn(AST* ar) {
         generateCode(ar->right);
 }
 
- void handleGenerateMain(AST* ar){
-    Tsymbol * aux = getTable();
-    while(aux != NULL) {
-        if(aux->type == VARINT || aux->type == VARBOOL ){
-            // printf("| %s |", aux->varname);
-            // printf(" %s |", string[aux->type]);
-            // printf(" %d |", aux->size);
-            // printf(" %d |\n", aux->value);
-            PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
-            sequense->tag = T_GLOBAL;
-            char * name1 = "_";
-            sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
-            sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
-            sequense->result = aux;
-            sequense->next = instructions;
-            instructions = sequense;
-        }
-        aux = aux->next;
-    }
-
-
+void handleGenerateMain(AST* ar){
     createSentenThreeDir(T_FUNC,ar->symbol);
     if (ar->left != NULL)
         generateCode(ar->left);
@@ -552,15 +553,15 @@ void printAsembler() {
         }
 
         // Para ver que OFFSET TIENEN los operadores de la instruccion
-        if(current->tag == T_LOAD_PARAM) {
-            printf(" El VALOR del parametro es: %s  y de tipo: %s\n", current->result->varname,string[current->result->type]);
-        }
-        if (current->op1->offset != 0)
-            printf(" El offset de %s  es: %d y de tipo: %s\n", current->op1->varname, current->op1->offset,string[current->result->type]);
-        if (current->op2->offset != 0)
-            printf(" El offset de %s  es: %d y de tipo: %s \n", current->op2->varname, current->op2->offset,string[current->result->type]);
-        if (current->result->offset != 0)
-            printf(" El offset de %s  es: %d y de tipo: %s\n", current->result->varname, current->result->offset, string[current->result->type]);
+        // if(current->tag == T_LOAD_PARAM) {
+        //     // printf(" El VALOR del parametro es: %s  y de tipo: %s\n", current->result->varname,string[current->result->type]);
+        // }
+        // if (current->op1->offset != 0)
+        //     // printf(" El offset de %s  es: %d y de tipo: %s\n", current->op1->varname, current->op1->offset,string[current->result->type]);
+        // if (current->op2->offset != 0)
+        //     // printf(" El offset de %s  es: %d y de tipo: %s \n", current->op2->varname, current->op2->offset,string[current->result->type]);
+        // if (current->result->offset != 0)
+            // printf(" El offset de %s  es: %d y de tipo: %s\n", current->result->varname, current->result->offset, string[current->result->type]);
         current = current->next;
     }
 }

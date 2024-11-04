@@ -18,9 +18,6 @@ struct Tsymbol * CreateSymbol(char *name, enum TYPES type, int size, int line){
 }
 
 struct Tsymbol * getTable(){
-  if(table->table != NULL)
-    return table->table;
-  else 
     return table;
 }
 
@@ -31,9 +28,10 @@ int getScope() {
 //push - instalo en la tabla el scope
 void InstallScope(){
   char aux[10];
+  char *name = "SCOPE";
   numScope++;
   sprintf(aux,"Scope %d",numScope);
-  Tsymbol *scope = CreateSymbol(aux,OTHERS, 0, 0);
+  Tsymbol *scope = CreateSymbol(name,OTHERS, 0, 0);
 
   scope->next =  table;
   table = scope;
@@ -156,18 +154,18 @@ void prinTable(){
         //printf("Func\n");
         printf("| %s |", aux->varname);
         printf(" %s |", string[aux->type]);
-        printf(" %d |", aux->size);
+        printf(" %d |", aux->offset);
         printf(" %d |\n", aux->value);
-        // if(aux->table != NULL) {
-        //     Tsymbol *aux1 = aux->table;
-        //     while(aux1 != NULL) {
-        //       printf("| %s |", aux1->varname);
-        //       printf(" %s |", string[aux1->type]);
-        //       printf(" %d |", aux1->size);
-        //       printf(" %d |\n", aux1->value);
-        //       aux1 = aux1->next;
-        //     }
-        // }
+        if(aux->table != NULL) {
+            Tsymbol *aux1 = aux->table;
+            while(aux1 != NULL) {
+              printf("| %s |", aux1->varname);
+              printf(" %s |", string[aux1->type]);
+              printf(" %d |", aux1->offset);
+              printf(" %d |\n", aux1->value);
+              aux1 = aux1->next;
+            }
+        }
         aux = aux->next;
     }
 }

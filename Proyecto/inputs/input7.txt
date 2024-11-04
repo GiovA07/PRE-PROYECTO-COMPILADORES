@@ -1,8 +1,11 @@
 Program {
+    int x;
+
     int main() {
-        int x;
         int y;
+        int x;
         bool z;
+        y = x;
         z = x==y;
         z = x<y;
         z = x>y;

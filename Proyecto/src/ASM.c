@@ -79,7 +79,7 @@ void writeVarGlobal(PseudoASM* instruction){
 void writeFunc(PseudoASM* instruction) {
     char buffer[256];
     if(strcmp(instruction->result->varname,"main") == 0){
-        sprintf(buffer, ".global %s\n ",instruction->result->varname);
+        sprintf(buffer, "\n.global %s\n ",instruction->result->varname);
         writeArchive(buffer);
     } 
     sprintf(buffer, "%s:\n    pushq   %%rbp\n    movq    %%rsp, %%rbp\n",instruction->result->varname);
@@ -135,8 +135,13 @@ void writeLoadParam(PseudoASM* instruction, int cantParam) {
 void writeAsign(PseudoASM* instruction) {
     Tsymbol* op1 = instruction->result;
     Tsymbol* op2 = instruction->op2;
-    Tsymbol * op1Global = LookupExternVar(op1->varname);
-    Tsymbol * op2Global = LookupExternVar(op2->varname);
+   
+    Tsymbol * op1Global = NULL;
+    Tsymbol * op2Global = NULL;
+    if(op1->offset == 0)
+        op1Global = LookupExternVar(op1->varname);
+    if(op2->offset == 0)
+        op2Global = LookupExternVar(op2->varname); 
     // if(op1Global) {
     //      Tsymbol * op1 = op1Global;
     //      printf("Global %s\n",op1->varname);
