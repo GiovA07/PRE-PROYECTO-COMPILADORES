@@ -341,7 +341,7 @@ void generateLoadParams(AST* ar) {
     enum TYPES tipoActual = ar->symbol->type;
 
     if (ar->symbol->type == CALL_F) {
-        createTagLoad(ar->left->symbol);
+        createTagLoad(ar->symbol);
     }
 
 
@@ -495,6 +495,7 @@ void handleGenerateBinaryOperation(AST* ar) {
 void handleUnaryOp(AST* ar) {
     generateCode(ar->left);
     if ((ar->symbol)->type  == ENOT) {
+        printf("Entro offset %d\n",ar->symbol->offset);
         PseudoASM* not = traslate((ar->symbol)->type, ar->left,NULL, ar);
         not->next = instructions;
         instructions = not;
@@ -551,15 +552,15 @@ void printAsembler() {
         }
 
         // Para ver que OFFSET TIENEN los operadores de la instruccion
-        // if(current->tag == T_LOAD_PARAM) {
-        //     printf(" El VALOR del parametro es: %s  y de tipo: %s\n", current->result->varname,string[current->result->type]);
-        // }
-        // if (current->op1->offset != 0)
-        //     printf(" El offset de %s  es: %d y de tipo: %s\n", current->op1->varname, current->op1->offset,string[current->result->type]);
-        // if (current->op2->offset != 0)
-        //     printf(" El offset de %s  es: %d y de tipo: %s \n", current->op2->varname, current->op2->offset,string[current->result->type]);
-        // if (current->result->offset != 0)
-        //     printf(" El offset de %s  es: %d y de tipo: %s\n", current->result->varname, current->result->offset, string[current->result->type]);
+        if(current->tag == T_LOAD_PARAM) {
+            printf(" El VALOR del parametro es: %s  y de tipo: %s\n", current->result->varname,string[current->result->type]);
+        }
+        if (current->op1->offset != 0)
+            printf(" El offset de %s  es: %d y de tipo: %s\n", current->op1->varname, current->op1->offset,string[current->result->type]);
+        if (current->op2->offset != 0)
+            printf(" El offset de %s  es: %d y de tipo: %s \n", current->op2->varname, current->op2->offset,string[current->result->type]);
+        if (current->result->offset != 0)
+            printf(" El offset de %s  es: %d y de tipo: %s\n", current->result->varname, current->result->offset, string[current->result->type]);
         current = current->next;
     }
 }

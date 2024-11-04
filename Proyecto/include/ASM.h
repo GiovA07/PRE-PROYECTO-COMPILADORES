@@ -16,6 +16,7 @@ void writeOperation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
 void writeBooleanOp(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag);
 void writeComparation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag);
 
+void writeVarGlobal(PseudoASM* instruction);
 void writeIFF(PseudoASM* instruction);
 void writeLabel(PseudoASM* instruction);
 void writeJump(PseudoASM* instruction);

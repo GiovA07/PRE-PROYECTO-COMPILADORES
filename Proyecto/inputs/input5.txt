@@ -1,11 +1,13 @@
 Program {
-    int foo(int y) extern;
-
+    //int x;
+    //int yyyy;
+    int prinInt(int a) extern;
+    
     int main() {
         int x;
-        x = foo(10);
+        x = 2;
+        x = prinInt(prinInt(x));
+        prinInt(x);
         return x;
     }
-
-
 }

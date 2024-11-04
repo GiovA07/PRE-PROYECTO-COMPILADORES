@@ -184,7 +184,10 @@ void createTable(AST* ar) {
             errorRet(ar, aux, &err);
         }
         if(ar->symbol->type == ENOT){
-             errorNot(ar, &err);
+           // printf("type %s => offset %d\n",string[ar->symbol->type],ar->symbol->offset);
+            offset += -8;
+            ar->symbol->offset = offset;
+            errorNot(ar, &err);
         }
         createTable(ar->left);
     }

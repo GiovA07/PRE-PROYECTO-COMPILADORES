@@ -29,6 +29,9 @@ void writeArchive(char* string) {
 
 void createWriteASM(PseudoASM* instruction) {
     enum ASM_TAG currentTag = instruction->tag;
+    if(currentTag == T_GLOBAL){
+        writeVarGlobal(instruction);
+    } 
     if(currentTag == T_FUNC) {
         writeFunc(instruction);
         cantParamFunc = -1;
@@ -64,6 +67,14 @@ void createWriteASM(PseudoASM* instruction) {
         createWriteASM(instruction->next);
 }
 
+void writeVarGlobal(PseudoASM* instruction){
+        char buffer[256];
+        sprintf(buffer, ".global %s\n\n ",instruction->result->varname);
+        writeArchive(buffer);
+        sprintf(buffer, "%s: \n    .long 0\n\n",instruction->result->varname);
+        writeArchive(buffer);
+        
+}
 
 void writeFunc(PseudoASM* instruction) {
     char buffer[256];
@@ -103,7 +114,7 @@ void writeLoadParam(PseudoASM* instruction, int cantParam) {
         sprintf(buffer, "    movl $%s, %s%s\n", result->varname, por, params[cantParam]);
         writeArchive(buffer);
     }
-    if(result->type == EID) {
+    if(result->type == EID || result->type == CALL_F) {
         sprintf(buffer, "    movl %d(%%rbp), %seax\n",result->offset, por);
         writeArchive(buffer);
         sprintf(buffer, "    movl %%eax, %s%s\n", por, params[cantParam]);
@@ -124,24 +135,55 @@ void writeLoadParam(PseudoASM* instruction, int cantParam) {
 void writeAsign(PseudoASM* instruction) {
     Tsymbol* op1 = instruction->result;
     Tsymbol* op2 = instruction->op2;
+    Tsymbol * op1Global = LookupExternVar(op1->varname);
+    Tsymbol * op2Global = LookupExternVar(op2->varname);
+    // if(op1Global) {
+    //      Tsymbol * op1 = op1Global;
+    //      printf("Global %s\n",op1->varname);
+    // }
+    // if(op2Global) {
+    //     Tsymbol * op2 = op2Global;
+    //      printf("Global %s\n",op2->varname);
+
+    // }
     enum TYPES typeOp2 = op2->type;
     char buffer[256];
     char* por = "%%";
     //writeArchive("    ;PRINCIPIO ASIGN\n");
+    
     if(typeOp2 == CONSINT){
-        sprintf(buffer, "    movl $%s, %d(%%rbp)\n", op2->varname, op1->offset);
+        if(op1Global) {
+            // printf("Global %s\n",op1->varname);
+            sprintf(buffer, "    movl $%s, %s(%%rip)\n", op2->varname, op1->varname);
+        } else{
+            sprintf(buffer, "    movl $%s, %d(%%rbp)\n", op2->varname, op1->offset);
+        }
     } else if(typeOp2 == CONSBOOL ){
         if(strcmp("true",op2->varname) == 0){
-			sprintf(buffer, "    movl $1, %d(%%rbp)\n", op1->offset);
+            if(op1Global)
+                sprintf(buffer, "    movl $1, %s(%%rip)\n", op1->varname);
+            else
+			    sprintf(buffer, "    movl $1, %d(%%rbp)\n", op1->offset);
 		}else {
-			sprintf(buffer, "    movl $0, %d(%%rbp)\n", op1->offset);	
+            if(op1Global)
+                sprintf(buffer, "    movl $0, %s(%%rip)\n", op1->varname);
+            else
+			    sprintf(buffer, "    movl $0, %d(%%rbp)\n", op1->offset);	
 		}
     }else {
         //Primero paso el valor de la otra variable al eax
-        sprintf(buffer, "    movl %d(%%rbp), %%eax\n\n", op2->offset);
+        if(op2Global) 
+            sprintf(buffer, "    movl %s(%%rip), %%eax\n\n", op2->varname);
+        else 
+            sprintf(buffer, "    movl %d(%%rbp), %%eax\n\n", op2->offset);
+
         writeArchive(buffer);
         //Despues paso el valor del eax a la variable de la asignacion.
-        sprintf(buffer, "    movl %%eax, %d(%%rbp)\n\n", op1->offset);
+
+        if(op1Global)
+            sprintf(buffer, "    movl %%eax, %s(%%rip)\n\n", op1->varname);
+        else
+            sprintf(buffer, "    movl %%eax, %d(%%rbp)\n\n", op1->offset);
     }
     writeArchive(buffer);
     //writeArchive("    ;FINAL ASIGN\n");
@@ -154,7 +196,10 @@ void writeReturn(PseudoASM* instruction) {
 
     // writeArchive("    ;Return: \n"); //borrar [--][==] [ O ] ]--[
     // Guarda el valor de la variable a retornar en eax
-    sprintf(buffer, "    movl %%eax, %d(%%rbp)\n", result->offset);
+    if(LookupExternVar(result->varname))
+        sprintf(buffer, "    movl %s(%%rip),  %%eax\n", result->varname);
+    else
+        sprintf(buffer, "    movl %%eax, %d(%%rbp)\n", result->offset);
     writeArchive(buffer);
     // Revierte el rbp de la pila antes a donde estaba antes de ser llamada.
     writeArchive("    popq    %rbp\n");
@@ -172,7 +217,10 @@ void writeIFF(PseudoASM* instruction) {
     char* por = "%%";
     //Compara si es true 
     //cambien esto me tirava error sprintf(buffer, "    cmpl  %d(%rbp),  1\n", op1->offset);
-    sprintf(buffer, "    cmpl  $1,  %d(%rbp)\n", op1->offset);
+    if(LookupExternVar(op1->varname))
+        sprintf(buffer, "    cmpl  $1,  %s(%rip)\n", op1->varname);
+    else
+        sprintf(buffer, "    cmpl  $1,  %d(%rbp)\n", op1->offset);
     writeArchive(buffer);
     //salto por falso
     char* nameLabel = result->varname;
@@ -220,20 +268,26 @@ void writeOperation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
 
     char aux[100];
     char* por = "%%";
+    Tsymbol * op1Global = LookupExternVar(op1->varname);
+    Tsymbol * op2Global = LookupExternVar(op2->varname);
 
-    if(op1->type == CONSINT)
-        sprintf(aux, "    movl $%s, %sedx\n", op1->varname, por);
-    else
-        sprintf(aux, "    movl %d(%srbp), %sedx\n", op1->offset, por, por);
-
-    fprintf(file,aux);
 
     if (tag == T_SUM || tag == T_RES || tag == T_PROD) {
+        if(op1->type == CONSINT)
+          sprintf(aux, "    movl $%s, %sedx\n", op1->varname, por);
+        else
+            if(op1Global)
+                sprintf(aux, "    movl %s(%srip), %sedx\n", op1->varname, por, por);
+            else 
+              sprintf(aux, "    movl %d(%srbp), %sedx\n", op1->offset, por, por);
+        fprintf(file,aux);
         if(op2->type == CONSINT)
             sprintf(aux, "    movl $%s, %seax\n", op2->varname, por);
         else
-            sprintf(aux, "    movl %d(%srbp), %seax\n", op2->offset, por, por);
-
+            if(op2Global)
+                sprintf(aux, "    movl %s(%srip), %seax\n", op2->varname, por, por);
+            else 
+                sprintf(aux, "    movl %d(%srbp), %seax\n", op2->offset, por, por);
         fprintf(file,aux);
 
         if (tag == T_SUM)
@@ -245,11 +299,29 @@ void writeOperation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
         sprintf(aux, "    movl %seax, %d(%srbp)\n", por, final->offset, por);
         fprintf(file,aux);
     } else if (tag == T_DIV || tag == T_MOD) {
-        fprintf(file, "    cltd\n");
-        if(op2->type == CONSINT)
-            sprintf(aux, "    idivl $%s\n", op2->varname);
+        if(op1->type == CONSINT)
+          sprintf(aux, "    movl $%s, %seax\n", op1->varname, por);
         else
-            sprintf(aux, "    idivl %d(%srbp)\n", op2->offset, por);
+            if(op1Global)
+                sprintf(aux, "    movl %s(%srip), %seax\n", op1->varname, por, por);
+            else 
+              sprintf(aux, "    movl %d(%srbp), %seax\n", op1->offset, por, por);
+        fprintf(file,aux);
+        if(op2->type == CONSINT){                
+            sprintf(aux, "    movl $%s,  %secx\n", op2->varname, por);
+            fprintf(file,aux);   
+            fprintf(file, "    cltd\n");
+            sprintf(aux, "    idivl %secx\n", por);
+        }else{
+            if(op2Global){
+                sprintf(aux, "    movl %s(%srip),  %secx\n", op2->varname, por,por);
+                fprintf(file,aux);
+                fprintf(file, "    cltd\n");
+                sprintf(aux, "    idivl %secx\n",por);
+            }else{ 
+                sprintf(aux, "    idivl %d(%srbp)\n", op2->offset, por);
+            }
+        }
         fprintf(file,aux);
 
         if (tag == T_DIV)
@@ -258,13 +330,13 @@ void writeOperation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
             sprintf(aux, "    movl %sedx, %d(%srbp)\n", por, final->offset, por);
         fprintf(file,aux);
 
-        sprintf(aux, "    $0, %seax\n", por);
-        fprintf(file, aux);
+        //sprintf(aux, "    $0, %seax\n", por);
+        //fprintf(file, aux);
     }
     fclose(file);
 }
 
-
+// Faltar para variable globales
 void writeBooleanOp(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag){
 
     char aux[100];
@@ -358,11 +430,11 @@ void writeBooleanOp(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
         writeArchive(aux);
 
     } else {
-        sprintf(aux, "    cmpl  $0, %d(%srbp)\n", op1->offset, por);
+        sprintf(aux, "    cmpl  $0, %d(%%rbp)\n", op1->offset);
         writeArchive(aux);
-        sprintf(aux, "    sete  %sal\n", por);
+        sprintf(aux, "    sete  %%al\n");
         writeArchive(aux);
-        sprintf(aux, "    movzbl  %sal, %seax\n", por, por);
+        sprintf(aux, "    movzbl  %%al, %%eax\n");
         writeArchive(aux);
     }
 

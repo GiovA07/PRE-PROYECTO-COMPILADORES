@@ -2,7 +2,10 @@ Program {
     int main() {
     bool flag;
     bool aux;
-    flag = 3 > 3 && false;
+    int a;
+    a = 1 +1;
+    flag = true;
+    aux = !flag;
     return 0;
     }
 }
