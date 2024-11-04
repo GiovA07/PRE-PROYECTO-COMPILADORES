@@ -2,7 +2,7 @@ Program {
     bool x;
     int z;
 
-    //void pritfResult() extern;
+    void pritfResult() extern;
     int get_num(int x) {
         int z;
         return z+x;

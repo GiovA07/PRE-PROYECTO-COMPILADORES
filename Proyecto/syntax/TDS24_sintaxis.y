@@ -146,9 +146,9 @@ list_func: declare_funcion                  {char * name = "LIS_FUNCION";$$ = cr
 declare_funcion: TYPE_INT ID TPAR_OP parametros TPAR_CL block           { char * nameAux = $2->varname; $$ = createTreeWhitSymbol(nameAux, RETINT, blockNum, yylineno, $4, $6);}
                | TYPE_BOOL ID TPAR_OP parametros TPAR_CL block          { char * nameAux = $2->varname; $$ = createTreeWhitSymbol(nameAux, RETBOL, blockNum, yylineno, $4, $6);}
                | TYPE_VOID ID TPAR_OP parametros TPAR_CL block          { char * nameAux = $2->varname; $$ = createTreeWhitSymbol(nameAux, RETVOID, blockNum, yylineno, $4, $6);}
-               | TYPE_INT ID TPAR_OP parametros TPAR_CL EXTERN ';'      { char * name = $2->varname;$$ = createTreeWhitSymbol(name,RETINT,blockNum-1,yylineno,$4, NULL);}
-               | TYPE_BOOL ID TPAR_OP parametros TPAR_CL EXTERN ';'     { char * name = $2->varname;$$ = createTreeWhitSymbol(name,RETBOL,blockNum-1,yylineno,$4, NULL);}
-               | TYPE_VOID ID TPAR_OP parametros TPAR_CL EXTERN ';'     { char * name = $2->varname;$$ = createTreeWhitSymbol(name,RETVOID,blockNum-1,yylineno,$4, NULL);}
+               | TYPE_INT ID TPAR_OP parametros TPAR_CL EXTERN ';'      { char * name = $2->varname;$$ = createTreeWhitSymbol(name,EXTINT,blockNum-1,yylineno,$4, NULL);}
+               | TYPE_BOOL ID TPAR_OP parametros TPAR_CL EXTERN ';'     { char * name = $2->varname;$$ = createTreeWhitSymbol(name,EXTBOL,blockNum-1,yylineno,$4, NULL);}
+               | TYPE_VOID ID TPAR_OP parametros TPAR_CL EXTERN ';'     { char * name = $2->varname;$$ = createTreeWhitSymbol(name,EXTVOID,blockNum-1,yylineno,$4, NULL);}
                ;
 
 

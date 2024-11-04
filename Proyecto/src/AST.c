@@ -89,7 +89,7 @@ void createTable(AST* ar) {
        InstallScope();
        InstallInCurrentScope(ar->symbol);
     }
-    if(tipoActual == RETINT || tipoActual == RETBOL || tipoActual == RETVOID ) {
+    if(tipoActual == RETINT || tipoActual == RETBOL || tipoActual == RETVOID || tipoActual == EXTVOID || tipoActual == EXTINT || tipoActual == EXTBOL) {
         //printf("APILO -> %s\n",ar->symbol->varname);
         cantBloq++;
         auxFunc = ar->symbol;
@@ -159,7 +159,7 @@ void createTable(AST* ar) {
     if((ar->symbol->type == RETVOID)){
         aux = ar->symbol->type;
     }
-    if(ar->symbol->type == RETINT || ar->symbol->type == RETBOL){
+    if(ar->symbol->type == RETINT || ar->symbol->type == RETBOL || ar->symbol->type == EXTBOL || ar->symbol->type == RETINT){
         aux = ar->symbol->type;
         errRet = true;
     }
