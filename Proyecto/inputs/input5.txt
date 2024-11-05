@@ -1,19 +1,25 @@
 Program {
-
-    int getA() {
-        bool aux;
-        aux = true;
-        return 10;
-    }
+    int x;
+    int yyyy;
+    bool aux;
+    bool fa;
+    
     int prinInt(int a) extern;
     
+    void mostrarRes(int a) {
+        a = prinInt(a);
+    }
+
     int main() {
         int x;
-        bool aux;
-        //x = yyyy;
-        aux = false;
-        x = prinInt(prinInt(x));
-        prinInt(x);
-        return x;
+        x = 1;
+        aux = true;
+        fa = true;
+        if(aux && fa)then{
+            prinInt(100);
+        }else {
+            prinInt(0);
+        }
+        return 11;
     }
 }

@@ -255,7 +255,6 @@ void generateCode(AST* ar) {
     if(strcmp((ar->symbol)->varname,"PROGRAM") == 0){
         Tsymbol * aux = getTable();
         while(aux != NULL) {
-            printf("ENTRO\n");
             Tsymbol * recorrert = aux->table;
             while(recorrert != NULL) {
                 if(recorrert->type == VARINT || recorrert->type == VARBOOL ){
@@ -387,6 +386,18 @@ void createTagLoad(Tsymbol* symbol) {
     if(ar->right != NULL) {
         generateCode(ar->right);
     }
+    if(ar->symbol->type == RETVOID){
+        // lo agregue para que poder poner el ret en lasfunciones void 
+        PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
+        sequense->tag = T_RETURN;
+        char * name1 = " ";
+        sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
+        sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
+        sequense->result = CreateSymbol(name1,OTHERS,0,0);
+
+        sequense->next = instructions;
+        instructions = sequense;
+    }
  }
 
  void requireParams(AST* ar) {
@@ -496,7 +507,7 @@ void handleGenerateBinaryOperation(AST* ar) {
 void handleUnaryOp(AST* ar) {
     generateCode(ar->left);
     if ((ar->symbol)->type  == ENOT) {
-        printf("Entro offset %d\n",ar->symbol->offset);
+       // printf("Entro offset %d\n",ar->symbol->offset);
         PseudoASM* not = traslate((ar->symbol)->type, ar->left,NULL, ar);
         not->next = instructions;
         instructions = not;
