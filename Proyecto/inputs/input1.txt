@@ -2,7 +2,7 @@ Program {
     bool x;
     int z;
 
-    void pritfResult() extern;
+    void prinInt(int c) extern;
     int get_num(int x) {
         int z;
         return z+x;
@@ -34,6 +34,7 @@ Program {
 
         while(true) {
             c = c + 1;
+            prinInt(c);
         }
         return 0;
     }

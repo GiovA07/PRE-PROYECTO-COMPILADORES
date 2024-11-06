@@ -3,16 +3,18 @@ Program {
     int yyyy;
     bool aux;
     bool fa;
-    
+
     int prinInt(int a) extern;
-    
+
     void mostrarRes(int a) {
         a = prinInt(a);
     }
 
     int main() {
         int x;
+        int res;
         x = 1;
+        res = 99;
         aux = true;
         fa = true;
         if(aux && fa)then{
@@ -20,6 +22,8 @@ Program {
         }else {
             prinInt(0);
         }
-        return 11;
+        mostrarRes(res);
+        return  0;
+
     }
 }

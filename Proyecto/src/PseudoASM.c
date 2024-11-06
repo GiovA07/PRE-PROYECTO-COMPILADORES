@@ -267,7 +267,7 @@ void generateCode(AST* ar) {
                     sequense->next = instructions;
                     instructions = sequense;
                 }
-            recorrert = recorrert->next;    
+            recorrert = recorrert->next;
             }
             aux = aux->next;
         }
@@ -387,7 +387,7 @@ void createTagLoad(Tsymbol* symbol) {
         generateCode(ar->right);
     }
     if(ar->symbol->type == RETVOID){
-        // lo agregue para que poder poner el ret en lasfunciones void 
+        // lo agregue para que poder poner el ret en lasfunciones void
         PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
         sequense->tag = T_RETURN;
         char * name1 = " ";
@@ -565,14 +565,14 @@ void printAsembler() {
 
         // Para ver que OFFSET TIENEN los operadores de la instruccion
         // if(current->tag == T_LOAD_PARAM) {
-        //     // printf(" El VALOR del parametro es: %s  y de tipo: %s\n", current->result->varname,string[current->result->type]);
+        //     printf(" El VALOR del parametro es: %s  y de tipo: %s\n", current->result->varname,string[current->result->type]);
         // }
         // if (current->op1->offset != 0)
-        //     // printf(" El offset de %s  es: %d y de tipo: %s\n", current->op1->varname, current->op1->offset,string[current->result->type]);
+        //     printf(" El offset de %s  es: %d y de tipo: %s\n", current->op1->varname, current->op1->offset,string[current->result->type]);
         // if (current->op2->offset != 0)
-        //     // printf(" El offset de %s  es: %d y de tipo: %s \n", current->op2->varname, current->op2->offset,string[current->result->type]);
+        //     printf(" El offset de %s  es: %d y de tipo: %s \n", current->op2->varname, current->op2->offset,string[current->result->type]);
         // if (current->result->offset != 0)
-            // printf(" El offset de %s  es: %d y de tipo: %s\n", current->result->varname, current->result->offset, string[current->result->type]);
+        //     printf(" El offset de %s  es: %d y de tipo: %s\n", current->result->varname, current->result->offset, string[current->result->type]);
         current = current->next;
     }
 }

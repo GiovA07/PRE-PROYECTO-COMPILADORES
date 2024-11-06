@@ -1,20 +1,28 @@
 Program {
-    int func_1() extern;
+    int prinInt(int a) extern;
 
-    int mult(int x, int y) {
+    int mult(int l, int o){
         int z;
-        return x * y;
+        z = l * o;
+        return z;
     }
 
-    int llamadoFunc(int x, int y) {
-        int z;
-        return x * y;
+    int suma(int a, int b) {
+        return a + b;
     }
+
 
     int main() {
         int x;
-        x = mult(5,6);
-        x = llamadoFunc(9,10);
+        int y;
+        x = 1;
+        y = 2;
+        while (x < 10) {
+            prinInt(x);
+            x = x + 1;
+            y = mult(y,2);
+            prinInt(y);
+        }
         return 0;
     }
 }

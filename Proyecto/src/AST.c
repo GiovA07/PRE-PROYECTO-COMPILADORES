@@ -79,8 +79,8 @@ void printDot(AST* tree, const char* filename) {
 }
 
 Tsymbol *auxFunc = NULL;
-int offset = -8;
-int cantBloq = 0;
+int offset = -16;
+int cantBloq = -1;
 
 // bool correct = false;
 void createTable(AST* ar) {
@@ -89,9 +89,10 @@ void createTable(AST* ar) {
        InstallScope();
        InstallInCurrentScope(ar->symbol);
     }
-    
+
     if(tipoActual == RETINT || tipoActual == RETBOL || tipoActual == RETVOID || tipoActual == EXTVOID || tipoActual == EXTINT || tipoActual == EXTBOL) {
         //printf("APILO -> %s\n",ar->symbol->varname);
+        offset = -16;
         cantBloq++;
         auxFunc = ar->symbol;
         InstallInCurrentScope(ar->symbol);
@@ -111,13 +112,13 @@ void createTable(AST* ar) {
         //Esto es para las variables globales, no tengan un scope  Ya que pertenecen al scope 1. (DESPUES FIJARNOS QUE M**** HACER CON ESTOS.)
         if (getScope() != 1) {
             ar->symbol->offset = offset;
-            offset += -8;
+            offset += -16;
         }
         InstallInCurrentScope(ar->symbol);
     }
     if(tipoActual == PARAMINT || tipoActual == PARAMBOOL)  {
         ar->symbol->offset = offset;
-        offset += -8;
+        offset += -16;
         InstallInCurrentScope(ar->symbol);
         InstallParam(ar->symbol, auxFunc);
     }
@@ -126,9 +127,6 @@ void createTable(AST* ar) {
     if (tipoActual == EID) {
         Tsymbol* symbolStack = LookupExternVar(ar->symbol->varname);
         if (symbolStack != NULL) {
-            // lo que pasa es que si guardo el symbolo que busque 
-            // estoy guardado la el mismo es decir con misma memoria 
-            //entonces cuando borro se borra dos veces lo mismo
             ar->symbol->offset = symbolStack->offset;
         }
     }
@@ -137,8 +135,10 @@ void createTable(AST* ar) {
     if(tipoActual == BLOCK_FIN) {
         if (cantBloq > 0)
             cantBloq--;
-        if (cantBloq == 0)
-            offset =  -8;
+        if (cantBloq == 0) {
+            auxFunc->offset = offset;
+            offset =  -16;
+        }
         PopScope();
     }
     // type
@@ -151,7 +151,7 @@ void createTable(AST* ar) {
             errorAsig(ar, &err);
         } else if(operArit || operBool || operCondi) {
               ar->symbol->offset = offset;
-              offset += -8;
+              offset += -16;
              errorOpera(ar, tipoActual, &err);
         }else if(tipoActual == EIF || tipoActual == EWHILE) {
             errorCond(ar, &err);
@@ -169,7 +169,7 @@ void createTable(AST* ar) {
         Tsymbol* exist = LookupExternVar(ar->left->symbol->varname);
         if(exist){
             ar->symbol->offset = offset;
-            offset += -8;
+            offset += -16;
             errorCall(ar, &err);
         }else {
            printf("\033[31mLa funcion no existe\033[0m, error en linea:%d\n",ar->left->symbol->line);
