@@ -1,23 +1,25 @@
 Program {
-    int s;
+
     int w;
     bool l;
     
-
-    bool get_bool(int x, int s) extern;  
+    int prinInt(int a) extern;
+    int printAdvanced(int x) extern; 
 
     int inc(bool x){
-        bool s;
         int z;
-        s = get_bool();
-        s = !true;
+        bool s;
+        
+        // posible problema de compatibilidad
+        s = x || x;
+        printAdvanced(10);
 
-        if(5 > 5)then{
+        if(s)then{
             int s;
             s = 10;
-            z = z + z; 
+            z = s; 
         }
-        return 4 + 4;
+        return 4 + z;
     }
 
     bool errr (){
@@ -28,10 +30,10 @@ Program {
     int main(){
         int s;
         bool x;
-        x = get_boolll(true,1);
-        w = 5 + get_boolll(true,1); 
-        l = !(w>w);
-        inc(true);
+        // posible problema de uso de constantes booleanas
+        s = inc(true && true);
+        prinInt(s);
+
         return 1;
     }
 }

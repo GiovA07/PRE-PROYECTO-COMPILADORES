@@ -15,14 +15,16 @@ Program {
         if (x == 1) then {
             return 1;
         } else {
-            return fact1(x - 1) * x;
+            int res;
+            res = x - 1;
+            return fact1(res) * x;
         }
+        return 1;
     }
 
     void main() {
         int x;
         prinInt(fact(5));
         prinInt(fact1(5));
-
     }
 }

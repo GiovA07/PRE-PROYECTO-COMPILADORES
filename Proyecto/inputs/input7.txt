@@ -1,14 +1,19 @@
 Program {
     int x;
 
+    int inputVal() extern;
+    void printAdvanced(int a) extern;
+
     int main() {
         int y;
         int x;
-        bool z;
-        y = x;
-        z = x==y;
-        z = x<y;
-        z = x>y;
+ 
+        x = inputVal();
+        y = inputVal();
+
+        y = x + y;
+        printAdvanced(y);
+
         return x;
     }
 }

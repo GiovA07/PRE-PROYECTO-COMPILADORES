@@ -1,28 +1,28 @@
 Program {
-    int x;
-    int yyyy;
-    bool aux;
+
     bool fa;
 
+    int inputVal() extern;
     int prinInt(int a) extern;
 
-    int mostrarRes(int a) {
-        a = 1+1;
-        return 10;
+    int extraFunc(int a) {
+        a = a+10;
+        return a;
     }
 
     void main() {
-        int x;
         int res;
-        x = 1;
-        res = 99;
+        bool aux;
+
         aux = true;
-        fa = true;
+        res = inputVal();
+        fa = res == 5;
         if(aux && fa)then{
-            prinInt(100);
+            prinInt(res);
         }else {
-            prinInt(0);
+            int error;
+            error = extraFunc(res);
+            prinInt(error);
         }
-        mostrarRes(res);
     }
 }

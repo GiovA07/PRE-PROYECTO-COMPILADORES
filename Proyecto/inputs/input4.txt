@@ -1,14 +1,25 @@
 Program {
 
+    int var;
+    bool cond;
 
+    void prinInt(int x) extern;
+    void printAdvanced(bool x) extern;
 
     int main() {
-    bool flag;
-    bool aux;
-    int a;
-    a = 1 +1;
-    flag = true;
-    aux = !flag;
-    return 0;
+        bool flag;
+        bool aux;
+        int a;
+
+        a = 1 + 1;
+        var = 1000;
+        cond = (a == 2);
+        flag = true;
+        aux = !flag;
+
+        prinInt(var);
+
+        printAdvanced(cond);
+        return 0;
     }
 }
