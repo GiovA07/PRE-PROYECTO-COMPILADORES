@@ -6,11 +6,12 @@ Program {
 
     int prinInt(int a) extern;
 
-    void mostrarRes(int a) {
-        a = prinInt(a);
+    int mostrarRes(int a) {
+        a = 1+1;
+        return 10;
     }
 
-    int main() {
+    void main() {
         int x;
         int res;
         x = 1;
@@ -23,7 +24,5 @@ Program {
             prinInt(0);
         }
         mostrarRes(res);
-        return  0;
-
     }
 }

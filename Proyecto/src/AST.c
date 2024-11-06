@@ -81,6 +81,7 @@ void printDot(AST* tree, const char* filename) {
 Tsymbol *auxFunc = NULL;
 int offset = -16;
 int cantBloq = -1;
+bool inBlockIf = false;
 
 // bool correct = false;
 void createTable(AST* ar) {
@@ -103,6 +104,8 @@ void createTable(AST* ar) {
     //si no se permite crear funciones dentro de funciones anda
     if( tipoActual == EIF || tipoActual == EWHILE || tipoActual == EELSE){
        // printf("PROBLEMA -> %s\n",ar->symbol->varname);
+        // para ver si estoy dentro de un if/while/else
+        inBlockIf = true;
         cantBloq++;
         InstallScope();
         InstallInCurrentScope(ar->symbol);
@@ -138,6 +141,13 @@ void createTable(AST* ar) {
         if (cantBloq == 0) {
             auxFunc->offset = offset;
             offset =  -16;
+        }
+
+        if(inBlockIf){
+            inBlockIf = false;
+        }else if(errRet){
+            printf("\033[31mTe falta un return \033[0m\n");
+            err= true;
         }
         PopScope();
     }
@@ -180,7 +190,7 @@ void createTable(AST* ar) {
 
     if (ar->left != NULL) {
         // type
-        if(ar->symbol->type == ERETURN){
+        if(ar->symbol->type == ERETURN && (inBlockIf == false)){
             errRet = false;
             errorRet(ar, aux, &err);
         }
