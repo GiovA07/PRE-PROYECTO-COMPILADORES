@@ -13,12 +13,13 @@ Program {
         // posible problema de compatibilidad
         s = x || x;
         printAdvanced(10);
-
+        z =0 ;
         if(s)then{
             int s;
             s = 10;
             z = s; 
         }
+
         return 4 + z;
     }
 
@@ -31,7 +32,8 @@ Program {
         int s;
         bool x;
         // posible problema de uso de constantes booleanas
-        s = inc(true && true);
+       // x = false && true;
+        s = inc(false && true);
         prinInt(s);
 
         return 1;

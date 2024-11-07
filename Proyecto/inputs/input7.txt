@@ -11,8 +11,7 @@ Program {
         x = inputVal();
         y = inputVal();
 
-        y = x + y;
-        printAdvanced(y);
+        printAdvanced( x + y);
 
         return x;
     }

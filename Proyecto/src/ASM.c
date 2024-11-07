@@ -136,11 +136,24 @@ void writeLoadParam(PseudoASM* instruction, int cantParam) {
     char por[3] = "%";
     Tsymbol *result = instruction->result;
     //writeArchive("    ;CARGANDO PARAMETRO\n");
-    if(result->type == CONSINT || result->type == CONSBOOL) {
+    if(result->type == CONSBOOL){
+        if(strcmp("true",result->varname) == 0){
+            sprintf(buffer, "    movl $1, %s%s\n",por, params[cantParam]);
+	    }else {
+            sprintf(buffer, "    movl $0, %s%s\n", por, params[cantParam]);
+	    }
+        writeArchive(buffer);
+    }else if(result->type == CONSINT) {
         sprintf(buffer, "    movl $%s, %s%s\n", result->varname, por, params[cantParam]);
         writeArchive(buffer);
     }
-    if(result->type == EID || result->type == CALL_F) {
+
+
+    enum TYPES tipoActual = result->type;
+    bool operArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
+    bool operBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
+    bool operCondi = (tipoActual == EMAYORQUE || tipoActual == EMENORQUE || tipoActual == EEQ);
+    if(result->type == EID || result->type == CALL_F || operArit || operBool || operCondi) {
         if(result->offset == 0) {
             sprintf(buffer, "    movl %s(%%rip), %seax\n",result->varname, por);
             writeArchive(buffer);
@@ -218,7 +231,15 @@ void writeReturn(PseudoASM* instruction) {
     if(strcmp(" ",result->varname) == 0){
         return;
     } else{
-        if(result->type == CONSBOOL || result->type == CONSINT){
+        if(result->type == CONSBOOL) {
+            if(strcmp("true",result->varname) == 0){
+                sprintf(buffer, "    movl $1, %%eax\n");
+		    }else {
+                sprintf(buffer, "    movl $0, %%eax\n");
+		    }
+            writeArchive(buffer);
+        }
+        else if(result->type == CONSINT){
             sprintf(buffer, "    movl $%s,  %%eax\n", result->varname);
         }else{
             if(result->offset == 0)

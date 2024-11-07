@@ -5,24 +5,15 @@ Program {
     int inputVal() extern;
     int prinInt(int a) extern;
 
-    void extraFunc(int a) {
-        a = a+10;
+    int extraFunc(int a) {
+        a = a * 1;
+        return a;
     }
 
     bool main() {
         int res;
-        bool aux;
-
-        aux = true;
-        res = inputVal();
-        fa = res == 5;
-        if(aux && fa)then{
-            prinInt(res);
-            return true;
-        }else {
-            int error;
-            prinInt(error);
-            return ;
-        }
+        res = extraFunc(10*10);
+        prinInt(res);
+        return true;
     }
 }

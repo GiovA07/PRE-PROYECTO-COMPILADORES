@@ -360,10 +360,12 @@ void generateLoadParams(AST* ar) {
     bool operArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
     bool operBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
     bool operCondi = (tipoActual == EMAYORQUE || tipoActual == EMENORQUE || tipoActual == EEQ);
-    if (ar->symbol->type == EID ||ar->symbol->type == CONSINT || ar->symbol->type == CONSBOOL|| ar->symbol->type == VARINT || ar->symbol->type == VARBOOL || operArit || operBool || operCondi) {
+    if (ar->symbol->type == EID ||ar->symbol->type == CONSINT || ar->symbol->type == CONSBOOL || ar->symbol->type == VARINT || ar->symbol->type == VARBOOL){
+        createTagLoad(ar->symbol);
+    }else if(operArit || operBool || operCondi){
+        generateCode(ar);
         createTagLoad(ar->symbol);
     }
-
 }
 
 void createTagLoad(Tsymbol* symbol) {

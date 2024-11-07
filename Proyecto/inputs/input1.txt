@@ -3,6 +3,7 @@ Program {
     int z;
 
     void prinInt(int c) extern;
+   
     int get_num(int x) {
         int z;
         return z+x;

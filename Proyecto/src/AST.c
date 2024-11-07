@@ -93,10 +93,15 @@ void createTable(AST* ar) {
        InstallInCurrentScope(ar->symbol);
     }
 
-    if(tipoActual == RETINT || tipoActual == RETBOL || tipoActual == RETVOID || tipoActual == EXTVOID || tipoActual == EXTINT || tipoActual == EXTBOL) {
+    if(tipoActual == RETINT || tipoActual == RETBOL || tipoActual == RETVOID) {
         //printf("APILO -> %s\n",ar->symbol->varname);
         offset = -16;
         cantBloq++;
+        printf("CantBlock %d => %s\n",cantBloq,ar->symbol->varname );
+        auxFunc = ar->symbol;
+        InstallInCurrentScope(ar->symbol);
+        InstallScope();
+    }else if(tipoActual == EXTVOID || tipoActual == EXTINT || tipoActual == EXTBOL){
         auxFunc = ar->symbol;
         InstallInCurrentScope(ar->symbol);
         InstallScope();
@@ -107,8 +112,10 @@ void createTable(AST* ar) {
     if( tipoActual == EIF || tipoActual == EWHILE || tipoActual == EELSE){
        // printf("PROBLEMA -> %s\n",ar->symbol->varname);
         // para ver si estoy dentro de un if/while/else
+        
         inBlockIf = true;
         cantBloq++;
+        //printf("CantBlock %d => %s\n",cantBloq,ar->symbol->varname );
         InstallScope();
         InstallInCurrentScope(ar->symbol);
     }
@@ -140,10 +147,11 @@ void createTable(AST* ar) {
     if(tipoActual == BLOCK_FIN) {
         if (cantBloq > 0)
             cantBloq--;
-        if (cantBloq == 0) {
+        if (cantBloq == 0 && !inBlockIf) {
             auxFunc->offset = offset;
             offset =  -16;
         }
+           // printf("Final CantBlock %d\n\n",cantBloq);
 
         // printf("Cantidad de Retunrs detectados %d\n",cantRetBlock);
 
