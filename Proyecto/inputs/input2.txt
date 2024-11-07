@@ -19,7 +19,6 @@ Program {
             res = x - 1;
             return fact1(res) * x;
         }
-        return 1;
     }
 
     void main() {

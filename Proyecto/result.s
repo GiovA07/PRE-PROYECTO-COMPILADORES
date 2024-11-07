@@ -75,7 +75,6 @@ L3:
 
 
 L4: 
-    movl $1,  %eax
     addq $112, %rsp 
     popq    %rbp
     ret

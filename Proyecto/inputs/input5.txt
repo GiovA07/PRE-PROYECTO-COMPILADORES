@@ -5,12 +5,11 @@ Program {
     int inputVal() extern;
     int prinInt(int a) extern;
 
-    int extraFunc(int a) {
+    void extraFunc(int a) {
         a = a+10;
-        return a;
     }
 
-    void main() {
+    bool main() {
         int res;
         bool aux;
 
@@ -19,10 +18,11 @@ Program {
         fa = res == 5;
         if(aux && fa)then{
             prinInt(res);
+            return true;
         }else {
             int error;
-            error = extraFunc(res);
             prinInt(error);
+            return ;
         }
     }
 }

@@ -82,6 +82,8 @@ Tsymbol *auxFunc = NULL;
 int offset = -16;
 int cantBloq = -1;
 bool inBlockIf = false;
+int cantReturns = 0;
+int cantRetBlock = 0;
 
 // bool correct = false;
 void createTable(AST* ar) {
@@ -143,13 +145,18 @@ void createTable(AST* ar) {
             offset =  -16;
         }
 
+        // printf("Cantidad de Retunrs detectados %d\n",cantRetBlock);
+
         if(inBlockIf){
             inBlockIf = false;
-        }else if(errRet){
-            printf("\033[31mTe falta un return \033[0m\n");
+        }else if(errRet && cantReturns != 2){
+            printf("\033[31mTe falta un return en la linea \033[0m %d\n",(ar->symbol)->line-1);
             err= true;
+        }else if(errRet && cantReturns == 2) {
+            errRet = false;
         }
         PopScope();
+        cantRetBlock = 0;
     }
     // type
     if (ar->right != NULL && ar->left != NULL) {
@@ -169,6 +176,7 @@ void createTable(AST* ar) {
     }
     if((ar->symbol->type == RETVOID)){
         aux = ar->symbol->type;
+        errRet = false;
     }
     if(ar->symbol->type == RETINT || ar->symbol->type == RETBOL || ar->symbol->type == EXTBOL || ar->symbol->type == RETINT){
         aux = ar->symbol->type;
@@ -190,7 +198,19 @@ void createTable(AST* ar) {
 
     if (ar->left != NULL) {
         // type
-        if(ar->symbol->type == ERETURN && (inBlockIf == false)){
+        if(ar->symbol->type == ERETURN && inBlockIf){          
+            // es para que solo me cuante un return para evitar esto => 
+            // return 10
+            // reutnr 10
+            if(cantRetBlock == 0)
+                cantReturns +=1;
+            
+            cantRetBlock +=1;
+            errorRet(ar, aux, &err);
+        }else if(ar->symbol->type == ERETURN && cantReturns == 2){
+            errRet = false;
+            errorRet(ar, aux, &err);
+        }else if(ar->symbol->type == ERETURN){
             errRet = false;
             errorRet(ar, aux, &err);
         }
