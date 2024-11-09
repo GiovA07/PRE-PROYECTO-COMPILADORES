@@ -286,6 +286,7 @@ void generateCode(AST* ar) {
         handleGenerateFunc(ar);
         createSentenThreeDir(T_END_FUN, ar->symbol);
     }else if((ar->symbol)->type == CALL_F){
+        has_Operation(ar->right);
         has_Call_Func(ar->right);
         generateLoadParams(ar->right);
         createCall_Func(ar->left->symbol, ar->symbol);
@@ -318,6 +319,23 @@ void handleGenerateMain(AST* ar){
         generateCode(ar->right);
  }
 
+void has_Operation(AST* ar){
+ if(ar == NULL) return;
+
+    if(ar->left)
+        has_Operation(ar->left);
+
+    if(ar->right)
+        has_Operation(ar->right);
+
+    enum TYPES tipoActual = ar->symbol->type;
+    bool operArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
+    bool operBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
+    bool operCondi = (tipoActual == EMAYORQUE || tipoActual == EMENORQUE || tipoActual == EEQ);
+    if(operArit || operBool || operCondi){
+        generateCode(ar);
+    }
+}
 
 void has_Call_Func(AST* ar) {
     if(ar == NULL) return;
@@ -340,10 +358,9 @@ void generateLoadParams(AST* ar) {
 
     enum TYPES tipoActual = ar->symbol->type;
 
-    if (ar->symbol->type == CALL_F) {
-        createTagLoad(ar->symbol);
+    if (tipoActual != ARGS) {
+    createTagLoad(ar->symbol);
     }
-
 
     bool notOperArit = (tipoActual != SUMA && tipoActual != RESTA && tipoActual != PROD && tipoActual != EDIV && tipoActual != ERESTO);
     bool notOperBool = (tipoActual != EOR && tipoActual != EAND && tipoActual != ENOT );
@@ -356,15 +373,6 @@ void generateLoadParams(AST* ar) {
         if(ar->right != NULL){
             generateLoadParams(ar->right);
         }
-    }
-    bool operArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
-    bool operBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
-    bool operCondi = (tipoActual == EMAYORQUE || tipoActual == EMENORQUE || tipoActual == EEQ);
-    if (ar->symbol->type == EID ||ar->symbol->type == CONSINT || ar->symbol->type == CONSBOOL || ar->symbol->type == VARINT || ar->symbol->type == VARBOOL){
-        createTagLoad(ar->symbol);
-    }else if(operArit || operBool || operCondi){
-        generateCode(ar);
-        createTagLoad(ar->symbol);
     }
 }
 

@@ -1,0 +1,45 @@
+Program {
+    int x;
+
+    int inputVal() extern;
+    void printAdvanced(int a) extern;
+
+    int hola(int a,int b) {
+        return a*b;
+    }
+
+    void extend(int a, int b, int c, int d, bool s, int g) {
+        printAdvanced(g);
+        
+        if (((a > b) && (b > c)) || (d == 0)) then {
+            printAdvanced(10000);
+        }
+        
+        if (s) then {
+            c = a + b;
+            d = c + c;
+        } else {
+            c = a - b;
+            d = c * c;
+        }
+        
+        printAdvanced(d);
+    }
+
+    int main() {
+        int b;
+        int a;
+        int c;
+        int d;
+        bool x;
+ 
+        a = 11;
+        b = 10;
+        c = 10;
+        d = 10;
+
+        extend(a,b,c,10,a == b,hola(a,b));
+
+        return b;
+    }
+}

@@ -47,6 +47,7 @@ void generateThreeDir(AST* ar);
 void createRetTag(Tsymbol* func);
 void generateLoadParams(AST* ar);
 void has_Call_Func(AST* ar);
+void has_Operation(AST* ar);
 void createSentenThreeDir(enum ASM_TAG tag , Tsymbol* func);
 void handleGenerateMain(AST* ar);
 void createTagLoad(Tsymbol* symbol);
