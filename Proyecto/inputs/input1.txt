@@ -4,7 +4,7 @@ Program {
 
     void prinInt(int c) extern;
    
-    int get_num(int x) {
+    bool get_num(int x) {
         int z;
         return z+x;
     }

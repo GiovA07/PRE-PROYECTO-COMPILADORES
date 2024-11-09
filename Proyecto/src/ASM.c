@@ -166,6 +166,7 @@ void writeLoadParam(PseudoASM* instruction, int cantParam) {
     }
    // writeArchive("    ;FIN DEL CARGO DE PARAMETRO\n");
     cantParam += 1;
+    //printf("Param Numero => %d",cantParam);
 
     if(instruction->next->tag ==  T_LOAD_PARAM) {
         instruction = instruction->next;
