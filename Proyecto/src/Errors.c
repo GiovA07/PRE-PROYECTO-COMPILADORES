@@ -117,7 +117,7 @@ void errorAsig(AST *ar, bool *err){
     if(auxIzq == NULL && tipoIzq == EID) {
         printf("\033[33mVariable en asignacion no declarada \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
         *err = true;
-    } else if(auxIzq != NULL && auxDer != NULL && auxIzq->type != auxDer->type) {
+    } else if(auxIzq != NULL && auxDer != NULL && (auxIzq->type  != auxDer->type) && !isVarCompatibleASIGN(auxIzq->type, auxDer->type)) {
         printf("\033[31mError de tipo en la asignacion, tipo incompatible \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
         *err = true;
     } else if(auxIzq != NULL && auxDer == NULL) {
@@ -137,6 +137,18 @@ void errorAsig(AST *ar, bool *err){
             *err = true;
         }
     }
+}
+
+bool isVarCompatibleASIGN (enum TYPES tipoIzq, enum TYPES tipoDer) {
+    bool result  = (
+        (tipoIzq == PARAMBOOL && tipoDer == PARAMBOOL) ||
+        (tipoIzq == PARAMBOOL && tipoDer == VARBOOL) ||
+        (tipoIzq == VARBOOL && tipoDer == PARAMBOOL) ||
+        (tipoIzq == PARAMINT && tipoDer == VARINT) ||
+        (tipoIzq == VARINT && tipoDer == PARAMINT) ||
+        (tipoIzq == PARAMINT && tipoDer == PARAMINT)
+    );
+    return result;
 }
 
 void errorOpera(AST *ar, enum TYPES type, bool* err){

@@ -15,6 +15,8 @@ void evaluate_op_condiciones(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* er
 void evaluate_op_booleanos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* err);
 void evaluate_op_aritmeticos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* err);
 
+bool isVarCompatibleASIGN (enum TYPES tipoIzq, enum TYPES tipoDer);
+
 void errorCall(AST *ar,  bool *err);
 void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size, bool *err);
 #endif

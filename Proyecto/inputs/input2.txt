@@ -1,5 +1,5 @@
 Program {
-    int prinInt(int c) extern;
+    int prinInt(int a) extern;
 
     int fact(int x) {
         int result;
@@ -15,7 +15,7 @@ Program {
         if (x == 1) then {
             return 1;
         } else {
-            return fact1( x - 1) * x;
+            return fact1(x - 1) * x;
         }
     }
 
