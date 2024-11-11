@@ -2,13 +2,15 @@
 #include "../include/ASM.h"
 #include <string.h>
 
-
+//para cargar los paramteros que tienen mas de 6
+PseudoASM* ParamsMayorSeis = NULL;
 PseudoASM* instructions = NULL;
 // PseudoASM* current2 = NULL;
 // bool p = true;
 
 int labID = 1;
 
+int paramReq  = 0;
 // para llevar cada funcion con el slato que le corresponde
 
 struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res) {
@@ -284,11 +286,14 @@ void generateCode(AST* ar) {
         //aca puede ir el coso para darle el offset
         // handleAddOffset(ar->left);
         handleGenerateFunc(ar);
+        paramReq = 0;
         createSentenThreeDir(T_END_FUN, ar->symbol);
     }else if((ar->symbol)->type == CALL_F){
+        //param = 0;
         has_Operation(ar->right);
         has_Call_Func(ar->right);
         generateLoadParams(ar->right);
+        //printf("Paramteros Totals %d\n",param);
         createCall_Func(ar->left->symbol, ar->symbol);
     }else if((ar->symbol)->type  == EIF){
         handleGenerateIF(ar);
@@ -302,7 +307,6 @@ void generateCode(AST* ar) {
         generateCode(ar->right);
     }
 }
-
 
 void handleGenerateOpReturn(AST* ar) {
     if (ar->left != NULL)
@@ -339,7 +343,7 @@ void has_Operation(AST* ar){
 
 void has_Call_Func(AST* ar) {
     if(ar == NULL) return;
-
+   
     if(ar->left)
         has_Call_Func(ar->left);
 
@@ -350,7 +354,7 @@ void has_Call_Func(AST* ar) {
         generateLoadParams(ar->right);
         createCall_Func(
             ar->left->symbol, ar->symbol);
-    }
+    }    
 }
 
 void generateLoadParams(AST* ar) {
@@ -359,9 +363,8 @@ void generateLoadParams(AST* ar) {
     enum TYPES tipoActual = ar->symbol->type;
 
     if (tipoActual != ARGS) {
-    createTagLoad(ar->symbol);
+        createTagLoad(ar->symbol);
     }
-
     bool notOperArit = (tipoActual != SUMA && tipoActual != RESTA && tipoActual != PROD && tipoActual != EDIV && tipoActual != ERESTO);
     bool notOperBool = (tipoActual != EOR && tipoActual != EAND && tipoActual != ENOT );
     bool notOperCondi = (tipoActual != EMAYORQUE && tipoActual != EMENORQUE && tipoActual != EEQ);
@@ -374,6 +377,7 @@ void generateLoadParams(AST* ar) {
             generateLoadParams(ar->right);
         }
     }
+
 }
 
 void createTagLoad(Tsymbol* symbol) {
@@ -387,11 +391,26 @@ void createTagLoad(Tsymbol* symbol) {
     instructions = param;
 }
 
- void handleGenerateFunc(AST* ar){
+
+void concatenarListas(PseudoASM *lista1, PseudoASM *lista2) {
+    if (lista2 == NULL) {
+        return;
+    }    
+    PseudoASM * actual = lista2;
+    while (actual->next != NULL) {
+        actual = actual->next;
+    }
+    actual->next = lista1;
+    instructions = lista2;
+}
+
+void handleGenerateFunc(AST* ar){
     createSentenThreeDir(T_FUNC,ar->symbol);
     // genero codigo de la funcion para funciones externas
     if(ar->left != NULL) {
         requireParams(ar->left);
+        invertASMAux();
+        concatenarListas(instructions,ParamsMayorSeis);
     }
     if(ar->right != NULL) {
         generateCode(ar->right);
@@ -410,10 +429,11 @@ void createTagLoad(Tsymbol* symbol) {
     }
  }
 
- void requireParams(AST* ar) {
-    if(ar->symbol->type == PARAMBOOL || ar->symbol->type == PARAMINT)
+void requireParams(AST* ar) {
+    if(ar->symbol->type == PARAMBOOL || ar->symbol->type == PARAMINT){
+        paramReq += 1;
         createCodRequiredParam(ar->symbol);
-
+    }
     if(ar->left)
         requireParams(ar->left);
     if(ar->right)
@@ -523,6 +543,26 @@ void handleUnaryOp(AST* ar) {
         instructions = not;
     }
 }
+
+
+
+void invertASMAux() {
+    PseudoASM* prev = NULL;
+    PseudoASM* current = ParamsMayorSeis;
+    PseudoASM* next = NULL;
+
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+
+    ParamsMayorSeis = prev;
+}
+
+
+
 void invertASM() {
     PseudoASM* prev = NULL;
     PseudoASM* current = instructions;
@@ -659,9 +699,13 @@ void createAndAppendTagLabel(char* nameLabel) {
     sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
     sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
     sequense->result = param;
-
-    sequense->next = instructions;
-    instructions = sequense;
+    if( paramReq > 6) {
+        sequense->next = ParamsMayorSeis;
+        ParamsMayorSeis = sequense;
+    }else {
+        sequense->next = instructions;
+        instructions = sequense;
+    }
 
  }
 

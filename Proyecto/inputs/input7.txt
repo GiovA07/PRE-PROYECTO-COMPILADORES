@@ -1,18 +1,33 @@
 Program {
     int x;
-
+    bool ss;
     int inputVal() extern;
     void printAdvanced(int a) extern;
 
+
+    int seisParam(int a,bool t,int b,int c,int d,int e,int f,int w, int z, bool ww){
+        if(t && ww)then{
+            printAdvanced(a);
+            printAdvanced(b);
+            printAdvanced(c);
+            printAdvanced(d);
+            printAdvanced(e);
+            printAdvanced(f);
+            printAdvanced(w);
+            printAdvanced(z);
+            return  a + b + c + d + e + f + w +z;
+        }else{
+            return (a + b + c + d + e +f + w)* 0;
+        }
+    }
+    
+    
     int main() {
         int y;
-        int x;
- 
-        x = inputVal();
-        y = inputVal();
-
-        printAdvanced( x + y);
-
+        x = 7;
+        ss = true;
+        x = seisParam(1,true,3,4,5,6,2,9,10,(ss && true) || false);
+        printAdvanced(x);
         return x;
     }
 }

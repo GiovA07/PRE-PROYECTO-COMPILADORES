@@ -8,7 +8,7 @@ Program {
         return a*b;
     }
 
-    void extend(int a, int b, int c, int d, bool s, int g) {
+    void extend(int a, int b, int c, int d, bool s, int g,int www) {
         printAdvanced(g);
         
         if (((a > b) && (b > c)) || (d == 0)) then {
@@ -38,7 +38,7 @@ Program {
         c = 10;
         d = 10;
 
-        extend(a,b,c,10,a == b,hola(a,b));
+        extend(a,b,c,10,a == b,hola(a,b), 9);
 
         return b;
     }

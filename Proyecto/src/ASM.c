@@ -115,58 +115,97 @@ void writeEndFunc(PseudoASM* instruction) {
 void writeLoadParamInFunc(PseudoASM* instruction) {
     char buffer[256];
     char* por = "%";
-    cantParamFunc +=1;
-    //writeArchive("     ;Cargando parametro\n");
     Tsymbol* param = instruction->result;
-            // movl    %edi, -4(%rbp)
+    cantParamFunc +=1;
+    if(cantParamFunc > 5) {
+        sprintf(buffer, "    movl  %d(%%rbp), %%eax\n", ((cantParamFunc-5) * 16), param->offset);
+        writeArchive(buffer);
+        sprintf(buffer, "    movl %%eax, %d(%%rbp)\n", param->offset);
+        writeArchive(buffer);
+    }else{
+        //writeArchive("     ;Cargando parametro\n");
+                // movl    %edi, -4(%rbp)
 
-    sprintf(buffer, "    movl %s%s, %d(%%rbp)\n", por, params[cantParamFunc], param->offset);
-    writeArchive(buffer);
-   // writeArchive("     ;TERMINO CARGAR parametro\n");
+        sprintf(buffer, "    movl %s%s, %d(%%rbp)\n", por, params[cantParamFunc], param->offset);
+        writeArchive(buffer);
+        // writeArchive("     ;TERMINO CARGAR parametro\n");
+
+    }
 }
 // elegir una forma
 //1-rdi, 2-rsi, 3-rdx, 4-rcx, 5-r8, 6-r9 => 64 bits
 //1-edi, 2-esi, 3-edx, 4-ecx, 5-r8d, 6-r9d => 32 bits
 // 32 bits usa movl
 // 64 bits usa movq
-
+int paramExtra = 0;
 //Si cantParam es > 6, se debe pushear a la pila....
 void writeLoadParam(PseudoASM* instruction, int cantParam) {
     char buffer[256];
     char por[3] = "%";
     Tsymbol *result = instruction->result;
-    //writeArchive("    ;CARGANDO PARAMETRO\n");
-    if(result->type == CONSBOOL){
-        if(strcmp("true",result->varname) == 0){
-            sprintf(buffer, "    movl $1, %s%s\n",por, params[cantParam]);
-	    }else {
-            sprintf(buffer, "    movl $0, %s%s\n", por, params[cantParam]);
-	    }
+    //writeArchive("    ;CARGANDO PARAMETRO\n");    
+    if(cantParam >= 6){
+        sprintf(buffer, "    subq $8, %srsp\n",por);
         writeArchive(buffer);
-    }else if(result->type == CONSINT) {
-        sprintf(buffer, "    movl $%s, %s%s\n", result->varname, por, params[cantParam]);
-        writeArchive(buffer);
-    }
-
-
-    enum TYPES tipoActual = result->type;
-    bool operArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
-    bool operBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
-    bool operCondi = (tipoActual == EMAYORQUE || tipoActual == EMENORQUE || tipoActual == EEQ);
-    if(result->type == EID || result->type == CALL_F || operArit || operBool || operCondi) {
-        if(result->offset == 0) {
-            sprintf(buffer, "    movl %s(%%rip), %seax\n",result->varname, por);
+        paramExtra ++;
+        if(result->type == CONSBOOL){
+            if(strcmp("true",result->varname) == 0){
+                sprintf(buffer, "    pushq $1 \n");
+	           }else {
+                sprintf(buffer, "    pushq $0\n");
+	           }
             writeArchive(buffer);
-        }else{
-            sprintf(buffer, "    movl %d(%%rbp), %seax\n",result->offset, por);
+        }else if(result->type == CONSINT) {
+            sprintf(buffer, "    pushq $%s\n", result->varname);
             writeArchive(buffer);
         }
-        sprintf(buffer, "    movl %%eax, %s%s\n", por, params[cantParam]);
-        writeArchive(buffer);
-    }
+        enum TYPES tipoActual = result->type;
+        bool operArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
+        bool operBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
+        bool operCondi = (tipoActual == EMAYORQUE || tipoActual == EMENORQUE || tipoActual == EEQ);
+        if(result->type == EID || result->type == CALL_F || operArit || operBool || operCondi) {
+            if(result->offset == 0) {
+                sprintf(buffer, "    pushq %s(%%rip)\n",result->varname);
+                writeArchive(buffer);
+            }else{
+                sprintf(buffer, "    pushq %d(%%rbp)\n",result->offset);
+                writeArchive(buffer);
+            }
+            // sprintf(buffer, "    pushq %%eax, %s%s\n", por, params[cantParam]);
+            // writeArchive(buffer);
+        }
+    }else{
+        if(result->type == CONSBOOL){
+            if(strcmp("true",result->varname) == 0){
+                sprintf(buffer, "    movl $1, %s%s\n",por, params[cantParam]);
+	           }else {
+                sprintf(buffer, "    movl $0, %s%s\n", por, params[cantParam]);
+	           }
+            writeArchive(buffer);
+        }else if(result->type == CONSINT) {
+            sprintf(buffer, "    movl $%s, %s%s\n", result->varname, por, params[cantParam]);
+            writeArchive(buffer);
+        }
+        enum TYPES tipoActual = result->type;
+        bool operArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
+        bool operBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
+        bool operCondi = (tipoActual == EMAYORQUE || tipoActual == EMENORQUE || tipoActual == EEQ);
+        if(result->type == EID || result->type == CALL_F || operArit || operBool || operCondi) {
+            if(result->offset == 0) {
+                sprintf(buffer, "    movl %s(%%rip), %seax\n",result->varname, por);
+                writeArchive(buffer);
+            }else{
+                sprintf(buffer, "    movl %d(%%rbp), %seax\n",result->offset, por);
+                writeArchive(buffer);
+            }
+            sprintf(buffer, "    movl %%eax, %s%s\n", por, params[cantParam]);
+            writeArchive(buffer);
+        }
+
+    } 
    // writeArchive("    ;FIN DEL CARGO DE PARAMETRO\n");
     cantParam += 1;
-    //printf("Param Numero => %d",cantParam);
+    //printf("Param Numero => %d\n",cantParam);
 
     if(instruction->next->tag ==  T_LOAD_PARAM) {
         instruction = instruction->next;
@@ -308,10 +347,20 @@ void writeCallFunc(PseudoASM* instruction) {
     char* nameLabel = instruction->op1->varname;
     sprintf(buffer, "    call %s\n", nameLabel);
     writeArchive(buffer);
+   // printf("paramExtra %d\n",paramExtra);
+    
+    if(paramExtra > 0) {
+        int aux = paramExtra * 16;
+        sprintf(buffer, "    addq $%d,  %%rsp\n",aux, nameLabel);
+        writeArchive(buffer);
+        paramExtra = 0;
+    }
 
     Tsymbol* result = instruction->result;
     sprintf(buffer, "    movl %%eax, %d(%%rbp)\n", result->offset);
     writeArchive(buffer);
+
+
 }
 
 

@@ -34,6 +34,7 @@ typedef struct PseudoASM {
     struct PseudoASM* next;
 } PseudoASM;
 
+void invertASMAux();
 void invertASM();
 void printAsembler();
 void deleteInstructions();
