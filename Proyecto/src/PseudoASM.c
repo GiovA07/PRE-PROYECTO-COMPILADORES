@@ -411,6 +411,7 @@ void handleGenerateFunc(AST* ar){
         requireParams(ar->left);
         invertASMAux();
         concatenarListas(instructions,ParamsMayorSeis);
+        ParamsMayorSeis = NULL;
     }
     if(ar->right != NULL) {
         generateCode(ar->right);

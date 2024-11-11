@@ -95,9 +95,10 @@ void createTable(AST* ar) {
 
     if(tipoActual == RETINT || tipoActual == RETBOL || tipoActual == RETVOID) {
         //printf("APILO -> %s\n",ar->symbol->varname);
+        cantReturns = 0;
         offset = -16;
         cantBloq++;
-        printf("CantBlock %d => %s\n",cantBloq,ar->symbol->varname );
+        //printf("CantBlock %d => %s\n",cantBloq,ar->symbol->varname );
         auxFunc = ar->symbol;
         InstallInCurrentScope(ar->symbol);
         InstallScope();
@@ -151,14 +152,13 @@ void createTable(AST* ar) {
             auxFunc->offset = offset;
             offset =  -16;
         }
-           // printf("Final CantBlock %d\n\n",cantBloq);
-
+        // printf("Final CantBlock %d\n",cantBloq);
         // printf("Cantidad de Retunrs detectados %d\n",cantRetBlock);
-
+        // printf("Cantidad Returns %d\n\n",cantReturns);
         if(inBlockIf){
             inBlockIf = false;
         }else if(errRet && cantReturns != 2){
-            printf("\033[31mTe falta un return en la linea \033[0m %d\n",(ar->symbol)->line-1);
+            printf("\033[31mTe falta un return en la linea $$$$$ \033[0m %d\n",(ar->symbol)->line-1);
             err= true;
         }else if(errRet && cantReturns == 2) {
             errRet = false;

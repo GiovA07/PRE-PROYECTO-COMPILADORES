@@ -1,6 +1,7 @@
 Program {
     int x;
     bool ss;
+    int prinInt(int a) extern;
     int inputVal() extern;
     void printAdvanced(int a) extern;
 
@@ -22,12 +23,32 @@ Program {
     }
     
     
-    int main() {
+    int seisParamAuxiliar(int a,bool t,int b,int c,int d,int e,int f,int w, int z, bool ww){
+        if(t && ww)then{
+            printAdvanced(a);
+            printAdvanced(b);
+            printAdvanced(c);
+            printAdvanced(d);
+            printAdvanced(e);
+            printAdvanced(f);
+            printAdvanced(w);
+            printAdvanced(z);
+            return  a + b + c + d + e + f + w +z;
+        }else{
+            return (a + b + c + d + e +f + w)* 0;
+        }
+    }
+
+    
+    
+    
+    void main() {
         int y;
         x = 7;
         ss = true;
         x = seisParam(1,true,3,4,5,6,2,9,10,(ss && true) || false);
-        printAdvanced(x);
-        return x;
+        y = seisParamAuxiliar(10,true,30,40,50,60,20,90,100,(ss && true) || false);
+        prinInt(x);
+        prinInt(y);
     }
 }
