@@ -10,6 +10,11 @@ void printAdvanced(int x) {
     printf("Val obtenido : %d\n", x);
 }
 
+int prinBool(bool a){
+    printf("%d\n",a);
+    return 1;
+}
+
 int inputVal() {
     int valor;
     printf("Ingrese un valor: ");

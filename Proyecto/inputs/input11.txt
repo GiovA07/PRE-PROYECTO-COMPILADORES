@@ -3,7 +3,6 @@ Program {
     int prinInt(int a) extern;
     int prinBool(bool b) extern;
 
-    // Función que suma dos números si ambos son positivos, o devuelve -1 en caso contrario    
     int sumaSiPositivos(int a, int b) {
         if (a > 0 && b > 0) then {
             return a + b;
@@ -12,13 +11,12 @@ Program {
         }
     }
 
-    // Función que devuelve el máximo de tres enteros
     int maxDeTres(int x, int y, int z) {
-        if (x > y+1 && x > z+1) then {
+        if (x > y && x > z) then {
             return x;
         } else{
             int res;
-            if (y > x+1 && y > z+1) then {
+            if (y > x && y > z) then {
                 res = y;
             } else {
                 res = z;
@@ -27,7 +25,6 @@ Program {
         } 
     }
 
-    // Función que determina si un número es positivo y si otro número es par
     bool esPositivoYPar(int num1, int num2) {
         bool esPositivo;
         bool esPar;

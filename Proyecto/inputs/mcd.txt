@@ -11,7 +11,7 @@ Program {
     }
 
     int main() {
-        prinInt(mcd(22, 33)); // Debería imprimir 6
+        prinInt(mcd(100, 234));
         return 1;
     }
 }

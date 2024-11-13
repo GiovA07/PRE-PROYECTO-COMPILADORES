@@ -37,8 +37,7 @@ Program {
         int b;
         a = inputVal();
         b = inputVal();
-        //prinInt(esPrimo(a));
-      //  a = 1 + 2 + 2;
+        prinInt(esPrimo(a));
         if(funcionBolleana(a,b))then{
             prinInt(1);
         }else{

@@ -353,74 +353,78 @@ void writeOperation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
     char* por = "%%";
     if (tag == T_SUM || tag == T_RES || tag == T_PROD) {
         if(op1->type == CONSINT){
-          sprintf(aux, "    movl $%s, %seax\n", op1->varname, por);
+          sprintf(aux, "    movl $%s, %%eax\n", op1->varname);
         }else{
             if(op1->offset == 0)
-                sprintf(aux, "    movl %s(%srip), %seax\n", op1->varname, por, por);
+                sprintf(aux, "    movl %s(%%rip), %%eax\n", op1->varname);
             else
-                sprintf(aux, "    movl %d(%srbp), %seax\n", op1->offset, por, por);
+                sprintf(aux, "    movl %d(%%rbp), %%eax\n", op1->offset);
         }
-        fprintf(file, aux);
+        writeArchive(aux);
         if(op2->type == CONSINT){
-            sprintf(aux, "    movl $%s, %sedx\n", op2->varname, por);
+            sprintf(aux, "    movl $%s, %%edx\n", op2->varname);
         }else{
             if(op2->offset == 0)
-                sprintf(aux, "    movl %s(%srip), %sedx\n", op2->varname, por, por);
+                sprintf(aux, "    movl %s(%%rip), %%edx\n", op2->varname);
             else
-                sprintf(aux, "    movl %d(%srbp), %sedx\n", op2->offset, por, por);
+                sprintf(aux, "    movl %d(%%rbp), %%edx\n", op2->offset);
         }
-        fprintf(file, aux);
-        if (tag == T_SUM)
-            fprintf(file, "    addl %%edx, %%eax\n");
-        else if (tag == T_RES)
-            fprintf(file, "    subl %%edx, %%eax\n");
-        else
-            fprintf(file, "    imull %%edx, %%eax\n");
-        sprintf(aux, "    movl %seax, %d(%srbp)\n", por, final->offset, por);
-        fprintf(file, aux);
+        writeArchive(aux);
+        if (tag == T_SUM){
+            sprintf(aux, "    addl %%edx, %%eax\n");
+            writeArchive(aux);
+
+        }else if (tag == T_RES){ 
+            sprintf(aux, "    subl %%edx, %%eax\n");
+            writeArchive(aux);
+        }
+        else{
+            sprintf(aux, "    imull %%edx, %%eax\n");
+            writeArchive(aux);
+        }
+        sprintf(aux, "    movl %%eax, %d(%%rbp)\n", final->offset);
+        writeArchive(aux);
     } else if (tag == T_DIV || tag == T_MOD) {
         if(op1->type == CONSINT)
-          sprintf(aux, "    movl $%s, %seax\n", op1->varname, por);
+          sprintf(aux, "    movl $%s, %%eax\n", op1->varname);
         else{
             if(op1->offset == 0)
-                sprintf(aux, "    movl %s(%srip), %seax\n", op1->varname, por, por);
+                sprintf(aux, "    movl %s(%%rip), %%eax\n", op1->varname);
             else
-              sprintf(aux, "    movl %d(%srbp), %seax\n", op1->offset, por, por);
+              sprintf(aux, "    movl %d(%%rbp), %%eax\n", op1->offset);
         }
-        fprintf(file, aux);
+        writeArchive(aux);
         if(op2->type == CONSINT){
-            sprintf(aux, "    movl $%s,  %secx\n", op2->varname, por);
-            fprintf(file, aux);
-            fprintf(file, "    cltd\n");
-            sprintf(aux, "    idivl %secx\n", por);
+            sprintf(aux, "    movl $%s,  %%ecx\n", op2->varname);
+            writeArchive(aux);
+            sprintf(aux, "    cltd\n");
+            writeArchive(aux);
+            sprintf(aux, "    idivl %%ecx\n");
         }else{
             if(op2->offset == 0){
-                sprintf(aux, "    movl %s(%srip),  %secx\n", op2->varname, por,por);
-                fprintf(file, aux);
-                fprintf(file, "    cltd\n");
-                sprintf(aux, "    idivl %secx\n",por);
+                sprintf(aux, "    movl %s(%%rip),  %%ecx\n", op2->varname);
+                writeArchive(aux);
+                sprintf(aux, "    cltd\n");
+                writeArchive(aux);
+                sprintf(aux, "    idivl %%ecx\n");
             }else{
-                fprintf(file, "    cltd\n");
-                sprintf(aux, "    idivl %d(%srbp)\n", op2->offset, por);
+                sprintf(aux, "    cltd\n");
+                writeArchive(aux);
+                sprintf(aux, "    idivl %d(%%rbp)\n", op2->offset);
             }
         }
-        fprintf(file, aux);
+        writeArchive(aux);
 
         if (tag == T_DIV)
-            sprintf(aux, "    movl %seax, %d(%srbp)\n", por, final->offset, por);
+            sprintf(aux, "    movl %%eax, %d(%%rbp)\n",final->offset);
         else
-            sprintf(aux, "    movl %sedx, %d(%srbp)\n", por, final->offset, por);
-        fprintf(file, aux);
+            sprintf(aux, "    movl %%edx, %d(%%rbp)\n",final->offset);
+        writeArchive(aux);
     }
-    fclose(file);
 }
 
-// Faltar para variable globales
 void writeBooleanOp(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag){
     char aux[100];
-    char* por = "%%";
-
-    // ahora anda
     if(op1->type == CONSBOOL){
         if(strcmp("true",op1->varname) == 0){
             sprintf(aux, "    movl $1, %%eax\n");
@@ -499,7 +503,6 @@ void writeBooleanOp(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
         }
         writeArchive(aux);
     } else {
-        // cambie esto ahora anda
         sprintf(aux, "    sete  %%al\n");
         writeArchive(aux);
         sprintf(aux, "    movzbl  %%al, %%eax\n");
@@ -510,40 +513,39 @@ void writeBooleanOp(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
 }
 
 void writeComparation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag){
-    file = fopen("result.s","a");
-    if (file == NULL) {
-        printf("Error al abrir el archivo");
-        return;
-    }
     char aux[30];
-    char* por = "%%";
     if( op1->type == CONSINT){
-        sprintf(aux, "    movl $%s , %seax \n", op1->varname,por);
+        sprintf(aux, "    movl $%s , %%eax \n", op1->varname);
     }else{
         if(op1->offset == 0)
-          sprintf(aux, "    movl %s(%srip) , %seax\n ", op1->varname, por,por);
+          sprintf(aux, "    movl %s(%%rip) , %%eax\n ", op1->varname);
         else
-           sprintf(aux, "    movl %d(%srbp) , %seax\n ", op1->offset, por,por);
+           sprintf(aux, "    movl %d(%%rbp) , %%eax\n ", op1->offset);
     }
-    fprintf(file, aux);
+    writeArchive(aux);
     if(op2->type == CONSINT){
-        sprintf(aux, "   cmpl  $%s , %seax \n", op2->varname,por);
+        sprintf(aux, "   cmpl  $%s , %%eax \n", op2->varname);
     }else{
         if(op2->offset == 0)
-            sprintf(aux, "   cmpl %s(%srip) , %seax\n", op2->varname, por,por);
+            sprintf(aux, "   cmpl %s(%%rip) , %%eax\n", op2->varname);
         else
-            sprintf(aux, "   cmpl %d(%srbp) , %seax\n", op2->offset, por,por);
+            sprintf(aux, "   cmpl %d(%%rbp) , %%eax\n", op2->offset);
     }
-    fprintf(file, aux);
-    if(tag == T_IGUAL)
-        fprintf(file, "    sete %%al\n");
-    if(tag == T_MAYOR)
-        fprintf(file, "    setg %%al\n");
-    if(tag == T_MENOR)
-        fprintf(file, "    setl %%al\n");
-    sprintf(aux, "    movzbl %sal, %seax\n", por, por);
-    fprintf(file, aux);
-    sprintf(aux, "    movl  %seax, %d(%srbp)\n",por, final->offset, por);
-    fprintf(file, aux);
-    fclose(file);
+    writeArchive(aux);
+    if(tag == T_IGUAL){
+        sprintf(aux, "    sete %%al\n");
+        writeArchive(aux);
+    }
+    if(tag == T_MAYOR){
+        sprintf(aux, "    setg %%al\n");
+        writeArchive(aux);
+    }
+    if(tag == T_MENOR){
+        sprintf(aux, "    setl %%al\n");
+        writeArchive(aux);
+    }
+    sprintf(aux, "    movzbl %%al, %%eax\n");
+    writeArchive(aux);
+    sprintf(aux, "    movl  %%eax, %d(%%rbp)\n", final->offset);
+    writeArchive(aux);
 }
