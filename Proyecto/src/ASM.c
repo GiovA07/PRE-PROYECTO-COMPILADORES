@@ -360,7 +360,7 @@ void writeOperation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
             else
                 sprintf(aux, "    movl %d(%srbp), %seax\n", op1->offset, por, por);
         }
-        fprintf(file, "%s", aux);
+        fprintf(file, aux);
         if(op2->type == CONSINT){
             sprintf(aux, "    movl $%s, %sedx\n", op2->varname, por);
         }else{
@@ -369,7 +369,7 @@ void writeOperation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
             else
                 sprintf(aux, "    movl %d(%srbp), %sedx\n", op2->offset, por, por);
         }
-        fprintf(file, "%s", aux);
+        fprintf(file, aux);
         if (tag == T_SUM)
             fprintf(file, "    addl %%edx, %%eax\n");
         else if (tag == T_RES)
@@ -377,7 +377,7 @@ void writeOperation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
         else
             fprintf(file, "    imull %%edx, %%eax\n");
         sprintf(aux, "    movl %seax, %d(%srbp)\n", por, final->offset, por);
-        fprintf(file, "%s", aux);
+        fprintf(file, aux);
     } else if (tag == T_DIV || tag == T_MOD) {
         if(op1->type == CONSINT)
           sprintf(aux, "    movl $%s, %seax\n", op1->varname, por);
@@ -387,16 +387,16 @@ void writeOperation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
             else
               sprintf(aux, "    movl %d(%srbp), %seax\n", op1->offset, por, por);
         }
-        fprintf(file, "%s", aux);
+        fprintf(file, aux);
         if(op2->type == CONSINT){
             sprintf(aux, "    movl $%s,  %secx\n", op2->varname, por);
-            fprintf(file, "%s", aux);
+            fprintf(file, aux);
             fprintf(file, "    cltd\n");
             sprintf(aux, "    idivl %secx\n", por);
         }else{
             if(op2->offset == 0){
                 sprintf(aux, "    movl %s(%srip),  %secx\n", op2->varname, por,por);
-                fprintf(file, "%s", aux);
+                fprintf(file, aux);
                 fprintf(file, "    cltd\n");
                 sprintf(aux, "    idivl %secx\n",por);
             }else{
@@ -404,13 +404,13 @@ void writeOperation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
                 sprintf(aux, "    idivl %d(%srbp)\n", op2->offset, por);
             }
         }
-        fprintf(file, "%s", aux);
+        fprintf(file, aux);
 
         if (tag == T_DIV)
             sprintf(aux, "    movl %seax, %d(%srbp)\n", por, final->offset, por);
         else
             sprintf(aux, "    movl %sedx, %d(%srbp)\n", por, final->offset, por);
-        fprintf(file, "%s", aux);
+        fprintf(file, aux);
     }
     fclose(file);
 }
@@ -525,7 +525,7 @@ void writeComparation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG t
         else
            sprintf(aux, "    movl %d(%srbp) , %seax\n ", op1->offset, por,por);
     }
-    fprintf(file, "%s", aux);
+    fprintf(file, aux);
     if(op2->type == CONSINT){
         sprintf(aux, "   cmpl  $%s , %seax \n", op2->varname,por);
     }else{
@@ -534,7 +534,7 @@ void writeComparation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG t
         else
             sprintf(aux, "   cmpl %d(%srbp) , %seax\n", op2->offset, por,por);
     }
-    fprintf(file, "%s", aux);
+    fprintf(file, aux);
     if(tag == T_IGUAL)
         fprintf(file, "    sete %%al\n");
     if(tag == T_MAYOR)
@@ -542,8 +542,8 @@ void writeComparation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG t
     if(tag == T_MENOR)
         fprintf(file, "    setl %%al\n");
     sprintf(aux, "    movzbl %sal, %seax\n", por, por);
-    fprintf(file, "%s", aux);
+    fprintf(file, aux);
     sprintf(aux, "    movl  %seax, %d(%srbp)\n",por, final->offset, por);
-    fprintf(file, "%s", aux);
+    fprintf(file, aux);
     fclose(file);
 }

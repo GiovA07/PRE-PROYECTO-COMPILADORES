@@ -12,16 +12,16 @@
     movq    %rsp, %rbp
     subq $160, %rsp 
     movl %edi, -16(%rbp)
-    movl -16(%%rbp) , %%eax
-    cmpl  $1 , %%eax 
+    movl -16(%rbp) , %eax
+    cmpl  $1 , %eax 
     setl %al
-    movzbl %%al, %%eax
-    movl  %%eax, -64(%%rbp)
-    movl -16(%%rbp) , %%eax
-    cmpl  $1 , %%eax 
+    movzbl %al, %eax
+    movl  %eax, -64(%rbp)
+    movl -16(%rbp) , %eax
+    cmpl  $1 , %eax 
     sete %al
-    movzbl %%al, %%eax
-    movl  %%eax, -80(%%rbp)
+    movzbl %al, %eax
+    movl  %eax, -80(%rbp)
     cmpl $0, -64(%rbp)
     jne .LO1 
     cmpl $0, -80(%rbp)
@@ -47,22 +47,22 @@ L1:
 
 
 L2: 
-    movl -32(%%rbp) , %%eax
-    cmpl -16(%%rbp) , %%eax
+    movl -32(%rbp) , %eax
+    cmpl -16(%rbp) , %eax
     setl %al
-    movzbl %%al, %%eax
-    movl  %%eax, -96(%%rbp)
+    movzbl %al, %eax
+    movl  %eax, -96(%rbp)
     cmpl  $1,  -96(%rbp)
     jne L3
-    movl -16(%%rbp), %%eax
+    movl -16(%rbp), %eax
     cltd
-    idivl -32(%%rbp)
-    movl %%edx, -128(%%rbp)
-    movl -128(%%rbp) , %%eax
-    cmpl  $0 , %%eax 
+    idivl -32(%rbp)
+    movl %edx, -128(%rbp)
+    movl -128(%rbp) , %eax
+    cmpl  $0 , %eax 
     sete %al
-    movzbl %%al, %%eax
-    movl  %%eax, -112(%%rbp)
+    movzbl %al, %eax
+    movl  %eax, -112(%rbp)
     cmpl  $1,  -112(%rbp)
     jne L4
     movl $0,  %eax
@@ -72,10 +72,10 @@ L2:
 
 
 L4: 
-    movl -32(%%rbp), %%eax
-    movl $1, %%edx
+    movl -32(%rbp), %eax
+    movl $1, %edx
     addl %edx, %eax
-    movl %%eax, -144(%%rbp)
+    movl %eax, -144(%rbp)
     movl -144(%rbp), %eax
 
     movl %eax, -32(%rbp)
@@ -94,11 +94,11 @@ funcionBolleana:
     subq $96, %rsp 
     movl %edi, -16(%rbp)
     movl %esi, -32(%rbp)
-    movl -16(%%rbp) , %%eax
-    cmpl -32(%%rbp) , %%eax
+    movl -16(%rbp) , %eax
+    cmpl -32(%rbp) , %eax
     sete %al
-    movzbl %%al, %%eax
-    movl  %%eax, -64(%%rbp)
+    movzbl %al, %eax
+    movl  %eax, -64(%rbp)
     cmpl  $1,  -64(%rbp)
     jne L5
     movl $0, -48(%rbp)
