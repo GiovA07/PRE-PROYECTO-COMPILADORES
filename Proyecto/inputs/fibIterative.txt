@@ -1,0 +1,26 @@
+Program {
+    int prinInt(int a) extern;
+    int inputVal() extern;
+
+    int fibonacci(int n) {
+        int a;
+        int b;
+        int temp;
+        a = 0;
+        b = 1;
+        while (n > 0) {
+            temp = a + b;
+            a = b;
+            b = temp;
+            n = n - 1;
+        }
+        return a;
+    }
+
+    int main() {
+        int val;
+        val = inputVal();
+        prinInt(fibonacci(val)); // Debería imprimir 55
+        return 1;
+    }
+}

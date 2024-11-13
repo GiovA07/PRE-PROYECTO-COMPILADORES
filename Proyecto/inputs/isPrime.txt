@@ -1,0 +1,24 @@
+Program {
+    int prinInt(int a) extern;
+
+    int esPrimo(int n) {
+        int i;
+        if (n < 1 || n == 1) then {
+            return 0; // 0 y 1 no son primos
+        }
+        i = 2;
+        while (i * i == n || i * i < n) {
+            if (n % i == 0) then {
+                return 0; // No es primo
+            }
+            i = i + 1;
+        }
+        return 1; // Es primo
+    }
+
+    int main() {
+        int result;
+        prinInt(esPrimo(17)); // Debería imprimir 1 (verdadero)
+        return 1;
+    }
+}

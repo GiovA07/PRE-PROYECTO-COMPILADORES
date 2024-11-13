@@ -1,0 +1,18 @@
+Program {
+    int prinInt(int a) extern;
+    int inputVal() extern;
+
+    int mcd(int a, int b) {
+        prinInt(b);
+        if (b == 0) then {
+            return a;
+        } else {
+            return mcd(b, a % b);
+        }
+    }
+
+    int main() {
+        prinInt(mcd(48, 18)); // Debería imprimir 6
+        return 1;
+    }
+}

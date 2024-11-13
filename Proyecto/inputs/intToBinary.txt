@@ -1,0 +1,24 @@
+Program {
+    int prinInt(int a) extern;
+    int inputVal() extern;
+
+    int decimalABinario(int n) {
+        int binario;
+        int factor;
+        binario = 0;
+        factor = 1;
+        while (n > 0) {
+            binario = binario + (n % 2) * factor;
+            n = n / 2;
+            factor = factor * 10;
+        }
+        return binario;
+    }
+
+    int main() {
+        int val;
+        val = inputVal();
+        prinInt(decimalABinario(val)); // Debería imprimir 1010
+        return 1;
+    }
+}
