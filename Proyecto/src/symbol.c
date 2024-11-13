@@ -96,7 +96,6 @@ void InstallParam (Tsymbol *param,Tsymbol *tablaFunc){
   }
 }
 
-
 struct Tsymbol *LookupExternVar(char * name) {
   Tsymbol *head = table;
   if(LookupInTableAux(name,head) == NULL){
@@ -109,7 +108,6 @@ struct Tsymbol *LookupExternVar(char * name) {
     }
   }
 }
-
 
 void setValue(Tsymbol* symbol, int valor){
     if(symbol != NULL) {
@@ -170,42 +168,6 @@ void prinTable(){
     }
 }
 
-
 void addOffset(Tsymbol* symbol, int offset) {
   symbol->offset = offset;
 }
-
-
-// struct Tsymbol *Lookup(char * name){
-//   Tsymbol *head = table;
-//   if(name == NULL) {
-//     return NULL;
-//   }
-//   while(head != NULL) {
-//     if(strcmp(name, head->varname)==0){
-//       return head;
-//     }
-//     head = head->next;
-//   }
-//   return NULL;
-// }
-
-// para tabla global
-// void Install(Tsymbol *symbol){
-//   if(Lookup(symbol->varname) == NULL){
-//     symbol->next =  table;
-//     table = symbol;
-//   } else {
-//     printf("Simbolo existente, linea de error: %d", symbol->line);
-//     exit(1);
-//   }
-// }
-
-// void DeleteList(){
-//   Tsymbol *aux;
-//   while(table != NULL) {
-//     aux  = table;
-//     table = table->next;
-//     free(aux);
-//   }
-// }

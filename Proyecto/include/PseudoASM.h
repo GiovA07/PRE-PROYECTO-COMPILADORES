@@ -33,9 +33,8 @@ typedef struct PseudoASM {
     Tsymbol* result;
     struct PseudoASM* next;
 } PseudoASM;
-
-void invertASMAux();
-void invertASM();
+void createInstallSequence(enum ASM_TAG tag, Tsymbol* op1, Tsymbol* op2, Tsymbol* result);
+void invertASM(PseudoASM ** list);
 void printAsembler();
 void deleteInstructions();
 void generateCode(AST* ar);
@@ -60,13 +59,17 @@ char* generateNameLabel();
 void handleGenerateOpReturn(AST* ar);
 void requireParams(AST* ar);
 void createCodRequiredParam(Tsymbol* param);
-
+void generateVarGlobals();
 
 void addOffSetFuncParams(AST* ar);
 void addOffSetFuncBody(AST* ar);
 void addOffSet(AST* ar);
 
-struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res);
+void operComparate(enum TYPES tag,Tsymbol* op1, Tsymbol* op2, Tsymbol* res);
+void operBoolean(enum TYPES tag,Tsymbol* op1, Tsymbol* op2, Tsymbol* res);
+void operAritmetic(enum TYPES tag,Tsymbol* op1, Tsymbol* op2, Tsymbol* res);
+
+void  traslate(enum TYPES tag, AST* op1, AST* op2, AST* res);
 struct Tsymbol *LookupVar(char * name);
 
 

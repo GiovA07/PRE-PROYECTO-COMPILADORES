@@ -31,8 +31,6 @@ Program {
     int main(){
         int s;
         bool x;
-        // posible problema de uso de constantes booleanas
-       // x = false && true;
         s = inc(false && true);
         prinInt(s);
 

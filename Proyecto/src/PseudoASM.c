@@ -5,232 +5,261 @@
 //para cargar los paramteros que tienen mas de 6
 PseudoASM* ParamsMayorSeis = NULL;
 PseudoASM* instructions = NULL;
-// PseudoASM* current2 = NULL;
-// bool p = true;
 
 int labID = 1;
-
 int paramReq  = 0;
 // para llevar cada funcion con el slato que le corresponde
 
-struct PseudoASM* traslate(enum TYPES tag, AST* op1, AST* op2, AST* res) {
-
+void createInstallSequence(enum ASM_TAG tag, Tsymbol* op1, Tsymbol* op2, Tsymbol* result){
     PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
+    sequense->tag = tag;
+    sequense->op1 = op1;
+    sequense->op2 = op2;
+    sequense->result = result;
+    sequense->next = instructions;
+    instructions = sequense;
+}
 
-    sequense->op1 = op1->symbol;
-
-    if(op2 != NULL) {
-        sequense->op2 = op2->symbol;
-    }else {
-        sequense->op2 = NULL;
-    }
-    sequense->result = res->symbol;
-
-    if(op2 == NULL){
-        // solo lo creo para que se ve en el printf sino tira error
-        char * name = "NULL";
-        sequense->op2 = CreateSymbol(name,OTHERS,0,0);
-        if (tag == ENOT) {
-            sequense->tag = T_NOT;
-            Tsymbol *auxLeft = LookupVar(op1->symbol->varname);
-            if (auxLeft != NULL) {
-                 sequense->result->value =  (!auxLeft->value);
+void operComparate(enum TYPES tag,Tsymbol* op1, Tsymbol* op2, Tsymbol* res){
+    Tsymbol *auxLeft = LookupVar(op1->varname);
+    Tsymbol *auxRigth = LookupVar(op2->varname);
+    switch(tag){
+        case  EMAYORQUE:
+            if (auxRigth != NULL && auxLeft != NULL) {
+                res->value =  (auxLeft->value > auxRigth->value);
+            } else if (auxRigth == NULL && auxLeft != NULL) {
+                res->value =  (auxLeft->value > op2->value);
+            } else if(auxRigth != NULL && auxLeft == NULL){
+                res->value = op1->value > auxRigth->value;
             } else {
-                //generateCode(op1);
-                sequense->result->value = (!(op1->symbol->value));
+                res->value = (op1->value > op2->value);
             }
+            createInstallSequence(T_MAYOR,op1, op2,res);
+            break;
+        case  EMENORQUE:
+            if (auxRigth != NULL && auxLeft != NULL) {
+                res->value =  (auxLeft->value < auxRigth->value);
+            } else if (auxRigth == NULL && auxLeft != NULL) {
+                res->value =  (auxLeft->value < op2->value);
+            } else if(auxRigth != NULL && auxLeft == NULL){
+                res->value = op1->value < auxRigth->value;
+            } else {
+                res->value = (op1->value < op2->value);
+            }
+            createInstallSequence(T_MENOR,op1, op2, res);
+            break;
+        case  EEQ:
+            if (auxRigth != NULL && auxLeft != NULL) {
+                res->value = (auxLeft->value == auxRigth->value);
+            } else if (auxRigth == NULL && auxLeft != NULL) {
+                res->value = (auxLeft->value == op2->value);
+            } else if(auxRigth != NULL && auxLeft == NULL){
+                res->value = op1->value == auxRigth->value;
+            } else {
+                res->value = (op1->value == op2->value);
+            }
+            createInstallSequence(T_IGUAL,op1,  op2, res);
+            break;
         }
-    }else {
+}
 
+void operBoolean(enum TYPES tag,Tsymbol* op1, Tsymbol* op2, Tsymbol* res){
+    Tsymbol *auxLeft = LookupVar(op1->varname);
+    Tsymbol *auxRigth = LookupVar(op2->varname);
+    switch(tag){   
+        case  EAND:
+            if (auxRigth != NULL && auxLeft != NULL) {
+                res->value = (auxLeft->value && auxRigth->value);
+            } else if (auxRigth == NULL && auxLeft != NULL) {
+                res->value = (auxLeft->value && op2->value);
+            } else if(auxRigth != NULL && auxLeft == NULL){
+                res->value = op1->value && auxRigth->value;
+            } else {
+                res->value = (op1->value && op2->value);
+            }
+            createInstallSequence(T_AND,op1,  op2, res);
+            break;
+        case  EOR:
+            if (auxRigth != NULL && auxLeft != NULL) {
+                res->value = (auxLeft->value || auxRigth->value);
+            } else if (auxRigth == NULL && auxLeft != NULL) {
+                res->value = (auxLeft->value || op2->value);
+            } else if(auxRigth != NULL && auxLeft == NULL){
+                res->value = op1->value || auxRigth->value;
+            } else {
+                res->value = (op1->value || op2->value);
+            }
+            createInstallSequence(T_OR,op1, op2, res);
+            break;
+    }
+
+}
+
+void operAritmetic(enum TYPES tag,Tsymbol* op1, Tsymbol* op2, Tsymbol* res){
+    Tsymbol *auxLeft = LookupVar(op1->varname);
+    Tsymbol *auxRigth = LookupVar(op2->varname);
+    switch(tag){
+        case SUMA:
+            if (auxRigth != NULL && auxLeft != NULL) {
+                res->value = auxRigth->value + auxLeft->value;
+            } else if (auxRigth == NULL && auxLeft != NULL) {
+                res->value = op2->value + auxLeft->value;
+            } else if(auxRigth != NULL && auxLeft == NULL) {
+                res->value = auxRigth->value + op1->value;
+            } else {
+                res->value = op2->value  + op1->value;
+            }
+            createInstallSequence(T_SUM,op1, op2, res);
+            break;
+        case RESTA:
+            if (auxRigth != NULL && auxLeft != NULL) {
+                res->value = auxLeft->value - auxRigth->value;
+            } else if (auxRigth == NULL && auxLeft != NULL) {
+                res->value = auxLeft->value - op2->value;
+            } else if(auxRigth != NULL && auxLeft == NULL){
+                res->value = op1->value - auxRigth->value;
+            } else {
+                res->value = op1->value - op2->value;
+            } 
+            createInstallSequence(T_RES,op1, op2, res);
+            break;
+        case PROD:
+            if (auxRigth != NULL && auxLeft != NULL) {
+                res->value = auxLeft->value * auxRigth->value;
+            } else if (auxRigth == NULL && auxLeft != NULL) {
+                res->value = auxLeft->value * op2->value;
+            } else if(auxRigth != NULL && auxLeft == NULL){
+                res->value = op1->value * auxRigth->value;
+            } else {
+                res->value = op1->value * op2->value;
+            }
+            createInstallSequence(T_PROD,op1, op2, res);
+            break;
+        case  EDIV:
+            if (auxRigth != NULL && auxLeft != NULL) {
+                if(auxRigth->value == 0) {
+                    printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", auxLeft->line);
+                    exit(1);
+                }else {
+                    res->value =  auxLeft->value / auxRigth->value;
+                }
+            } else if (auxRigth == NULL && auxLeft != NULL) {
+                if(op2->value == 0) {
+                    printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", auxLeft->line);
+                    exit(1);
+                }else {
+                    res->value =  auxLeft->value / op2->value;
+                }
+            } else if(auxRigth != NULL && auxLeft == NULL){
+                if(auxRigth->value == 0) {
+                    printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n",  op1->line);
+                    exit(1);
+                }else {
+                    res->value = op1->value / auxRigth->value ;
+                }
+            } else {
+                if(op2->value == 0) {
+                    printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n",  op1->line);
+                    exit(1);
+                }else {
+                    res->value = op1->value / op2->value;
+                }
+            }
+            createInstallSequence(T_DIV,op1, op2, res);
+            break;
+        case  ERESTO:
+            if (auxRigth != NULL && auxLeft != NULL) {
+                if(auxRigth->value == 0) {
+                    printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", auxLeft->line);
+                    exit(1);
+                }else {
+                    res->value =  auxLeft->value % auxRigth->value;
+                }
+            } else if (auxRigth == NULL && auxLeft != NULL) {
+                if(op2->value == 0) {
+                    printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", auxLeft->line);
+                    exit(1);
+                }else {
+                    res->value =  auxLeft->value % op2->value;
+                }
+            } else if(auxRigth != NULL && auxLeft == NULL){
+                if(auxRigth->value == 0) {
+                    printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n",  op1->line);
+                    exit(1);
+                }else {
+                    res->value = op1->value % auxRigth->value ;
+                }
+            } else {
+                if(op2->value == 0) {
+                    printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n",  op1->line);
+                    exit(1);
+                }else {
+                    res->value = op1->value % op2->value;
+                }
+            }
+            createInstallSequence(T_MOD,op1, op2, res);
+            break;
+        }
+}
+
+void traslate(enum TYPES tag, AST* op1, AST* op2, AST* res) {
+    Tsymbol * op1Symbol = op1->symbol;
+    Tsymbol * op2Symbol = NULL;
+    Tsymbol * resSymbol = res->symbol;
+    
+    Tsymbol *auxRigth = NULL;
     Tsymbol *auxLeft = LookupVar(op1->symbol->varname);
-    Tsymbol *auxRigth = LookupVar(op2->symbol->varname);
 
-    if (tag == ASIG) {
-        sequense->tag = T_ASIGN;
-        //guardo todo el nodo arbol
-        if(auxRigth){
-            sequense->op1->value = auxRigth->value;
-            sequense->result = sequense->op1;
-        }else {
-            sequense->op1->value = sequense->op2->value;
-            sequense->result = sequense->op1;
-        }
+    if(op2 != NULL){
+        op2Symbol = op2->symbol;
+        auxRigth = LookupVar(op2->symbol->varname);
+    }
 
-    } else if (tag == SUMA) {
-        sequense->tag = T_SUM;
-        if (auxRigth != NULL && auxLeft != NULL) {
-            sequense->result->value = auxRigth->value + auxLeft->value;
-        } else if (auxRigth == NULL && auxLeft != NULL) {
-            sequense->result->value = op2->symbol->value + auxLeft->value;
-        } else if(auxRigth != NULL && auxLeft == NULL) {
-            sequense->result->value = auxRigth->value + op1->symbol->value;
-        } else {
-            sequense->result->value = op2->symbol->value  + op1->symbol->value;
-        }
-    } else if (tag == RESTA) {
-
-        sequense->tag = T_RES;
-        if (auxRigth != NULL && auxLeft != NULL) {
-            sequense->result->value =  auxLeft->value - auxRigth->value;
-        } else if (auxRigth == NULL && auxLeft != NULL) {
-            sequense->result->value =  auxLeft->value - op2->symbol->value;
-        } else if(auxRigth != NULL && auxLeft == NULL){
-            sequense->result->value = op1->symbol->value - auxRigth->value;
-        } else {
-             sequense->result->value = op1->symbol->value - op2->symbol->value;
-        }
-    } else if (tag == PROD) {
-        sequense->tag = T_PROD;
-        if (auxRigth != NULL && auxLeft != NULL) {
-            sequense->result->value =  auxLeft->value * auxRigth->value;
-        } else if (auxRigth == NULL && auxLeft != NULL) {
-            sequense->result->value =  auxLeft->value * op2->symbol->value;
-        } else if(auxRigth != NULL && auxLeft == NULL){
-            sequense->result->value = op1->symbol->value * auxRigth->value;
-        } else {
-            sequense->result->value = op1->symbol->value * op2->symbol->value;
-        }
-    } else if (tag == EDIV) {
-        sequense->tag = T_DIV;
-        if (auxRigth != NULL && auxLeft != NULL) {
-            if(auxRigth->value == 0) {
-                printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", auxLeft->line);
-                exit(1);
+    switch(tag){
+        case ASIG:
+            if(auxRigth){
+                op1Symbol->value = auxRigth->value;
+                resSymbol = op1Symbol;
             }else {
-                sequense->result->value =  auxLeft->value / auxRigth->value;
+                op1Symbol->value = op2Symbol->value;
+                resSymbol = op1Symbol;
             }
-        } else if (auxRigth == NULL && auxLeft != NULL) {
-            if(op2->symbol->value == 0) {
-                printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", auxLeft->line);
-                exit(1);
+            createInstallSequence(T_ASIGN,op1Symbol,op2Symbol,resSymbol);
+            break;
+        case SUMA: case RESTA: case PROD: case EDIV: case ERESTO:
+            operAritmetic(tag,op1Symbol,op2Symbol,resSymbol);
+            break;
+        case  EAND: case  EOR:
+            operBoolean(tag,op1Symbol,op2Symbol,resSymbol);
+            break;
+        case  EMAYORQUE: case  EMENORQUE: case  EEQ:
+            operComparate(tag,op1Symbol,op2Symbol,resSymbol);
+            break;
+        case EWHILE:
+            if (op1Symbol->value == 1)
+                resSymbol = op2->right->symbol;
+            else
+                resSymbol = NULL;
+            break;
+            createInstallSequence(T_WHILE,op1Symbol,op2Symbol,resSymbol);
+        case EIF:
+            if(auxLeft){
+                resSymbol->value = auxLeft->value;
             }else {
-                sequense->result->value =  auxLeft->value / op2->symbol->value;
+                resSymbol->value = op1Symbol->value;
             }
-        } else if(auxRigth != NULL && auxLeft == NULL){
-            if(auxRigth->value == 0) {
-                printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n",  op1->symbol->line);
-                exit(1);
-            }else {
-                sequense->result->value = op1->symbol->value / auxRigth->value ;
-            }
-        } else {
-            if(op2->symbol->value == 0) {
-                printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n",  op1->symbol->line);
-                exit(1);
-            }else {
-                sequense->result->value = op1->symbol->value / op2->symbol->value;
-            }
-        }
-    } else if (tag == ERESTO) {
-        sequense->tag = T_MOD;
-        if (auxRigth != NULL && auxLeft != NULL) {
-            if(auxRigth->value == 0) {
-                printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", auxLeft->line);
-                exit(1);
-            }else {
-                sequense->result->value =  auxLeft->value % auxRigth->value;
-            }
-        } else if (auxRigth == NULL && auxLeft != NULL) {
-            if(op2->symbol->value == 0) {
-                printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", auxLeft->line);
-                exit(1);
-            }else {
-                sequense->result->value =  auxLeft->value % op2->symbol->value;
-            }
-        } else if(auxRigth != NULL && auxLeft == NULL){
-            if(auxRigth->value == 0) {
-                printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n",  op1->symbol->line);
-                exit(1);
-            }else {
-                sequense->result->value = op1->symbol->value % auxRigth->value ;
-            }
-        } else {
-            if(op2->symbol->value == 0) {
-                printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n",  op1->symbol->line);
-                exit(1);
-            }else {
-                sequense->result->value = op1->symbol->value % op2->symbol->value;
-            }
-        }
-    } else if (tag == EAND) {
-        sequense->tag = T_AND;
-        if (auxRigth != NULL && auxLeft != NULL) {
-            sequense->result->value = (auxLeft->value && auxRigth->value);
-        } else if (auxRigth == NULL && auxLeft != NULL) {
-            sequense->result->value =  (auxLeft->value && op2->symbol->value);
-        } else if(auxRigth != NULL && auxLeft == NULL){
-            sequense->result->value = op1->symbol->value && auxRigth->value;
-        } else {
-            sequense->result->value = (op1->symbol->value && op2->symbol->value);
-        }
-    } else if (tag == EOR) {
-        sequense->tag = T_OR;
-        if (auxRigth != NULL && auxLeft != NULL) {
-            sequense->result->value =  (auxLeft->value || auxRigth->value);
-        } else if (auxRigth == NULL && auxLeft != NULL) {
-            sequense->result->value =  (auxLeft->value || op2->symbol->value);
-        } else if(auxRigth != NULL && auxLeft == NULL){
-            sequense->result->value = op1->symbol->value || auxRigth->value;
-        } else {
-            sequense->result->value = (op1->symbol->value || op2->symbol->value);
-        }
-    } else if (tag == EMAYORQUE) {
-        sequense->tag = T_MAYOR;
-        if (auxRigth != NULL && auxLeft != NULL) {
-            sequense->result->value =  (auxLeft->value > auxRigth->value);
-        } else if (auxRigth == NULL && auxLeft != NULL) {
-            sequense->result->value =  (auxLeft->value > op2->symbol->value);
-        } else if(auxRigth != NULL && auxLeft == NULL){
-            sequense->result->value = op1->symbol->value > auxRigth->value;
-        } else {
-            sequense->result->value = (op1->symbol->value > op2->symbol->value);
-        }
-    } else if (tag == EMENORQUE) {
-        sequense->tag = T_MENOR;
-        if (auxRigth != NULL && auxLeft != NULL) {
-            sequense->result->value =  (auxLeft->value < auxRigth->value);
-        } else if (auxRigth == NULL && auxLeft != NULL) {
-            sequense->result->value =  (auxLeft->value < op2->symbol->value);
-        } else if(auxRigth != NULL && auxLeft == NULL){
-            sequense->result->value = op1->symbol->value < auxRigth->value;
-        } else {
-            sequense->result->value = (op1->symbol->value < op2->symbol->value);
-        }
-    } else if (tag == EEQ) {
-        sequense->tag = T_IGUAL;
-        if (auxRigth != NULL && auxLeft != NULL) {
-            sequense->result->value =  (auxLeft->value == auxRigth->value);
-        } else if (auxRigth == NULL && auxLeft != NULL) {
-            sequense->result->value =  (auxLeft->value == op2->symbol->value);
-        } else if(auxRigth != NULL && auxLeft == NULL){
-            sequense->result->value = op1->symbol->value == auxRigth->value;
-        } else {
-            sequense->result->value = (op1->symbol->value == op2->symbol->value);
-        }
-    } else if (tag == EWHILE) {
-        sequense->tag = T_WHILE;
-        if (op1->symbol->value == 1)
-        //ver
-            sequense->result = op2->right->symbol;
-        else
-            sequense->result = NULL;
-    } else if (tag == EIF) {
-        sequense->tag = T_IF;
-        if(auxLeft){
-            sequense->result->value = auxLeft->value;
-        }else {
-            sequense->result->value = op1->symbol->value;
-
-        }
-    } else{
-        return instructions;
+            createInstallSequence(T_IF,op1Symbol,op2Symbol,resSymbol);
+            break;
+        case ENOT:
+            if (auxLeft != NULL) {
+                resSymbol->value =  (!auxLeft->value);
+            } else {
+                resSymbol->value = (!(op1Symbol->value));
+            } 
+            createInstallSequence(T_NOT,op1Symbol,op2Symbol,resSymbol);
+            break;
     }
 }
-    return sequense;
-}
-
-
-
 
 struct Tsymbol *LookupVar(char * name){
   PseudoASM* head = instructions;
@@ -246,65 +275,67 @@ struct Tsymbol *LookupVar(char * name){
   return NULL;
 }
 
-
 void generateThreeDir(AST* ar) {
     generateCode(ar);
-    invertASM();
+    invertASM(&instructions);
 }
 
+void generateVarGlobals(){
+    Tsymbol * aux = getTable();
+    while(aux != NULL) {
+        Tsymbol * recorrert = aux->table;
+        while(recorrert != NULL) {
+            if(recorrert->type == VARINT || recorrert->type == VARBOOL ){
+                char * name1 = "_";
+                createInstallSequence(T_GLOBAL, CreateSymbol(name1,OTHERS,0,0),CreateSymbol(name1,OTHERS,0,0), recorrert);
+            }
+        recorrert = recorrert->next;
+        }
+        aux = aux->next;
+    }
+}
 
 void generateCode(AST* ar) {
-    if(strcmp((ar->symbol)->varname,"PROGRAM") == 0){
-        Tsymbol * aux = getTable();
-        while(aux != NULL) {
-            Tsymbol * recorrert = aux->table;
-            while(recorrert != NULL) {
-                if(recorrert->type == VARINT || recorrert->type == VARBOOL ){
-                    PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
-                    sequense->tag = T_GLOBAL;
-                    char * name1 = "_";
-                    sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
-                    sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
-                    sequense->result = recorrert;
-                    sequense->next = instructions;
-                    instructions = sequense;
-                }
-            recorrert = recorrert->next;
+    enum TYPES tipoActual = ar->symbol->type;
+    switch(tipoActual){
+        case ERETURN:
+            handleGenerateOpReturn(ar);
+            createRetTag(ar->left->symbol);
+            break;
+        case RETINT: case RETBOL: case RETVOID:
+            if (strcmp((ar->symbol)->varname,"main") == 0) {
+                handleGenerateMain(ar);
+                createSentenThreeDir(T_END_FUN, ar->symbol);
+            } else {
+                handleGenerateFunc(ar);
+                paramReq = 0;
+                createSentenThreeDir(T_END_FUN, ar->symbol);
             }
-            aux = aux->next;
-        }
-    }
-    if(ar->symbol->type == ERETURN) {
-        handleGenerateOpReturn(ar);
-        createRetTag(ar->left->symbol);
-    } else if (strcmp((ar->symbol)->varname,"main") == 0) {
-        //aca puede ir el coso para darle el offset
-        // handleAddOffset(ar->left);
-        handleGenerateMain(ar);
-        createSentenThreeDir(T_END_FUN, ar->symbol);
-    } else if(((ar->symbol)->type == RETINT || (ar->symbol)->type == RETBOL ||(ar->symbol)->type == RETVOID) ){
-        //aca puede ir el coso para darle el offset
-        // handleAddOffset(ar->left);
-        handleGenerateFunc(ar);
-        paramReq = 0;
-        createSentenThreeDir(T_END_FUN, ar->symbol);
-    }else if((ar->symbol)->type == CALL_F){
-        //param = 0;
-        has_Operation(ar->right);
-        has_Call_Func(ar->right);
-        generateLoadParams(ar->right);
-        //printf("Paramteros Totals %d\n",param);
-        createCall_Func(ar->left->symbol, ar->symbol);
-    }else if((ar->symbol)->type  == EIF){
-        handleGenerateIF(ar);
-    } else if ((ar->symbol)->type  == EWHILE) {
-        handleGenerateWhile(ar);
-    }else if ((ar->right != NULL && ar->left != NULL)) {
-        handleGenerateBinaryOperation(ar);
-    }else if (ar->left != NULL) {
-        handleUnaryOp(ar);
-    }else if (ar->right != NULL) {
-        generateCode(ar->right);
+            break;
+        case CALL_F:
+            has_Operation(ar->right);
+            has_Call_Func(ar->right);
+            generateLoadParams(ar->right);
+            createCall_Func(ar->left->symbol, ar->symbol);
+            break;
+        case EIF:
+            handleGenerateIF(ar);
+            break;
+        case EWHILE:
+            handleGenerateWhile(ar);
+            break;
+        default:
+            if(strcmp((ar->symbol)->varname,"PROGRAM") == 0){
+                generateVarGlobals();
+            }
+            if ((ar->right != NULL && ar->left != NULL)) {
+                handleGenerateBinaryOperation(ar);
+            }else if (ar->left != NULL) {
+                handleUnaryOp(ar);
+            }else if (ar->right != NULL) {
+                generateCode(ar->right);
+            }
+            break;
     }
 }
 
@@ -324,14 +355,12 @@ void handleGenerateMain(AST* ar){
  }
 
 void has_Operation(AST* ar){
- if(ar == NULL) return;
+    if(ar == NULL) return;
 
     if(ar->left)
-        has_Operation(ar->left);
-
+        has_Operation(ar->left);    
     if(ar->right)
-        has_Operation(ar->right);
-
+        has_Operation(ar->right);   
     enum TYPES tipoActual = ar->symbol->type;
     bool operArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
     bool operBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
@@ -381,16 +410,9 @@ void generateLoadParams(AST* ar) {
 }
 
 void createTagLoad(Tsymbol* symbol) {
-    PseudoASM* param = (PseudoASM*)malloc(sizeof(PseudoASM));
-    param->tag = T_LOAD_PARAM;
     char * name1 = "_";
-    param->op1 = CreateSymbol(name1,OTHERS,0,0);
-    param->op2 =  CreateSymbol(name1,OTHERS,0,0);
-    param->result = symbol;
-    param->next = instructions;
-    instructions = param;
+    createInstallSequence(T_LOAD_PARAM, CreateSymbol(name1,OTHERS,0,0),CreateSymbol(name1,OTHERS,0,0), symbol);
 }
-
 
 void concatenarListas(PseudoASM *lista1, PseudoASM *lista2) {
     if (lista2 == NULL) {
@@ -406,10 +428,9 @@ void concatenarListas(PseudoASM *lista1, PseudoASM *lista2) {
 
 void handleGenerateFunc(AST* ar){
     createSentenThreeDir(T_FUNC,ar->symbol);
-    // genero codigo de la funcion para funciones externas
     if(ar->left != NULL) {
         requireParams(ar->left);
-        invertASMAux();
+        invertASM(&ParamsMayorSeis);
         concatenarListas(instructions,ParamsMayorSeis);
         ParamsMayorSeis = NULL;
     }
@@ -417,18 +438,11 @@ void handleGenerateFunc(AST* ar){
         generateCode(ar->right);
     }
     if(ar->symbol->type == RETVOID){
-        // lo agregue para que poder poner el ret en lasfunciones void
-        PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
-        sequense->tag = T_RETURN;
         char * name1 = " ";
-        sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
-        sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
-        sequense->result = CreateSymbol(name1,OTHERS,0,0);
-
-        sequense->next = instructions;
-        instructions = sequense;
+        createInstallSequence(T_RETURN, CreateSymbol(name1,OTHERS,0,0),CreateSymbol(name1,OTHERS,0,0), CreateSymbol(name1,OTHERS,0,0));
     }
  }
+
 
 void requireParams(AST* ar) {
     if(ar->symbol->type == PARAMBOOL || ar->symbol->type == PARAMINT){
@@ -442,33 +456,14 @@ void requireParams(AST* ar) {
  }
 
  void createCall_Func(Tsymbol* nameFunc, Tsymbol* tempResult){
-    PseudoASM* call_func = (PseudoASM*)malloc(sizeof(PseudoASM));
-    call_func->tag = T_CALL;
-
     char * name1 = "_";
-    call_func->op1 = nameFunc;
-    call_func->op2 =  CreateSymbol(name1,OTHERS,0,0);
-    call_func->result = tempResult;
-
-    call_func->next = instructions;
-    instructions = call_func;
+    createInstallSequence(T_CALL, nameFunc,CreateSymbol(name1,OTHERS,0,0), tempResult);
  }
 
  void createSentenThreeDir(enum ASM_TAG tag , Tsymbol* func){
-    PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
-    sequense->tag = tag;
-
     char * name1 = "_";
-    sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
-    sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
-    sequense->result = func;
-
-    sequense->next = instructions;
-    instructions = sequense;
-
+    createInstallSequence(tag, CreateSymbol(name1,OTHERS,0,0),CreateSymbol(name1,OTHERS,0,0), func);
  }
-
-
 
 void handleGenerateIF(AST* ar) {
     generateCode(ar->left);
@@ -495,11 +490,11 @@ void handleGenerateIF(AST* ar) {
         //label_else
         createAndAppendTagLabel(labelIFF);
         generateCode((ar->right)->right->left); //else
-
         //create labelend_jump
         createAndAppendTagLabel(jump->result->varname);
     }
 }
+
 void handleGenerateWhile(AST* ar) {
     PseudoASM* jump = createJump();
     //label jump para volver a ejecutar el WHILE
@@ -515,23 +510,19 @@ void handleGenerateWhile(AST* ar) {
     // create label IFF en caso que no se cumpla la condicion del WHILE
     createAndAppendTagLabel(conditionFalse->result->varname);
 }
+
 void handleGenerateBinaryOperation(AST* ar) {
     enum TYPES tipoActual = (ar->symbol)->type;
-
     if (ar->left != NULL) {
         generateCode(ar->left);
     }
     if (ar->right != NULL) {
         generateCode(ar->right);
     }
-
-
     bool isAsignBool = tipoActual == ASIG || tipoActual == EAND || tipoActual == EOR || tipoActual == EEQ || tipoActual == EMAYORQUE || tipoActual == EMENORQUE;
     bool isAritmet = tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == ERESTO || tipoActual == EDIV;
     if (isAsignBool || isAritmet) {
-        PseudoASM* pseudoAsm = traslate(tipoActual, ar->left, ar->right, ar);
-        pseudoAsm->next = instructions;
-        instructions = pseudoAsm;
+        traslate(tipoActual, ar->left, ar->right, ar);
     }
 }
 
@@ -539,17 +530,13 @@ void handleUnaryOp(AST* ar) {
     generateCode(ar->left);
     if ((ar->symbol)->type  == ENOT) {
        // printf("Entro offset %d\n",ar->symbol->offset);
-        PseudoASM* not = traslate((ar->symbol)->type, ar->left,NULL, ar);
-        not->next = instructions;
-        instructions = not;
+        traslate((ar->symbol)->type, ar->left,NULL, ar);
     }
 }
 
-
-
-void invertASMAux() {
+void invertASM(PseudoASM ** list) {
     PseudoASM* prev = NULL;
-    PseudoASM* current = ParamsMayorSeis;
+    PseudoASM* current = *list;
     PseudoASM* next = NULL;
 
     while (current != NULL) {
@@ -558,28 +545,9 @@ void invertASMAux() {
         prev = current;
         current = next;
     }
-
-    ParamsMayorSeis = prev;
-}
-
-
-
-void invertASM() {
-    PseudoASM* prev = NULL;
-    PseudoASM* current = instructions;
-    PseudoASM* next = NULL;
-
-    while (current != NULL) {
-        next = current->next;
-        current->next = prev;
-        prev = current;
-        current = next;
-    }
-
-    instructions = prev;
+    *list = prev;
 }
 void deleteInstructions() {
-    //printFuncJum();
     PseudoASM* current = instructions;
     PseudoASM* next = NULL;
 
@@ -596,13 +564,11 @@ void deleteInstructions() {
         free(current);
         current = next;
     }
-    //deleteFuncTable();
 }
+
 void printAsembler() {
     PseudoASM* current = instructions;
-
     printf("\nInstructions\n");
-
     while (current != NULL) {
         if (current->op1 && current->op2) {
             printf("%s %s %s %s\n", tagName[current->tag], current->op1->varname, current->op2->varname, current->result->varname);
@@ -613,49 +579,29 @@ void printAsembler() {
         }else{
             printf("%s     %s\n", tagName[current->tag], current->result->varname);
         }
-
-        // Para ver que OFFSET TIENEN los operadores de la instruccion
-        // if(current->tag == T_LOAD_PARAM) {
-        //     printf(" El VALOR del parametro es: %s  y de tipo: %s\n", current->result->varname,string[current->result->type]);
-        // }
-        // if (current->op1->offset != 0)
-        //     printf(" El offset de %s  es: %d y de tipo: %s\n", current->op1->varname, current->op1->offset,string[current->result->type]);
-        // if (current->op2->offset != 0)
-        //     printf(" El offset de %s  es: %d y de tipo: %s \n", current->op2->varname, current->op2->offset,string[current->result->type]);
-        // if (current->result->offset != 0)
-        //     printf(" El offset de %s  es: %d y de tipo: %s\n", current->result->varname, current->result->offset, string[current->result->type]);
         current = current->next;
     }
 }
 
 PseudoASM* createTagForFalse(enum ASM_TAG tag, Tsymbol* condition) {
     PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
-
     sequense->tag = tag;
     sequense->op1 = condition;
-
     char * name1 = "_";
     sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
-
     char* name = generateNameLabel();
-
     sequense->result = CreateSymbol(name,OTHERS,0,0);
-
     return sequense;
 }
 
 PseudoASM* createJump() {
     PseudoASM* jump = (PseudoASM*)malloc(sizeof(PseudoASM));
-
     jump->tag = T_JUMP;
     char * name1 = "_";
     jump->op1 = CreateSymbol(name1,OTHERS,0,0);
     jump->op2 =  CreateSymbol(name1,OTHERS,0,0);
-
     char* name = generateNameLabel();
-
     jump->result = CreateSymbol(name,OTHERS,0,0);
-
     return jump;
 }
 
@@ -667,48 +613,30 @@ char* generateNameLabel() {
 }
 
 void createAndAppendTagLabel(char* nameLabel) {
-    PseudoASM* label = (PseudoASM*)malloc(sizeof(PseudoASM));
     char * name1 = "_";
-    label->tag = T_LABEL;
-    label->op1 =  CreateSymbol(name1,OTHERS,0,0);
-    label->op2 =  CreateSymbol(name1,OTHERS,0,0);
-    label->result = CreateSymbol(nameLabel,OTHERS,0,0);
-    label->next = instructions;
-    instructions = label;
-
+    createInstallSequence(T_LABEL,CreateSymbol(name1,OTHERS,0,0),CreateSymbol(name1,OTHERS,0,0),CreateSymbol(nameLabel,OTHERS,0,0));
 }
 
-
- void createRetTag(Tsymbol* func){
-    PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
-    sequense->tag = T_RETURN;
+void createRetTag(Tsymbol* func){
     char * name1 = " ";
-    sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
-    sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
-    sequense->result = func;
+    createInstallSequence(T_RETURN,CreateSymbol(name1,OTHERS,0,0),CreateSymbol(name1,OTHERS,0,0),func);
+}
 
-    sequense->next = instructions;
-    instructions = sequense;
-
- }
-
-
- void createCodRequiredParam(Tsymbol* param){
-    PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
-    sequense->tag = T_REQUIRED_PARAM;
-    char * name1 = " ";
-    sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
-    sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
-    sequense->result = param;
+void createCodRequiredParam(Tsymbol* param){
     if( paramReq > 6) {
+        PseudoASM* sequense = (PseudoASM*)malloc(sizeof(PseudoASM));
+        sequense->tag = T_REQUIRED_PARAM;
+        char * name1 = " ";
+        sequense->op1 = CreateSymbol(name1,OTHERS,0,0);
+        sequense->op2 =  CreateSymbol(name1,OTHERS,0,0);
+        sequense->result = param;
         sequense->next = ParamsMayorSeis;
         ParamsMayorSeis = sequense;
     }else {
-        sequense->next = instructions;
-        instructions = sequense;
+        char * name1 = " ";
+        createInstallSequence(T_REQUIRED_PARAM,CreateSymbol(name1,OTHERS,0,0), CreateSymbol(name1,OTHERS,0,0), param);
     }
-
- }
+}
 
 void generateAssembler() {
     createFile();

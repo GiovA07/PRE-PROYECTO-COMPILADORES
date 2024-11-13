@@ -1,6 +1,4 @@
-
 #include "../include/Errors.h"
-
 
 bool isTypeAritmetic(enum TYPES type) {
     return (type == SUMA || type == RESTA || type == PROD || type == CONSINT || type == ERESTO || type == EDIV );
@@ -12,16 +10,12 @@ bool esComparador(enum TYPES tipo) {
     return tipo == EMAYORQUE || tipo == EMENORQUE || tipo == EEQ;
 }
 
-
 void errorCond(AST *ar, bool* err) {
-
     Tsymbol* auxIzq = LookupInCurrentLevel(((ar->left)->symbol)->varname);
     Tsymbol* auxIzqGlob = LookupExternVar(((ar->left)->symbol)->varname);
     if(!auxIzq && auxIzqGlob){
          auxIzq = auxIzqGlob;
     }
-
-
     enum TYPES tipoIzq = ((ar->left)->symbol)->type;
     if(!auxIzq){
         if(tipoIzq == CALL_F){
@@ -48,7 +42,6 @@ void errorNot(AST* ar, bool* err) {
     if(!auxIzq && auxIzqGlob){
          auxIzq = auxIzqGlob;
     }
-
     enum TYPES tipoIzq = ((ar->left)->symbol)->type;
     if(!auxIzq && !isTypeBool(tipoIzq) && !esComparador(tipoIzq)){
         printf("\033[31mError de tipo, operacion no definida, dentro del NOT\033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
@@ -67,7 +60,6 @@ void errorRet(AST* ar,enum TYPES type, bool* err){
     if(!auxIzq && auxIzqGlob){
          auxIzq = auxIzqGlob;
     }
-
     enum TYPES tipoActualIzq = ((ar->left)->symbol)->type;
     if(type == RETVOID ){
             printf("\033[31mError de tipo de retorno \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
@@ -93,27 +85,22 @@ void errorRet(AST* ar,enum TYPES type, bool* err){
     }
 }
 
-
 void errorAsig(AST *ar, bool *err){
     Tsymbol* auxDer = LookupInCurrentLevel(((ar->right)->symbol)->varname);
     Tsymbol* auxDerGlob = LookupExternVar(((ar->right)->symbol)->varname);
     if(!auxDer && auxDerGlob){
         auxDer = auxDerGlob;
     }
-
     Tsymbol* auxIzq = LookupInCurrentLevel(((ar->left)->symbol)->varname);
     Tsymbol* auxIzqGlob = LookupExternVar(((ar->left)->symbol)->varname);
     if(!auxIzq && auxIzqGlob){
          auxIzq = auxIzqGlob;
     }
-
     enum TYPES tipoDer = ((ar->right)->symbol)->type;
     enum TYPES tipoIzq = ((ar->left)->symbol)->type;
-
     bool errorIntDer = !isTypeAritmetic(tipoDer);
     bool errorBoolDer = !isTypeBool(tipoDer);
     bool errorCondDer = !esComparador(tipoDer);
-
     if(auxIzq == NULL && tipoIzq == EID) {
         printf("\033[33mVariable en asignacion no declarada \033[0m, error en la linea: %d\n", ((ar->left)->symbol)->line);
         *err = true;
@@ -152,34 +139,24 @@ bool isVarCompatibleASIGN (enum TYPES tipoIzq, enum TYPES tipoDer) {
 }
 
 void errorOpera(AST *ar, enum TYPES type, bool* err){
-
     Tsymbol* auxDer = LookupInCurrentLevel(((ar->right)->symbol)->varname);
     Tsymbol* auxDerGlob = LookupExternVar(((ar->right)->symbol)->varname);
     if(!auxDer && auxDerGlob){
         auxDer = auxDerGlob;
     }
-
     Tsymbol* auxIzq = LookupInCurrentLevel(((ar->left)->symbol)->varname);
     Tsymbol* auxIzqGlob = LookupExternVar(((ar->left)->symbol)->varname);
     if(!auxIzq && auxIzqGlob){
          auxIzq = auxIzqGlob;
     }
-
     enum TYPES tipoDer = ((ar->right)->symbol)->type;
     enum TYPES tipoIzq = ((ar->left)->symbol)->type;
-
     bool errorIntDer = !isTypeAritmetic(tipoDer);
     bool errorIzq = !isTypeAritmetic(tipoIzq);
-
-
     if(type == SUMA || type == RESTA || type == PROD || type == ERESTO || type == EDIV) {
-
         evaluate_op_aritmeticos(ar, auxIzq, auxDer, err);
-
     } else if(type == EOR || type == EAND || type == ENOT){
-
         evaluate_op_booleanos(ar, auxIzq, auxDer, err);
-
     }else {
         evaluate_op_condiciones(ar, auxIzq, auxDer, err);
     }
@@ -191,10 +168,8 @@ void evaluate_op_condiciones(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* er
     enum TYPES tipoIzq = ((ar->left)->symbol)->type;
     bool errorIntDer = !isTypeAritmetic(tipoDer);
     bool errorSintacticoDer = esComparador(tipoDer);
-
     bool errorIntIzq = !isTypeAritmetic(tipoIzq);
     bool errorSintacticoIzq = esComparador(tipoIzq);
-
     if(auxIzq && auxDer){
         if((auxIzq->type != VARINT && auxIzq->type != PARAMINT) || (auxDer->type != VARINT && auxDer->type != PARAMINT)){
             printf("\033[31mError de tipo \033[0m, error en la linea: %d\n", lineErrLeft);
@@ -264,7 +239,6 @@ void evaluate_op_condiciones(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* er
     }
 }
 
-
 void evaluate_op_booleanos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* err) {
     int lineErrLeft = ((ar->left)->symbol)->line;
     enum TYPES tipoDer = ((ar->right)->symbol)->type;
@@ -329,7 +303,6 @@ void evaluate_op_booleanos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* err)
         }
     }
 }
-
 
 void evaluate_op_aritmeticos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* err) {
     enum TYPES tipoDer = ((ar->right)->symbol)->type;
@@ -397,7 +370,6 @@ void evaluate_op_aritmeticos(AST* ar, Tsymbol* auxIzq, Tsymbol* auxDer, bool* er
         }
 }
 
-
 void errorCall(AST *ar,  bool *err) {
     Tsymbol* func = LookupExternVar(ar->left->symbol->varname);
     int len = cantArguments(func);
@@ -427,7 +399,6 @@ void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size, bool *err)
     if(ar == NULL) return;
 
     enum TYPES tipoActual = ar->symbol->type;
-
     bool operArit = (tipoActual != SUMA && tipoActual != RESTA && tipoActual != PROD && tipoActual != EDIV && tipoActual != ERESTO);
     bool operBool = (tipoActual != EOR && tipoActual != EAND && tipoActual != ENOT );
     bool operCondi = (tipoActual != EMAYORQUE && tipoActual != EMENORQUE && tipoActual != EEQ);
@@ -443,29 +414,24 @@ void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size, bool *err)
     if(ar->symbol->type != ARGS && ar->symbol->type != EFUNC ){
         //guardar el tipo
         if(*index < maxArg) {
-
             Tsymbol* arg = LookupInCurrentLevel(ar->symbol->varname);
             Tsymbol* argGlob = LookupExternVar(ar->symbol->varname);
 
             if(!arg && argGlob){
                 arg = argGlob;
             }
-
-
             if (arg == NULL) {
-
                 bool operArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
                 bool operBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
                 bool operCondi = (tipoActual == EMAYORQUE || tipoActual == EMENORQUE || tipoActual == EEQ);
-
                 if(ar->symbol->type == CALL_F) {
                     Tsymbol *typeFunc = LookupExternVar(ar->left->symbol->varname);
                     if(typeFunc) {
-            if(!arg && argGlob){
-                arg = argGlob;
-            }
-                    tipos[*index] = typeFunc->type;
-                    (*index)++;
+                        if(!arg && argGlob){
+                            arg = argGlob;
+                        }
+                        tipos[*index] = typeFunc->type;
+                        (*index)++;
                     }
                 }else if (ar->symbol->type == CONSINT || ar->symbol->type == CONSBOOL) {
                     tipos[*index] = ar->symbol->type;
@@ -491,5 +457,3 @@ void recorrer(AST *ar, int tipos[], int* index, int maxArg, int size, bool *err)
         }
     }
 }
-
-
