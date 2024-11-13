@@ -23,7 +23,7 @@ Program {
     }
     
     int seisParamAuxiliar(int a,bool t,int b,int c,int d,int e,int f,int w, int z, bool ww){
-        if(!t && ww)then{
+        if(t && ww)then{
             printAdvanced(a);
             printAdvanced(b);
             printAdvanced(c);
@@ -45,7 +45,6 @@ void main() {
         x = 7;
         ss = true;
         seisParam(1,!auxiliar,3,4,5,6,2,9,10,(ss && true) || false);
-       
         y = seisParamAuxiliar(10,true,30,40,50,60,20,90,100,(ss && true) || false);
         prinInt(x);
         prinInt(y);

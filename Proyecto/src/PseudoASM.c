@@ -309,6 +309,10 @@ void handleGenerateMain(AST* ar){
         generateCode(ar->left);
     if (ar->right != NULL)
         generateCode(ar->right);
+    if(ar->symbol->type == RETVOID){
+        char * name1 = " ";
+        createInstallSequence(T_RETURN, CreateSymbol(name1,OTHERS,0,0),CreateSymbol(name1,OTHERS,0,0), CreateSymbol(name1,OTHERS,0,0));
+    }
  }
 
 void has_Operation(AST* ar){

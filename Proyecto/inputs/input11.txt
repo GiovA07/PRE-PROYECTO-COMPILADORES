@@ -1,0 +1,56 @@
+Program {
+
+    int prinInt(int a) extern;
+    int prinBool(bool b) extern;
+
+    // Función que suma dos números si ambos son positivos, o devuelve -1 en caso contrario    
+    int sumaSiPositivos(int a, int b) {
+        if (a > 0 && b > 0) then {
+            return a + b;
+        } else {
+            return -1;
+        }
+    }
+
+    // Función que devuelve el máximo de tres enteros
+    int maxDeTres(int x, int y, int z) {
+        if (x > y+1 && x > z+1) then {
+            return x;
+        } else{
+            int res;
+            if (y > x+1 && y > z+1) then {
+                res = y;
+            } else {
+                res = z;
+            }
+            return res;
+        } 
+    }
+
+    // Función que determina si un número es positivo y si otro número es par
+    bool esPositivoYPar(int num1, int num2) {
+        bool esPositivo;
+        bool esPar;
+        esPositivo = num1 > 0;
+        esPar = (num2 % 2) == 0;
+        return esPositivo && esPar;
+    }
+
+    // Función principal
+    int main() {
+        int resultadoSuma;
+        int maximo;
+        bool positivoYPar;
+
+        resultadoSuma = sumaSiPositivos(5, 3);
+        prinInt(resultadoSuma);
+
+        maximo = maxDeTres(10, 20, 15);
+        prinInt(maximo);
+
+        positivoYPar = esPositivoYPar(7, 4);
+        prinBool(positivoYPar);
+
+        return 0;
+    }
+}

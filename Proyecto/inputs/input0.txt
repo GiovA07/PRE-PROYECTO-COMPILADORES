@@ -1,0 +1,15 @@
+// Función para verificar si un número es perfecto
+bool esPerfecto(int n) {
+    int suma;
+    int i;
+    suma = 0;
+    i = 1;
+    while (i < n) {
+        if (n % i == 0) then {
+            suma = suma + i;
+        }
+        i = i + 1;
+    }
+    return suma == n;
+}
+

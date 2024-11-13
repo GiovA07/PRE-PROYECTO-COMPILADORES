@@ -296,9 +296,9 @@ void writeIFF(PseudoASM* instruction) {
 		}
     }else {
         if(op1->offset == 0)
-           sprintf(buffer, "    cmpl  $1,  %s(%rip)\n", op1->varname);
+           sprintf(buffer, "    cmpl  $1,  %s(%%rip)\n", op1->varname);
         else
-          sprintf(buffer, "    cmpl  $1,  %d(%rbp)\n", op1->offset);
+          sprintf(buffer, "    cmpl  $1,  %d(%%rbp)\n", op1->offset);
     }
     writeArchive(buffer);
     //salto por falso
