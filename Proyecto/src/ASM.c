@@ -399,6 +399,7 @@ void writeOperation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
                 fprintf(file, "    cltd\n");
                 sprintf(aux, "    idivl %secx\n",por);
             }else{
+                fprintf(file, "    cltd\n");
                 sprintf(aux, "    idivl %d(%srbp)\n", op2->offset, por);
             }
         }

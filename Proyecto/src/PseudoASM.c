@@ -137,7 +137,7 @@ void operAritmetic(enum TYPES tag,Tsymbol* op1, Tsymbol* op2, Tsymbol* res){
             break;
         case  EDIV:
             if (auxRigth != NULL && auxLeft != NULL) {
-                if(auxRigth->value == 0) {
+                if(auxRigth->value == 0 && auxRigth->type == CONSINT) {
                     printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", auxLeft->line);
                     exit(1);
                 }else {
@@ -169,7 +169,7 @@ void operAritmetic(enum TYPES tag,Tsymbol* op1, Tsymbol* op2, Tsymbol* res){
             break;
         case  ERESTO:
             if (auxRigth != NULL && auxLeft != NULL) {
-                if(auxRigth->value == 0) {
+                if(auxRigth->value == 0 && auxRigth->type == CONSINT) {
                     printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", auxLeft->line);
                     exit(1);
                 }else {
