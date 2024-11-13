@@ -3,7 +3,6 @@ Program {
     int inputVal() extern;
 
     int mcd(int a, int b) {
-        prinInt(b);
         if (b == 0) then {
             return a;
         } else {
@@ -12,7 +11,7 @@ Program {
     }
 
     int main() {
-        prinInt(mcd(48, 18)); // Debería imprimir 6
+        prinInt(mcd(22, 33)); // Debería imprimir 6
         return 1;
     }
 }

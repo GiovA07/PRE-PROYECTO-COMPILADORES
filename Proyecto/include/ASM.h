@@ -21,7 +21,7 @@ void writeIFF(PseudoASM* instruction);
 void writeLabel(PseudoASM* instruction);
 void writeJump(PseudoASM* instruction);
 void writeLoadParam(PseudoASM* instruction, int cantParam);
-
+void writeEndFunc(PseudoASM* instruction);
 void writeLoadParamInFunc(PseudoASM* instruction);
 void writeCallFunc(PseudoASM* instruction);
 #endif

@@ -25,39 +25,39 @@ void operComparate(enum TYPES tag,Tsymbol* op1, Tsymbol* op2, Tsymbol* res){
     Tsymbol *auxRigth = LookupVar(op2->varname);
     switch(tag){
         case  EMAYORQUE:
-            if (auxRigth != NULL && auxLeft != NULL) {
-                res->value =  (auxLeft->value > auxRigth->value);
-            } else if (auxRigth == NULL && auxLeft != NULL) {
-                res->value =  (auxLeft->value > op2->value);
-            } else if(auxRigth != NULL && auxLeft == NULL){
-                res->value = op1->value > auxRigth->value;
-            } else {
-                res->value = (op1->value > op2->value);
-            }
+            // if (auxRigth != NULL && auxLeft != NULL) {
+            //     res->value =  (auxLeft->value > auxRigth->value);
+            // } else if (auxRigth == NULL && auxLeft != NULL) {
+            //     res->value =  (auxLeft->value > op2->value);
+            // } else if(auxRigth != NULL && auxLeft == NULL){
+            //     res->value = op1->value > auxRigth->value;
+            // } else {
+            //     res->value = (op1->value > op2->value);
+            // }
             createInstallSequence(T_MAYOR,op1, op2,res);
             break;
         case  EMENORQUE:
-            if (auxRigth != NULL && auxLeft != NULL) {
-                res->value =  (auxLeft->value < auxRigth->value);
-            } else if (auxRigth == NULL && auxLeft != NULL) {
-                res->value =  (auxLeft->value < op2->value);
-            } else if(auxRigth != NULL && auxLeft == NULL){
-                res->value = op1->value < auxRigth->value;
-            } else {
-                res->value = (op1->value < op2->value);
-            }
+            // if (auxRigth != NULL && auxLeft != NULL) {
+            //     res->value =  (auxLeft->value < auxRigth->value);
+            // } else if (auxRigth == NULL && auxLeft != NULL) {
+            //     res->value =  (auxLeft->value < op2->value);
+            // } else if(auxRigth != NULL && auxLeft == NULL){
+            //     res->value = op1->value < auxRigth->value;
+            // } else {
+            //     res->value = (op1->value < op2->value);
+            // }
             createInstallSequence(T_MENOR,op1, op2, res);
             break;
         case  EEQ:
-            if (auxRigth != NULL && auxLeft != NULL) {
-                res->value = (auxLeft->value == auxRigth->value);
-            } else if (auxRigth == NULL && auxLeft != NULL) {
-                res->value = (auxLeft->value == op2->value);
-            } else if(auxRigth != NULL && auxLeft == NULL){
-                res->value = op1->value == auxRigth->value;
-            } else {
-                res->value = (op1->value == op2->value);
-            }
+            // if (auxRigth != NULL && auxLeft != NULL) {
+            //     res->value = (auxLeft->value == auxRigth->value);
+            // } else if (auxRigth == NULL && auxLeft != NULL) {
+            //     res->value = (auxLeft->value == op2->value);
+            // } else if(auxRigth != NULL && auxLeft == NULL){
+            //     res->value = op1->value == auxRigth->value;
+            // } else {
+            //     res->value = (op1->value == op2->value);
+            // }
             createInstallSequence(T_IGUAL,op1,  op2, res);
             break;
         }
@@ -66,29 +66,29 @@ void operComparate(enum TYPES tag,Tsymbol* op1, Tsymbol* op2, Tsymbol* res){
 void operBoolean(enum TYPES tag,Tsymbol* op1, Tsymbol* op2, Tsymbol* res){
     Tsymbol *auxLeft = LookupVar(op1->varname);
     Tsymbol *auxRigth = LookupVar(op2->varname);
-    switch(tag){   
+    switch(tag){
         case  EAND:
-            if (auxRigth != NULL && auxLeft != NULL) {
-                res->value = (auxLeft->value && auxRigth->value);
-            } else if (auxRigth == NULL && auxLeft != NULL) {
-                res->value = (auxLeft->value && op2->value);
-            } else if(auxRigth != NULL && auxLeft == NULL){
-                res->value = op1->value && auxRigth->value;
-            } else {
-                res->value = (op1->value && op2->value);
-            }
+            // if (auxRigth != NULL && auxLeft != NULL) {
+            //     res->value = (auxLeft->value && auxRigth->value);
+            // } else if (auxRigth == NULL && auxLeft != NULL) {
+            //     res->value = (auxLeft->value && op2->value);
+            // } else if(auxRigth != NULL && auxLeft == NULL){
+            //     res->value = op1->value && auxRigth->value;
+            // } else {
+            //     res->value = (op1->value && op2->value);
+            // }
             createInstallSequence(T_AND,op1,  op2, res);
             break;
         case  EOR:
-            if (auxRigth != NULL && auxLeft != NULL) {
-                res->value = (auxLeft->value || auxRigth->value);
-            } else if (auxRigth == NULL && auxLeft != NULL) {
-                res->value = (auxLeft->value || op2->value);
-            } else if(auxRigth != NULL && auxLeft == NULL){
-                res->value = op1->value || auxRigth->value;
-            } else {
-                res->value = (op1->value || op2->value);
-            }
+            // if (auxRigth != NULL && auxLeft != NULL) {
+            //     res->value = (auxLeft->value || auxRigth->value);
+            // } else if (auxRigth == NULL && auxLeft != NULL) {
+            //     res->value = (auxLeft->value || op2->value);
+            // } else if(auxRigth != NULL && auxLeft == NULL){
+            //     res->value = op1->value || auxRigth->value;
+            // } else {
+            //     res->value = (op1->value || op2->value);
+            // }
             createInstallSequence(T_OR,op1, op2, res);
             break;
     }
@@ -100,39 +100,12 @@ void operAritmetic(enum TYPES tag,Tsymbol* op1, Tsymbol* op2, Tsymbol* res){
     Tsymbol *auxRigth = LookupVar(op2->varname);
     switch(tag){
         case SUMA:
-            if (auxRigth != NULL && auxLeft != NULL) {
-                res->value = auxRigth->value + auxLeft->value;
-            } else if (auxRigth == NULL && auxLeft != NULL) {
-                res->value = op2->value + auxLeft->value;
-            } else if(auxRigth != NULL && auxLeft == NULL) {
-                res->value = auxRigth->value + op1->value;
-            } else {
-                res->value = op2->value  + op1->value;
-            }
             createInstallSequence(T_SUM,op1, op2, res);
             break;
         case RESTA:
-            if (auxRigth != NULL && auxLeft != NULL) {
-                res->value = auxLeft->value - auxRigth->value;
-            } else if (auxRigth == NULL && auxLeft != NULL) {
-                res->value = auxLeft->value - op2->value;
-            } else if(auxRigth != NULL && auxLeft == NULL){
-                res->value = op1->value - auxRigth->value;
-            } else {
-                res->value = op1->value - op2->value;
-            } 
             createInstallSequence(T_RES,op1, op2, res);
             break;
         case PROD:
-            if (auxRigth != NULL && auxLeft != NULL) {
-                res->value = auxLeft->value * auxRigth->value;
-            } else if (auxRigth == NULL && auxLeft != NULL) {
-                res->value = auxLeft->value * op2->value;
-            } else if(auxRigth != NULL && auxLeft == NULL){
-                res->value = op1->value * auxRigth->value;
-            } else {
-                res->value = op1->value * op2->value;
-            }
             createInstallSequence(T_PROD,op1, op2, res);
             break;
         case  EDIV:
@@ -140,29 +113,21 @@ void operAritmetic(enum TYPES tag,Tsymbol* op1, Tsymbol* op2, Tsymbol* res){
                 if(auxRigth->value == 0 && auxRigth->type == CONSINT) {
                     printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", auxLeft->line);
                     exit(1);
-                }else {
-                    res->value =  auxLeft->value / auxRigth->value;
                 }
             } else if (auxRigth == NULL && auxLeft != NULL) {
                 if(op2->value == 0) {
                     printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n", auxLeft->line);
                     exit(1);
-                }else {
-                    res->value =  auxLeft->value / op2->value;
                 }
             } else if(auxRigth != NULL && auxLeft == NULL){
                 if(auxRigth->value == 0) {
                     printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n",  op1->line);
                     exit(1);
-                }else {
-                    res->value = op1->value / auxRigth->value ;
                 }
             } else {
                 if(op2->value == 0) {
                     printf("\033[31mNo se puede dividir por 0 \033[0m, linea de error: %d\n",  op1->line);
                     exit(1);
-                }else {
-                    res->value = op1->value / op2->value;
                 }
             }
             createInstallSequence(T_DIV,op1, op2, res);
@@ -172,29 +137,21 @@ void operAritmetic(enum TYPES tag,Tsymbol* op1, Tsymbol* op2, Tsymbol* res){
                 if(auxRigth->value == 0 && auxRigth->type == CONSINT) {
                     printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", auxLeft->line);
                     exit(1);
-                }else {
-                    res->value =  auxLeft->value % auxRigth->value;
                 }
             } else if (auxRigth == NULL && auxLeft != NULL) {
                 if(op2->value == 0) {
                     printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n", auxLeft->line);
                     exit(1);
-                }else {
-                    res->value =  auxLeft->value % op2->value;
                 }
             } else if(auxRigth != NULL && auxLeft == NULL){
                 if(auxRigth->value == 0) {
                     printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n",  op1->line);
                     exit(1);
-                }else {
-                    res->value = op1->value % auxRigth->value ;
                 }
             } else {
                 if(op2->value == 0) {
                     printf("\033[31mNo se puede sacar resto por 0 \033[0m, linea de error: %d\n",  op1->line);
                     exit(1);
-                }else {
-                    res->value = op1->value % op2->value;
                 }
             }
             createInstallSequence(T_MOD,op1, op2, res);
@@ -206,7 +163,7 @@ void traslate(enum TYPES tag, AST* op1, AST* op2, AST* res) {
     Tsymbol * op1Symbol = op1->symbol;
     Tsymbol * op2Symbol = NULL;
     Tsymbol * resSymbol = res->symbol;
-    
+
     Tsymbol *auxRigth = NULL;
     Tsymbol *auxLeft = LookupVar(op1->symbol->varname);
 
@@ -243,19 +200,19 @@ void traslate(enum TYPES tag, AST* op1, AST* op2, AST* res) {
             break;
             createInstallSequence(T_WHILE,op1Symbol,op2Symbol,resSymbol);
         case EIF:
-            if(auxLeft){
-                resSymbol->value = auxLeft->value;
-            }else {
-                resSymbol->value = op1Symbol->value;
-            }
+            // if(auxLeft){
+            //     resSymbol->value = auxLeft->value;
+            // }else {
+            //     resSymbol->value = op1Symbol->value;
+            // }
             createInstallSequence(T_IF,op1Symbol,op2Symbol,resSymbol);
             break;
         case ENOT:
-            if (auxLeft != NULL) {
-                resSymbol->value =  (!auxLeft->value);
-            } else {
-                resSymbol->value = (!(op1Symbol->value));
-            } 
+            // if (auxLeft != NULL) {
+            //     resSymbol->value =  (!auxLeft->value);
+            // } else {
+            //     resSymbol->value = (!(op1Symbol->value));
+            // }
             createInstallSequence(T_NOT,op1Symbol,op2Symbol,resSymbol);
             break;
     }
@@ -358,9 +315,9 @@ void has_Operation(AST* ar){
     if(ar == NULL) return;
 
     if(ar->left)
-        has_Operation(ar->left);    
+        has_Operation(ar->left);
     if(ar->right)
-        has_Operation(ar->right);   
+        has_Operation(ar->right);
     enum TYPES tipoActual = ar->symbol->type;
     bool operArit = (tipoActual == SUMA || tipoActual == RESTA || tipoActual == PROD || tipoActual == EDIV || tipoActual == ERESTO);
     bool operBool = (tipoActual == EOR || tipoActual == EAND || tipoActual == ENOT );
@@ -372,7 +329,7 @@ void has_Operation(AST* ar){
 
 void has_Call_Func(AST* ar) {
     if(ar == NULL) return;
-   
+
     if(ar->left)
         has_Call_Func(ar->left);
 
@@ -383,7 +340,7 @@ void has_Call_Func(AST* ar) {
         generateLoadParams(ar->right);
         createCall_Func(
             ar->left->symbol, ar->symbol);
-    }    
+    }
 }
 
 void generateLoadParams(AST* ar) {
@@ -417,7 +374,7 @@ void createTagLoad(Tsymbol* symbol) {
 void concatenarListas(PseudoASM *lista1, PseudoASM *lista2) {
     if (lista2 == NULL) {
         return;
-    }    
+    }
     PseudoASM * actual = lista2;
     while (actual->next != NULL) {
         actual = actual->next;

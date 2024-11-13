@@ -18,6 +18,8 @@ int cantBloq = -1;
 bool inBlockIf = false;
 int cantReturns = 0;
 int cantRetBlock = 0;
+int cantWhileIf = 0;
+
 //chekear error retorno
 bool errRet = false;
 
@@ -109,6 +111,7 @@ void createTable(AST* ar) {
         InstallScope();
     }
     if( tipoActual == EIF || tipoActual == EWHILE || tipoActual == EELSE){
+        cantWhileIf++;
         inBlockIf = true;
         cantBloq++;
         InstallScope();
@@ -141,8 +144,11 @@ void createTable(AST* ar) {
             auxFunc->offset = offset;
             offset =  -16;
         }
-        if(inBlockIf){
+        if(inBlockIf && cantWhileIf == 1){
             inBlockIf = false;
+            cantWhileIf--;
+        }else if(inBlockIf && cantWhileIf > 1) {
+            cantWhileIf--;
         }else if(errRet && cantReturns != 2){
             printf("\033[31mTe falta un return en la linea \033[0m %d\n",(ar->symbol)->line-1);
             err = true;
@@ -151,7 +157,7 @@ void createTable(AST* ar) {
         }
         PopScope();
         cantRetBlock = 0;
-        //printf("FIN BLOQUE  \n\n");
+        // printf("FIN BLOQUE  \n\n");
 
     }
     if (ar->right != NULL && ar->left != NULL) {
@@ -189,7 +195,7 @@ void createTable(AST* ar) {
         }
     }
     if (ar->left != NULL) {
-        if(ar->symbol->type == ERETURN && inBlockIf){          
+        if(ar->symbol->type == ERETURN && inBlockIf){
             if(cantRetBlock == 0){
                 cantReturns +=1;
             }

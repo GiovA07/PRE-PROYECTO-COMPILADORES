@@ -12,18 +12,40 @@ Program {
         res2 = 1;
         while (i < n) {
             if (n % i == 0) then {
-                res2 = 0;
-                return res2;
+                return 0;
             }
             i = i + 1;
         }
-        return res2;
+        return 1;
     }
 
+    bool funcionBolleana(int a, int b){
+        bool res;
+        if(a == b)then {
+            res = false;
+        }else {
+            res = true;
+        }
+        return !res;
+    }
+
+    void  printVar(int b){
+        prinInt(b);
+    }
     int main() {
         int a;
+        int b;
         a = inputVal();
-        prinInt(esPrimo(a));
+        b = inputVal();
+        //prinInt(esPrimo(a));
+      //  a = 1 + 2 + 2;
+        if(funcionBolleana(a,b))then{
+            prinInt(1);
+        }else{
+            prinInt(0);
+        }
+        printVar(1000000);
+        prinInt(a);
         return 1;
     }
 }

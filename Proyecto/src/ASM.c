@@ -9,6 +9,8 @@ int cantParamFunc = -1;
 char params[7][20] = {"edi", "esi", "edx", "ecx", "r8d", "r9d"};
 int paramExtra = 0;
 
+int positiveMaxOffset = 0;
+
 void createFile() {
     file = fopen("result.s", "w");
     if (file == NULL) {
@@ -45,7 +47,7 @@ void createWriteASM(PseudoASM* instruction) {
             break;
         case T_ASIGN:
             writeAsign(instruction);
-            break;        
+            break;
         case T_IFF: case T_WF:
             writeIFF(instruction);
             break;
@@ -66,9 +68,9 @@ void createWriteASM(PseudoASM* instruction) {
         case T_CALL:
             writeCallFunc(instruction);
             break;
-        case T_END_FUN:
-            writeEndFunc(instruction);
-            break;
+        // case T_END_FUN:
+        //     writeEndFunc(instruction);
+        //     break;
         case T_SUM: case T_RES: case T_DIV: case T_PROD: case T_MOD:
             writeOperation(instruction->op1, instruction->op2, instruction->result, currentTag);
             break;
@@ -80,6 +82,7 @@ void createWriteASM(PseudoASM* instruction) {
             break;
         case T_RETURN:
             writeReturn(instruction);
+            writeEndFunc(instruction);
             break;
     }
     if(instruction->next != NULL)
@@ -104,14 +107,13 @@ void writeFunc(PseudoASM* instruction) {
     }
     sprintf(buffer, "%s:\n    pushq   %%rbp\n    movq    %%rsp, %%rbp\n",instruction->result->varname);
     writeArchive(buffer);
-    int positiveMaxOffset = instruction->result->offset * -1;
+    positiveMaxOffset = instruction->result->offset * -1;
     sprintf(buffer,"    subq $%d, %%rsp \n",positiveMaxOffset);
     writeArchive(buffer);
 }
 
 void writeEndFunc(PseudoASM* instruction) {
     char buffer[256];
-    int positiveMaxOffset = instruction->result->offset * -1;
     sprintf(buffer,"    addq $%d, %%rsp \n",positiveMaxOffset);
     writeArchive(buffer);
     // Revierte el rbp de la pila antes a donde estaba antes de ser llamada.
@@ -126,7 +128,7 @@ void writeLoadParamInFunc(PseudoASM* instruction) {
     Tsymbol* param = instruction->result;
     cantParamFunc +=1;
     if(cantParamFunc > 5) {
-        sprintf(buffer, "    movl  %d(%%rbp), %%eax\n", ((cantParamFunc-5) * 16), param->offset);
+        sprintf(buffer, "    movl  %d(%%rbp), %%eax\n", ((cantParamFunc-5) * 16));
         writeArchive(buffer);
         sprintf(buffer, "    movl %%eax, %d(%%rbp)\n", param->offset);
         writeArchive(buffer);
@@ -196,7 +198,7 @@ void writeLoadParam(PseudoASM* instruction, int cantParam) {
             writeArchive(buffer);
         }
 
-    } 
+    }
     cantParam += 1;
     if(instruction->next->tag ==  T_LOAD_PARAM) {
         instruction = instruction->next;
@@ -329,7 +331,7 @@ void writeCallFunc(PseudoASM* instruction) {
     writeArchive(buffer);
     if(paramExtra > 0) {
         int aux = paramExtra * 16;
-        sprintf(buffer, "    addq $%d,  %%rsp\n",aux, nameLabel);
+        sprintf(buffer, "    addq $%d,  %%rsp\n",aux);
         writeArchive(buffer);
         paramExtra = 0;
     }
@@ -358,7 +360,7 @@ void writeOperation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
             else
                 sprintf(aux, "    movl %d(%srbp), %seax\n", op1->offset, por, por);
         }
-        fprintf(file,aux);
+        fprintf(file, "%s", aux);
         if(op2->type == CONSINT){
             sprintf(aux, "    movl $%s, %sedx\n", op2->varname, por);
         }else{
@@ -367,8 +369,7 @@ void writeOperation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
             else
                 sprintf(aux, "    movl %d(%srbp), %sedx\n", op2->offset, por, por);
         }
-        fprintf(file,aux);
-
+        fprintf(file, "%s", aux);
         if (tag == T_SUM)
             fprintf(file, "    addl %%edx, %%eax\n");
         else if (tag == T_RES)
@@ -376,7 +377,7 @@ void writeOperation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
         else
             fprintf(file, "    imull %%edx, %%eax\n");
         sprintf(aux, "    movl %seax, %d(%srbp)\n", por, final->offset, por);
-        fprintf(file,aux);
+        fprintf(file, "%s", aux);
     } else if (tag == T_DIV || tag == T_MOD) {
         if(op1->type == CONSINT)
           sprintf(aux, "    movl $%s, %seax\n", op1->varname, por);
@@ -386,16 +387,16 @@ void writeOperation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
             else
               sprintf(aux, "    movl %d(%srbp), %seax\n", op1->offset, por, por);
         }
-        fprintf(file,aux);
+        fprintf(file, "%s", aux);
         if(op2->type == CONSINT){
             sprintf(aux, "    movl $%s,  %secx\n", op2->varname, por);
-            fprintf(file,aux);
+            fprintf(file, "%s", aux);
             fprintf(file, "    cltd\n");
             sprintf(aux, "    idivl %secx\n", por);
         }else{
             if(op2->offset == 0){
                 sprintf(aux, "    movl %s(%srip),  %secx\n", op2->varname, por,por);
-                fprintf(file,aux);
+                fprintf(file, "%s", aux);
                 fprintf(file, "    cltd\n");
                 sprintf(aux, "    idivl %secx\n",por);
             }else{
@@ -403,13 +404,13 @@ void writeOperation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG tag
                 sprintf(aux, "    idivl %d(%srbp)\n", op2->offset, por);
             }
         }
-        fprintf(file,aux);
+        fprintf(file, "%s", aux);
 
         if (tag == T_DIV)
             sprintf(aux, "    movl %seax, %d(%srbp)\n", por, final->offset, por);
         else
             sprintf(aux, "    movl %sedx, %d(%srbp)\n", por, final->offset, por);
-        fprintf(file,aux);
+        fprintf(file, "%s", aux);
     }
     fclose(file);
 }
@@ -524,7 +525,7 @@ void writeComparation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG t
         else
            sprintf(aux, "    movl %d(%srbp) , %seax\n ", op1->offset, por,por);
     }
-    fprintf(file, aux);
+    fprintf(file, "%s", aux);
     if(op2->type == CONSINT){
         sprintf(aux, "   cmpl  $%s , %seax \n", op2->varname,por);
     }else{
@@ -533,7 +534,7 @@ void writeComparation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG t
         else
             sprintf(aux, "   cmpl %d(%srbp) , %seax\n", op2->offset, por,por);
     }
-    fprintf(file, aux);
+    fprintf(file, "%s", aux);
     if(tag == T_IGUAL)
         fprintf(file, "    sete %%al\n");
     if(tag == T_MAYOR)
@@ -541,8 +542,8 @@ void writeComparation(Tsymbol* op1, Tsymbol* op2, Tsymbol* final, enum ASM_TAG t
     if(tag == T_MENOR)
         fprintf(file, "    setl %%al\n");
     sprintf(aux, "    movzbl %sal, %seax\n", por, por);
-    fprintf(file, aux);
+    fprintf(file, "%s", aux);
     sprintf(aux, "    movl  %seax, %d(%srbp)\n",por, final->offset, por);
-    fprintf(file, aux);
+    fprintf(file, "%s", aux);
     fclose(file);
 }

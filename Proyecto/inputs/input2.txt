@@ -1,5 +1,6 @@
 Program {
     int prinInt(int a) extern;
+    int inputVal() extern;
 
     int fact(int x) {
         int result;
@@ -21,7 +22,8 @@ Program {
 
     void main() {
         int x;
-        prinInt(fact(5));
-        prinInt(fact1(5));
+        x = inputVal();
+        prinInt(fact(fact(x)));
+        prinInt(fact1(x));
     }
 }
