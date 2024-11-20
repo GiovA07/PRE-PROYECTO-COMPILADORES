@@ -60,7 +60,7 @@ int blockNum = 0;
 /* presedencias */
 %left OR AND                // ||, &&
 %left EQ                    // ==
-%left MAYORQUE MENORQUE     // >, <
+%left MAYORQUE MENORQUE     // >,<
 %left TMAS TMENOS           // +, -
 %left TPOR TDIVISION TRESTO // *, /, %
 %right NOT                  // La negación es asociativa a la derecha
@@ -171,7 +171,10 @@ expr: valor                     {$$ = $1;}
 
 valor: INT                      {$$ = createTree($1, NULL, NULL);}
      | ID                       {$$ = createTree($1, NULL, NULL);}
-     | TMENOS INT               {$$ = createTree($2, NULL, NULL);}
+     | TMENOS INT               {int len = strlen($2->varname); char* newVarname = (char*)malloc(len + 2);
+                                 newVarname[0] = '-'; strcpy(newVarname + 1, $2->varname);
+                                 $2->varname = newVarname;
+                                 $2->value = $2->value * - 1; $$ = createTree($2, NULL, NULL);}
      | TTRUE                    {$$ = createTree($1, NULL, NULL);}
      | TFALSE                   {$$ = createTree($1, NULL, NULL);}
      ;
@@ -200,6 +203,7 @@ void compilador(struct AST* ar){
        exit(1);
     }
     generateThreeDir(ar);
+    printAsembler();
     generateAssembler();
     deleteInstructions();
     elimArbol(ar);

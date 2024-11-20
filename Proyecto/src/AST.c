@@ -97,11 +97,10 @@ void createTable(AST* ar) {
        InstallInCurrentScope(ar->symbol);
     }
     if(tipoActual == RETINT || tipoActual == RETBOL || tipoActual == RETVOID) {
-        //printf("APILO -> %s\n",ar->symbol->varname);
+
         cantReturns = 0;
         offset = -16;
         cantBloq++;
-        //printf("CantBlock %d => %s\n",cantBloq,ar->symbol->varname );
         auxFunc = ar->symbol;
         InstallInCurrentScope(ar->symbol);
         InstallScope();

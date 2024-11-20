@@ -25,39 +25,12 @@ void operComparate(enum TYPES tag,Tsymbol* op1, Tsymbol* op2, Tsymbol* res){
     Tsymbol *auxRigth = LookupVar(op2->varname);
     switch(tag){
         case  EMAYORQUE:
-            // if (auxRigth != NULL && auxLeft != NULL) {
-            //     res->value =  (auxLeft->value > auxRigth->value);
-            // } else if (auxRigth == NULL && auxLeft != NULL) {
-            //     res->value =  (auxLeft->value > op2->value);
-            // } else if(auxRigth != NULL && auxLeft == NULL){
-            //     res->value = op1->value > auxRigth->value;
-            // } else {
-            //     res->value = (op1->value > op2->value);
-            // }
             createInstallSequence(T_MAYOR,op1, op2,res);
             break;
         case  EMENORQUE:
-            // if (auxRigth != NULL && auxLeft != NULL) {
-            //     res->value =  (auxLeft->value < auxRigth->value);
-            // } else if (auxRigth == NULL && auxLeft != NULL) {
-            //     res->value =  (auxLeft->value < op2->value);
-            // } else if(auxRigth != NULL && auxLeft == NULL){
-            //     res->value = op1->value < auxRigth->value;
-            // } else {
-            //     res->value = (op1->value < op2->value);
-            // }
             createInstallSequence(T_MENOR,op1, op2, res);
             break;
         case  EEQ:
-            // if (auxRigth != NULL && auxLeft != NULL) {
-            //     res->value = (auxLeft->value == auxRigth->value);
-            // } else if (auxRigth == NULL && auxLeft != NULL) {
-            //     res->value = (auxLeft->value == op2->value);
-            // } else if(auxRigth != NULL && auxLeft == NULL){
-            //     res->value = op1->value == auxRigth->value;
-            // } else {
-            //     res->value = (op1->value == op2->value);
-            // }
             createInstallSequence(T_IGUAL,op1,  op2, res);
             break;
         }
@@ -68,27 +41,9 @@ void operBoolean(enum TYPES tag,Tsymbol* op1, Tsymbol* op2, Tsymbol* res){
     Tsymbol *auxRigth = LookupVar(op2->varname);
     switch(tag){
         case  EAND:
-            // if (auxRigth != NULL && auxLeft != NULL) {
-            //     res->value = (auxLeft->value && auxRigth->value);
-            // } else if (auxRigth == NULL && auxLeft != NULL) {
-            //     res->value = (auxLeft->value && op2->value);
-            // } else if(auxRigth != NULL && auxLeft == NULL){
-            //     res->value = op1->value && auxRigth->value;
-            // } else {
-            //     res->value = (op1->value && op2->value);
-            // }
             createInstallSequence(T_AND,op1,  op2, res);
             break;
         case  EOR:
-            // if (auxRigth != NULL && auxLeft != NULL) {
-            //     res->value = (auxLeft->value || auxRigth->value);
-            // } else if (auxRigth == NULL && auxLeft != NULL) {
-            //     res->value = (auxLeft->value || op2->value);
-            // } else if(auxRigth != NULL && auxLeft == NULL){
-            //     res->value = op1->value || auxRigth->value;
-            // } else {
-            //     res->value = (op1->value || op2->value);
-            // }
             createInstallSequence(T_OR,op1, op2, res);
             break;
     }
@@ -193,26 +148,12 @@ void traslate(enum TYPES tag, AST* op1, AST* op2, AST* res) {
             operComparate(tag,op1Symbol,op2Symbol,resSymbol);
             break;
         case EWHILE:
-            if (op1Symbol->value == 1)
-                resSymbol = op2->right->symbol;
-            else
-                resSymbol = NULL;
-            break;
             createInstallSequence(T_WHILE,op1Symbol,op2Symbol,resSymbol);
+            break;
         case EIF:
-            // if(auxLeft){
-            //     resSymbol->value = auxLeft->value;
-            // }else {
-            //     resSymbol->value = op1Symbol->value;
-            // }
             createInstallSequence(T_IF,op1Symbol,op2Symbol,resSymbol);
             break;
         case ENOT:
-            // if (auxLeft != NULL) {
-            //     resSymbol->value =  (!auxLeft->value);
-            // } else {
-            //     resSymbol->value = (!(op1Symbol->value));
-            // }
             createInstallSequence(T_NOT,op1Symbol,op2Symbol,resSymbol);
             break;
     }
